@@ -1,0 +1,162 @@
+#+TITLE: Docs
+
+* Objetos
+** Padre
+#+BEGIN_SRC js
+Padre = {
+    id,
+    nombre,
+    correo,
+    telefono,
+    hijos: [ Hijo ]
+}
+#+END_SRC
+** Hijo
+#+BEGIN_SRC js
+Hijo = {
+    nombre,
+    equipo,
+    asistencias
+}
+#+END_SRC
+** Entrenador
+#+BEGIN_SRC js
+Entrenador = {
+    id,
+    nombre,
+    correo,
+    telefono,
+    equipo
+}
+#+END_SRC
+** Equipo
+#+BEGIN_SRC js
+Equipo = {
+    colorLetra,
+    colorFondo,
+    eventos = [ Eventos ],
+    inicioTemporada = date,
+    finTemporada = date,
+}
+#+END_SRC
+** Evento
+#+BEGIN_SRC js
+// Podemos pensar en mostrar los eventos por si mismos, sin
+// necesariamente tener que pensar en la semana
+Evento = {
+    id,
+    nombre,
+    lugar,
+    hora,
+    duracion,
+    comentarios
+}
+#+END_SRC
+** Admin
+#+BEGIN_SRC js
+Admin = {
+    id,
+    correo
+}
+#+END_SRC
+** User
+#+BEGIN_SRC js
+User = {
+    id, // igual al id de persona, padre, entrenador o admin
+    correo,
+    contraseña
+}
+#+END_SRC
+* API
+** Funciones
+Las funciones del API están descritas según las vistas de la página
+*** Registro
+**** *createParent(Padre) => Result Code*
+- Does not exist and is successful
+- Does not exist but failed
+- Already exists
+**** *createCoach(Entrenador) => Result Code*
+- Does not exist and is successful
+- Does not exist but failed
+- Already exists
+**** *createTeam(Team) => Result Code*
+- Does not exist and is successful
+- Does not exist but failed
+- Already exists
+*** Dashboard General
+Estas son funciones que son comunes al dashboard de usuario y entrenador
+**** *authPerson(email, password) => Result Code*
+ - Success: personId
+ - Failure: other code (negative number, for example)
+**** *getParent(parentId) => Parent || Null*
+**** *getCoach(coachId) => Coach || Null*
+**** *getTeam(teamId) => Team || Null*
+**** *getNextEvents(currentEventId) => [ Event ]*
+ - Guard against first event
+**** *getPreviousEvents(currentEventId) => [ Event ]*
+ - Guard against last event
+**** *getTelephoneDirectory(teamId) -> [ Person ]*
+ - Failure: empty list
+ - Success: [ Person ]
+
+**** *deleteAccount(accountId) => Result Code*
+- Does not exist
+- Success
+- Failure
+*** Dashboard Usuario
+*** Dashboard Entrenador
+*** Dashboard Admin
+**** *deleteParent(parentId) => Result Code*
+- Does not exist
+- Exists, success
+- Exists, failure
+**** *deleteAdmin(adminId) => Result Code*
+- Does not exist
+- Exists, success
+- Exists, failure
+**** *deleteCoach(coachId) => Result Code*
+- Does not exist
+- Exists, success
+- Exists, failure
+**** *deleteTeam(teamId) => Result Code*
+- Does not exist
+- Exists, success
+- Exists, failure
+**** *deleteEvent(EventId) => Result Code*
+- Does not exist
+- Exists, success
+- Exists, failure
+
+** Endpoints
+*** Usuario
+- POST   /Register: :: Registrar nuevo usuario
+- POST   /RegisterGoogle: :: Registrar nuevo usuario con cuenta de Google
+- DELETE /DeleteAccount: :: Borrar mi Cuenta
+- POST   /LogIn: :: Hacer login
+- POST   /Login: :: Hacer login con Google
+- PUT    /Info: :: Editar información personal
+*** Administrador
+- POST   /: :: registra nuevos Admin.
+- DELETE /Coach: :: borrar algun Admin
+*** Entrenador
+- POST   /Invitation: :: genera una nueva invitación
+- PUT    /InvitationStatus: :: Actualizar el estatus de invitación (Aceptada/Rechazada)
+- PUT    /Season: :: Modifica el inicio y fin de una temporada
+- PUT    /TeamColors: :: Modifica los colores del equipo para desplegarlos en el ui
+- PUT    /Contact: :: Modifica información de contacto
+- POST   /Coach: :: registra nuevo entrenador (Administrador).
+- DELETE / Coach: :: borrar algun entrenador (Administrador)
+*** Events
+- GET    /Week: :: Obtiene los eventos de cierta semana (Para padres y entrenadores)
+- POST   /Event: :: Genera un nuevo evento. (Partidos, Entrenamientos, etc...) (Solo Entrenador)
+- PUT    /Event: :: Modifica los detalles de un evento. (Entrenador)
+- DELETE /Event: :: Borra un evento (Admin)
+*** Padres
+- POST /Hijo: :: Registra un nuevo hijo
+- PUT  /Contact: :: Modifica información de contacto
+- PUT  /Invitation Status: :: Actualizar el estatus de Invitación (Aceptada/ Rechazada)
+- GET  /HijoDashboard: :: Cambia de vista de hijo
+*** Equipo
+- POST   /Team: :: crear un equipo (Admin)
+- GET    /: :: Visualiza el directorio del equipo
+- DELETE /: :: borra un equipo determinado (Administrador)
