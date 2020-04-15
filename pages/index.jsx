@@ -16,8 +16,8 @@ const Home = () => (
     <main>
       <h1>Futbol App</h1>
       <SoccerBall fontSize="large"/>
-      <Button variant="contained">Registrarse</Button>
-      <Button variant="contained">Iniciar Sesión</Button>
+      <Button variant="contained" color="primary">Registrarse</Button>
+      <Button variant="contained" color="primary">Iniciar Sesión</Button>
     </main>
   </div>
 )
