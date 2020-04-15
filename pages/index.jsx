@@ -1,25 +1,46 @@
-import Head from 'next/head'
+import Typography from '@material-ui/core/Typography'
+import Grid from '@material-ui/core/Grid'
 import SoccerBall from '@material-ui/icons/SportsSoccer'
 import Button from '@material-ui/core/Button'
 
 const Home = () => (
-  <div className="container">
-    <Head>
-      <title>Futbol App</title>
-      <link rel="icon" href="/favicon.png" />
-      <meta
-        name="viewport"
-        content="minimum-scale=1, initial-scale=1, width=device-width"
-      />
-    </Head>
+  <Grid
+    container
+    direction="column"
+    alignItems="center"
+    justify="center">
 
-    <main>
-      <h1>Futbol App</h1>
-      <SoccerBall fontSize="large"/>
-      <Button variant="contained" color="primary">Registrarse</Button>
-      <Button variant="contained" color="primary">Iniciar Sesión</Button>
-    </main>
-  </div>
-)
+    <Typography variant="h1" align="center">
+      Futbol App
+    </Typography>
+
+    <SoccerBall style={{fontSize: "20em"}}/>
+
+    <Grid container justify="center" spacing={2}>
+      {["Registrarse", "Iniciar Sesión"].map((value, i) =>(
+        <Grid key={i} item>
+          <Button
+            variant="contained"
+            color="primary"
+            size="large">
+
+            {value}
+          </Button>
+        </Grid>
+      ))}
+    </Grid>
+
+    <style global jsx>{`
+          html,
+          body,
+          body > div:first-child,
+          div#__next,
+          div#__next > div {
+            height: 100%;
+            overflow-x: hidden;
+          }
+     `}</style>
+  </Grid>
+);
 
 export default Home
