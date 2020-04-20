@@ -7,6 +7,7 @@ const cors = require('cors');
 // App Settings
 const app = express();
 app.use(bodyParser.json());
+app.use(cors({ origin: true }));
 
 // import firebase admin settings
 const serviceAccount = require("./futbol-app-8b521-firebase-adminsdk-e1qpn-cf3587676f.json");
@@ -14,8 +15,6 @@ admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
     databaseURL: "https://futbol-app-8b521.firebaseio.com"
 });
-
-app.use(cors({ origin: true }));
 
 // Import Routes
 const userRoutes = require('./Routes/UserRoutes');
