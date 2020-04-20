@@ -8,10 +8,19 @@ const cors = require('cors');
 const app = express();
 app.use(bodyParser.json());
 
+// import firebase admin settings
+const serviceAccount = require("./futbol-app-8b521-firebase-adminsdk-e1qpn-cf3587676f.json");
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: "https://futbol-app-8b521.firebaseio.com"
+});
+
 app.use(cors({ origin: true }));
 
-app.get('/hello-world', (req, res) => {
-    return res.status(200).send('Hello World!');
-});
+// Import Routes
+const userRoutes = require('./Routes/UserRoutes');
+
+// Routes for Request
+app.use('/user', userRoutes);
 
 exports.app = functions.https.onRequest(app);
