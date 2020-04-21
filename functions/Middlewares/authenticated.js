@@ -4,10 +4,12 @@ module.exports = (req, res, next) => {
     try {
         const token = req.headers.authorization.split(' ')[1];
 
-        admin.auth().verifyIdToken(token).then(() => {
+        admin.auth().verifyIdToken(
+            token
+        ).then(() => {
             next();
         }).catch((error) => {
-            res.status(400).json(error);
+            res.status(400).json(error.message);
         });
     } catch(error) {
         res.status(401).send('Auth failed!');
