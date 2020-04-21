@@ -17,9 +17,9 @@ admin.initializeApp({
 });
 
 // Import Routes
-const userRoutes = require('./Routes/UserRoutes');
+const parentRoutes = require('./Routes/ParentRoutes');
 
 // Routes for Request
-app.use('/user', userRoutes);
+app.use('/parent', parentRoutes);
 
 exports.app = functions.https.onRequest(app);

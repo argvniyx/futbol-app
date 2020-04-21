@@ -3,6 +3,8 @@ const admin = require('firebase-admin');
 
 const router = express.Router();
 
+const authenticated = require('../Middlewares/authenticated');
+
 // ---------------------------------------------------------
 router.post('/sing-up', (req, res) => {
 
@@ -28,6 +30,11 @@ router.post('/sing-up', (req, res) => {
     }).catch((error) => {
         return res.status(500).json(error);
     });
+});
+// Just testing middle ware
+// ---------------------------------------------------------
+router.get('/', authenticated, (req, res) => {
+    return res.status(200).send('hello world');
 });
 
 module.exports = router;
