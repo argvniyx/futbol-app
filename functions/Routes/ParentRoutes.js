@@ -8,11 +8,12 @@ const authenticated = require('../Middlewares/Authenticated');
 // ---------------------------------------------------------
 router.post('/sign-up', (req, res) => {
 
-    Email = req.body.Email;
-    Password = req.body.Password;
-    FirstName = req.body.FirstName;
-    LastName = req.body.LastName;
-    TypeUser = 3;
+    const Email = req.body.Email;
+    const Password = req.body.Password;
+    const FirstName = req.body.FirstName;
+    const LastName = req.body.LastName;
+    const Phone = req.body.Phone;
+    const TypeUser = 3; // this means is a parent
 
     if (
         !Email ||
@@ -23,24 +24,45 @@ router.post('/sign-up', (req, res) => {
         return res.status(400).send('Missing body');
     }
 
-    // Hay que agregar que se cree el objeto User en la tabla User (La nuestra)
-    // para agregar el dato de TypeUser
-
     admin.auth().createUser({
         email: Email,
         password: Password,
-        displayName: FirstName + ' ' + LastName
+        displayName: FirstName + ' ' + LastName,
+        phoneNumber: Phone
     }).then((user) => {
-        return res.status(200).json(user);
+
+        // add to our user table
+        admin.firestore().collection(
+            'users'
+        ).doc(user.email).set({
+            uid: user.uid,
+            TypeUser: TypeUser
+        }).then(() => {
+            return res.status(200).send(
+                'User created successfully'
+            );
+        }).catch((error) => {
+            return res.status(500).json(error.message);
+        });
     }).catch((error) => {
         return res.status(500).json(error.message);
     });
 
 });
-// Just testing middle ware
+// Just testing middleware
 // ---------------------------------------------------------
 router.get('/hello', authenticated, (req, res) => {
-    return res.status(200).send('hello world');
+    // this is the get for all
+    admin.firestore().collection(
+        'users'
+    ).get().then((snapshot) => {
+        let users = snapshot.docs.map(doc => {
+            return doc.data();
+        });
+        return res.status(200).json(users);
+    }).catch((error) => {
+        return res.status(500).json(error.message);
+    });
 });
 
 module.exports = router;
