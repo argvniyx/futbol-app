@@ -1,7 +1,10 @@
 import DashboardComponent from '../components/dashboard-component'
+import UserCard from '../components/user-card'
 
 const Dashboard = () => (
-    <DashboardComponent/>
+    <DashboardComponent>
+      <UserCard/>
+    </DashboardComponent>
 );
 
 export default Dashboard;
