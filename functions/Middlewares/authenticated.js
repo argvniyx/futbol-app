@@ -6,7 +6,8 @@ module.exports = (req, res, next) => {
 
         admin.auth().verifyIdToken(
             token
-        ).then(() => {
+        ).then((result) => {
+            req.user_id = result.user_id;
             next();
         }).catch((error) => {
             res.status(400).json(error.message);
