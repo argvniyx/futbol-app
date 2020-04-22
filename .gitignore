@@ -23,3 +23,9 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+.idea/
+
+functions/futbol-app-8b521-firebase-adminsdk-e1qpn-cf3587676f.json
+
+*.log
