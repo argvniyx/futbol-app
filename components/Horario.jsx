@@ -46,7 +46,7 @@ const Horario = () => {
     >
       <Typography variant='h5'>Horario Entrenamientos</Typography>
       <FormGroup row>
-        <FormGroup column>
+        <FormGroup>
           <Typography variant='h6'>Dia</Typography>
           {days.map((day) => (
             <FormControlLabel
@@ -56,7 +56,7 @@ const Horario = () => {
             />
           ))}
         </FormGroup>
-        <FormGroup column>
+        <FormGroup>
           <Typography variant='h6'>Hora</Typography>
           {days.map((day) => (
             <TextField 
