@@ -4,6 +4,7 @@ const admin = require('firebase-admin');
 const router = express.Router();
 
 const authenticated = require('../Middlewares/Authenticated');
+const isParent = require('../Middlewares/isParent');
 
 // ---------------------------------------------------------
 router.post('/sign-up', (req, res) => {
@@ -34,7 +35,7 @@ router.post('/sign-up', (req, res) => {
         // add to our user table
         admin.firestore().collection(
             'users'
-        ).doc(user.email).set({
+        ).doc(user.uid).set({
             uid: user.uid,
             TypeUser: TypeUser
         }).then(() => {
@@ -49,20 +50,17 @@ router.post('/sign-up', (req, res) => {
     });
 
 });
-// Just testing middleware
+
+// TODO: Here everything but the children methods
+
+// Children routes
 // ---------------------------------------------------------
-router.get('/hello', authenticated, (req, res) => {
-    // this is the get for all
-    admin.firestore().collection(
-        'users'
-    ).get().then((snapshot) => {
-        let users = snapshot.docs.map(doc => {
-            return doc.data();
-        });
-        return res.status(200).json(users);
-    }).catch((error) => {
-        return res.status(500).json(error.message);
+router.post(
+    '/children',
+    authenticated,
+    isParent,
+    (req, res) => {
+        return res.status(200).send('good');
     });
-});
 
 module.exports = router;
