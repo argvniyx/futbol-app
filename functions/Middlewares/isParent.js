@@ -11,9 +11,9 @@ module.exports = (req, res, next) => {
         if (user.TypeUser === 3) {
             next();
         } else {
-            res.status(401).send('You are not authorized to do that');
+            return res.status(401).send('You are not authorized to do that');
         }
     }).catch((error) => {
-        res.status(500).send(error.message);
+        return res.status(500).send(error.message);
     });
 };
