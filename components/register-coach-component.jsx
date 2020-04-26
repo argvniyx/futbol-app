@@ -46,9 +46,7 @@ const RegisterCoachComponent = () => {
             </Box>
             <Box>
               <SelectTeam/>
-              <Grid container direction='column' alignItems='center'>
-                <Button variant='contained' color='primary'>Unirse a Equipo</Button>
-              </Grid>
+              <Button variant='contained' color='primary'>Unirse a Equipo</Button>
             </Box>
           </Grid>
         </Grid>
