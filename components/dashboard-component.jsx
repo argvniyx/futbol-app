@@ -1,7 +1,7 @@
+import clsx from 'clsx'
 import Box from '@material-ui/core/Box'
 import Container from '@material-ui/core/Container'
 import Grid from '@material-ui/core/Grid'
-import Paper from '@material-ui/core/Paper'
 import { makeStyles } from '@material-ui/core';
 import Header from './header'
 import UserCard from '../components/user-card'
@@ -16,11 +16,25 @@ const useStyles = makeStyles((theme) => ({
   container: {
     paddingTop: theme.spacing(4),
     paddingBottom: theme.spacing(4)
+  },
+  paper: {
+    padding: theme.spacing(1),
+    display: 'flex',
+    overflow: 'auto',
+    flexDirection: 'column',
+  },
+  fixedHeightTop: {
+    height: 550
+  },
+  fixedHeightBottom: {
+    height: 250
   }
 }));
 
 const DashboardComponent = props => {
   const classes = useStyles();
+  const fixedHeightPaperT = clsx(classes.paper, classes.fixedHeightTop);
+  const fixedHeightPaperB = clsx(classes.paper, classes.fixedHeightBottom);
 
   return (
     <Box className={classes.root}>
@@ -28,25 +42,17 @@ const DashboardComponent = props => {
       <main className={classes.content}>
         <Container maxWidth="lg" className={classes.container}>
           <Grid container spacing={3}>
-            <Grid item xs={12} md={8} lg={9}>
-              <Paper>
-                <Timeline />
-              </Paper>
+            <Grid item xs={12} lg={6}>
+              <Timeline className={fixedHeightPaperT}/>
             </Grid>
-            <Grid item xs={12} md={4} lg={3}>
-              <Paper>
-                <EventDetails />
-              </Paper>
+            <Grid item xs={12} lg={6}>
+              <EventDetails className={fixedHeightPaperT}/>
             </Grid>
-            <Grid item xs={12}>
-              <Paper className={classes.paper}>
-                <Directory />
-              </Paper>
+            <Grid item xs={12} lg={6}>
+              <Directory className={fixedHeightPaperB}/>
             </Grid>
-            <Grid item xs={12}>
-              <Paper className={classes.paper}>
-                <UserCard />
-              </Paper>
+            <Grid item xs={12} lg={6}>
+              <UserCard className={fixedHeightPaperB}/>
             </Grid>
           </Grid>
         </Container>
