@@ -9,6 +9,7 @@ import Select from '@material-ui/core/Select'
 import InputLabel from '@material-ui/core/InputLabel'
 import MenuItem from '@material-ui/core/MenuItem'
 import { makeStyles } from '@material-ui/core'
+import SelectTeam from './select-team'
 
 const useStyles = makeStyles((theme) => ({
     equipoExistente: {
@@ -32,39 +33,22 @@ const RegisterCoachComponent = () => {
           <TextField label='Correo' margin='dense' variant='filled'></TextField>
         </FormGroup>
         <Grid>
-            <Grid container direction='row'>
-              <Box>
-                <Grid container direction='column' alignItems='center'>
-                  <Box>
-                    <Horario/>
-                    <Grid container direction='column' alignItems='center'>
-                      <Button variant='contained' color='primary'>Crear Equipo</Button>
-                    </Grid>
-                  </Box>
-                </Grid>
-               </Box>
-               <Box>
+          <Grid container direction='row'>
+            <Box>
+              <Grid container direction='column' alignItems='center'>
+                <Box>
+                  <Horario/>
                   <Grid container direction='column' alignItems='center'>
-                      {/*<InputLabel id='equipo'>Equipo existente</InputLabel>
-                      <Select labelId='equipo'>
-                        <MenuItem value={'Equipo1'}>Equipo1</MenuItem>
-                        <MenuItem value={'Equipo2'}>Equipo2</MenuItem>
-                        <MenuItem value={'Equipo3'}>Equipo3</MenuItem>
-                        </Select> */}
-                        <TextField
-                        select
-                        label='Equipo existente'
-                        className={classes.equipoExistente}>
-                        <MenuItem value={'Equipo1'}>Equipo1</MenuItem>
-                        <MenuItem value={'Equipo2'}>Equipo2</MenuItem>
-                        <MenuItem value={'Equipo3'}>Equipo3</MenuItem>
-                        </TextField>
-                        <Grid container direction='column' alignItems='center'>
-                        <Button variant='contained' color='primary'>Unirse a Equipo</Button>
-                    </Grid>
+                    <Button variant='contained' color='primary'>Crear Equipo</Button>
                   </Grid>
                 </Box>
-            </Grid>
+              </Grid>
+            </Box>
+            <Box>
+              <SelectTeam/>
+              <Button variant='contained' color='primary'>Unirse a Equipo</Button>
+            </Box>
+          </Grid>
         </Grid>
       </Grid>
     </Box>
