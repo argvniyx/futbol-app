@@ -14,7 +14,7 @@ router.post('/sign-up', (req, res) => {
     const FirstName = req.body.FirstName;
     const LastName  = req.body.LastName;
     const Phone     = req.body.Phone;
-    const TypeUser  = 3; // this means is a parent
+    const UserType  = 3; // this means is a parent
 
     if (
         // just to check this params are included
@@ -38,8 +38,7 @@ router.post('/sign-up', (req, res) => {
             'users'
         ).doc(user.uid).set({
             uid: user.uid,
-            TypeUser: TypeUser,
-            children: []
+            UserType: UserType,
         }).then(() => {
             return res.status(200).send(
                 'User created successfully'
@@ -53,7 +52,7 @@ router.post('/sign-up', (req, res) => {
 
 });
 
-// TODO: Here everything but the children methods
+// TODO: Other parent methods
 
 // Children routes
 // ---------------------------------------------------------
@@ -62,6 +61,7 @@ router.post(
     authenticated,
     isParent,
     (req, res) => {
+
         const firestore    = admin.firestore();
         const userID       = req.user_id;
         let arrChildren    = []; // to store incoming children
@@ -75,6 +75,7 @@ router.post(
         ) {
             return res.status(400).send('missing children to add');
         } else {
+
             arrChildren.forEach((child) => {
                 // add every child to the children table
                 firestore.collection('children').add({
@@ -83,6 +84,7 @@ router.post(
                     TeamNumber: child.TeamNumber,
                     Absence: 0
                 }).then((docRef) => {
+
                     arrRefChildren.push(docRef.id);
                     // add every children id to the parent
                     firestore.collection(
@@ -93,16 +95,19 @@ router.post(
                     }).catch((error) => {
                         return res.status(500).send(error.message);
                     });
+
                     if (
                         // just checks if we have completed adding all our children
                         arrRefChildren.length === arrRefChildren.length
                     ) {
                         return res.status(200).send('Children added correctly');
                     }
+
                 }).catch((error) => {
                     return res.status(500).send(error.message);
                 });
             });
+
         }
     });
 
