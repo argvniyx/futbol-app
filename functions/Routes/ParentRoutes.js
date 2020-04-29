@@ -111,4 +111,89 @@ router.post(
         }
     });
 
+// ---------------------------------------------------------
+router.get(
+    '/children',
+    authenticated,
+    isParent,
+    (req, res) => {
+        const firestore  = admin.firestore();
+        const userID     = req.user_id;
+        let fullChildren = [];
+
+        firestore.collection(
+            'users'
+        ).doc(userID).get().then((snapshot) => {
+
+            let children = snapshot.data().children;
+
+            children.forEach((child) => {
+
+                firestore.collection(
+                    'children'
+                ).doc(child).get().then((snap) => {
+
+                    let childData = snap.data();
+                    childData.id = child;
+                    fullChildren.push(childData);
+                    if(
+                        fullChildren.length === children.length
+                    ) {
+                        return res.status(200).json(fullChildren);
+                    }
+
+                }).catch((error) => {
+                   return res.status(500).send(error.message);
+                });
+            });
+        }).catch((error) => {
+            return res.status(500).send(error.message);
+        });
+    });
+
+// ---------------------------------------------------------
+router.put(
+    '/children/:id',
+    authenticated,
+    isParent,
+    (req, res) => {
+        const firestore  = admin.firestore();
+        const userId     = req.user_id;
+        const childEdit  = req.params.id;
+        const FirstName = req.body.FirstName;
+        const LastName = req.body.LastName;
+        const TeamNumber = req.body.TeamNumber
+
+        if (!FirstName && !LastName && !TeamNumber) {
+            return res.status(401).send('Missing body');
+        }
+
+        firestore.collection(
+            'users'
+        ).doc(userId).get().then((snapshot) => {
+            let user = snapshot.data();
+            let exists = user.children.includes(childEdit);
+            if (exists) {
+
+                firestore.collection(
+                    'children'
+                ).doc(childEdit).update({
+                    FirstName: FirstName,
+                    LastName: LastName,
+                    TeamNumber: TeamNumber
+                }).then(() => {
+                    return res.status(200).send('Child updated');
+                }).catch((error) => {
+                    return res.status(500).send(error.message);
+                });
+
+            } else {
+                return res.status(404).send("Could not find child");
+            }
+
+        }).catch((error) => {
+            return res.status(500).send(error.message);
+        });
+    });
+
 module.exports = router;
