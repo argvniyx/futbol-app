@@ -2,18 +2,23 @@ const admin = require('firebase-admin');
 
 module.exports = (req, res, next) => {
 
-    const uid = req.user_id;
+    const uid      = req.user_id;
+    const UserType = 3;
+
 
     admin.firestore().collection(
         'users'
     ).doc(uid).get().then((snapshot) => {
         let user = snapshot.data();
-        const TypeUser = 3;
-        if (snapshot.exists && user.TypeUser === 3) {
+        if (
+            // checks that if exits and corresponding role
+            snapshot.exists &&
+            user.UserType === UserType
+        ) {
             next();
         } else if(
             // this is for the parent doesnt exist on our user
-            // table
+            // table, we create them
             !snapshot.exists
         ) {
             // add to our user table
@@ -21,8 +26,7 @@ module.exports = (req, res, next) => {
                 'users'
             ).doc(uid).set({
                 uid: uid,
-                TypeUser: TypeUser,
-                children: []
+                UserType: UserType,
             }).then(() => {
                 next();
             }).catch((error) => {
