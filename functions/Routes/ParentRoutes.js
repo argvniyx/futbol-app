@@ -4,20 +4,22 @@ const admin = require('firebase-admin');
 const router = express.Router();
 
 const authenticated = require('../Middlewares/Authenticated');
+const isParent = require('../Middlewares/isParent');
 
 // ---------------------------------------------------------
 router.post('/sign-up', (req, res) => {
 
-    const Email = req.body.Email;
-    const Password = req.body.Password;
+    const Email     = req.body.Email;
+    const Password  = req.body.Password;
     const FirstName = req.body.FirstName;
-    const LastName = req.body.LastName;
-    const Phone = req.body.Phone;
-    const TypeUser = 3; // this means is a parent
+    const LastName  = req.body.LastName;
+    const Phone     = req.body.Phone;
+    const UserType  = 3; // this means is a parent
 
     if (
-        !Email ||
-        !Password ||
+        // just to check this params are included
+        !Email     ||
+        !Password  ||
         !FirstName ||
         !LastName
     ) {
@@ -34,9 +36,9 @@ router.post('/sign-up', (req, res) => {
         // add to our user table
         admin.firestore().collection(
             'users'
-        ).doc(user.email).set({
+        ).doc(user.uid).set({
             uid: user.uid,
-            TypeUser: TypeUser
+            UserType: UserType,
         }).then(() => {
             return res.status(200).send(
                 'User created successfully'
@@ -49,20 +51,64 @@ router.post('/sign-up', (req, res) => {
     });
 
 });
-// Just testing middleware
+
+// TODO: Other parent methods
+
+// Children routes
 // ---------------------------------------------------------
-router.get('/hello', authenticated, (req, res) => {
-    // this is the get for all
-    admin.firestore().collection(
-        'users'
-    ).get().then((snapshot) => {
-        let users = snapshot.docs.map(doc => {
-            return doc.data();
-        });
-        return res.status(200).json(users);
-    }).catch((error) => {
-        return res.status(500).json(error.message);
+router.post(
+    '/children',
+    authenticated,
+    isParent,
+    (req, res) => {
+
+        const firestore    = admin.firestore();
+        const userID       = req.user_id;
+        let arrChildren    = []; // to store incoming children
+        let arrRefChildren = []; // store their reference
+        arrChildren        = req.body.children;
+
+        if  (
+            // just checks the params are included
+            !arrChildren ||
+            arrChildren.length === 0
+        ) {
+            return res.status(400).send('missing children to add');
+        } else {
+
+            arrChildren.forEach((child) => {
+                // add every child to the children table
+                firestore.collection('children').add({
+                    FirstName: child.FirstName,
+                    LastName: child.LastName,
+                    TeamNumber: child.TeamNumber,
+                    Absence: 0
+                }).then((docRef) => {
+
+                    arrRefChildren.push(docRef.id);
+                    // add every children id to the parent
+                    firestore.collection(
+                        'users'
+                    ).doc(userID).update({
+                        // this helps us add our children if it has data in the array
+                        children: admin.firestore.FieldValue.arrayUnion(docRef.id)
+                    }).catch((error) => {
+                        return res.status(500).send(error.message);
+                    });
+
+                    if (
+                        // just checks if we have completed adding all our children
+                        arrRefChildren.length === arrRefChildren.length
+                    ) {
+                        return res.status(200).send('Children added correctly');
+                    }
+
+                }).catch((error) => {
+                    return res.status(500).send(error.message);
+                });
+            });
+
+        }
     });
-});
 
 module.exports = router;
