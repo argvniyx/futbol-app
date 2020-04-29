@@ -1,3 +1,4 @@
+import firebase from "firebase";
 import Typography from '@material-ui/core/Typography'
 import Grid from '@material-ui/core/Grid'
 import SoccerBall from '@material-ui/icons/SportsSoccer'
@@ -31,7 +32,7 @@ const Home = () => {
   const handleOpen = (event) =>{
     console.log('login')
     setOpen(true)
-  } 
+  }
 
   const handleClose = (event) => {
     console.log('close')
@@ -43,9 +44,35 @@ const Home = () => {
   }
 
   const handleLogin = (event) => {
-    console.log(userInfo['username'])
-    console.log(userInfo['password'])
-    setOpen(false)
+
+    firebase.auth().signInWithEmailAndPassword(
+        userInfo['username'],
+        userInfo['password']
+    ).then(
+        (result) => {
+          getUserToken();
+          setOpen(false)
+        },
+        (err) => {
+          alert("Oops " + err.message);
+        }
+    );
+  }
+
+  const handleLoginGoogle = (event) => {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      firebase.auth().signInWithPopup(provider).then((result) => {
+          console.log(result);
+          getUserToken();
+      }).catch((error) => {
+          console.log(error.message);
+      });
+  }
+
+  const getUserToken = () => {
+      firebase.auth().currentUser.getIdToken(true).then((result) => {
+          console.log(result);
+      });
   }
 
   return(
@@ -85,6 +112,7 @@ const Home = () => {
             <TextField label='Contrase;a' margin='dense' variant='filled' type='password' name='password' onChange={handleUserInfo}></TextField>
             <Box style={{marginTop:'10px'}}>
               <Button color='primary' variant='contained' size='medium' onClick={handleLogin}>Login</Button>
+              <Button color='primary' variant='contained' size='medium' onClick={handleLoginGoogle}>Login with Google</Button>
             </Box>
           </Grid>
         </div>

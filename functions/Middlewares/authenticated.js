@@ -10,9 +10,9 @@ module.exports = (req, res, next) => {
             req.user_id = result.user_id;
             next();
         }).catch((error) => {
-            res.status(400).json(error.message);
+            return res.status(400).json(error.message);
         });
     } catch(error) {
-        res.status(401).send('Auth failed!');
+        return res.status(401).send('Auth failed!');
     }
 };
