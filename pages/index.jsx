@@ -59,6 +59,16 @@ const Home = () => {
     );
   }
 
+  const handleLoginGoogle = (event) => {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      firebase.auth().signInWithPopup(provider).then((result) => {
+          console.log(result);
+          getUserToken();
+      }).catch((error) => {
+          console.log(error.message);
+      });
+  }
+
   const getUserToken = () => {
       firebase.auth().currentUser.getIdToken(true).then((result) => {
           console.log(result);
@@ -102,6 +112,7 @@ const Home = () => {
             <TextField label='Contrase;a' margin='dense' variant='filled' type='password' name='password' onChange={handleUserInfo}></TextField>
             <Box style={{marginTop:'10px'}}>
               <Button color='primary' variant='contained' size='medium' onClick={handleLogin}>Login</Button>
+              <Button color='primary' variant='contained' size='medium' onClick={handleLoginGoogle}>Login with Google</Button>
             </Box>
           </Grid>
         </div>
