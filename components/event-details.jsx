@@ -11,7 +11,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function DirectoryCard() {
+export default function EventDetails() {
   const classes = useStyles();
 
   return (
