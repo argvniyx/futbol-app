@@ -6,6 +6,10 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Card from '@material-ui/core/Card'
 import CardHeader from '@material-ui/core/CardHeader'
 import CardContent from '@material-ui/core/CardContent'
+import CardActions from '@material-ui/core/CardActions'
+import IconButton from '@material-ui/core/IconButton'
+import NavigateNext from '@material-ui/icons/NavigateNext'
+import NavigateBefore from '@material-ui/icons/NavigateBefore'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -54,6 +58,14 @@ export default function Timeline() {
           ))}
         </List>
       </CardContent>
+      <CardActions disableSpacing>
+        <IconButton>
+          <NavigateBefore/>
+        </IconButton>
+        <IconButton>
+          <NavigateNext/>
+        </IconButton>
+      </CardActions>
     </Card>
   );
 }
