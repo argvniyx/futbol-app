@@ -1,18 +1,30 @@
 const admin = require('firebase-admin');
 
+// Middleware to check if the user that is making the 
+// request is an Admin or not
 module.exports = (req, res, next) => {
-    try {
-        const token = req.headers.authorization.split(' ')[1];
 
-        admin.auth().verifyIdToken(
-            token
-        ).then((result) => {
-            req.user_id = result.user_id;
-            next();
-        }).catch((error) => {
-            res.status(400).json(error.message);
-        });
-    } catch(error) {
-        res.status(401).send('Auth failed!');
-    }
+    // Get the user data
+    const uid = req.user_id;
+    const UserType = 1;
+
+    // Get the user collection (Table)
+    admin.firestore().collection(
+        'users'
+    ).doc(uid).get().then((snapshot) => {
+        // Get the user data from the firebase
+        let user = snapshot.data();
+
+        // Checks that if exits and corresponding role
+        if (snapshot.exists && user.UserType === UserType){
+                next();
+
+        // Return the unauthorized error
+        } else {
+            return res.status(401).send('You are not authorized to do that');
+        }
+
+    }).catch((error) => {
+        return res.status(500).send(error.message);
+    });
 };

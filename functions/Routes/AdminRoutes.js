@@ -6,13 +6,14 @@ const sgMail = require('@sendgrid/mail');
 const router = express.Router();
 
 // Load the middlewares
+const authenticated = require('../Middlewares/authenticated');
 const isAdmin = require('../Middlewares/isAdmin.js');
 
 // Set the api key
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 // ---------------------------------------------------------
-router.post('/new-coach', (req, res) => {
+router.post('/new-coach', authenticated, isAdmin, (req, res) => {
 
     // Get the request body 
     const Email = req.body.Email;
@@ -20,7 +21,7 @@ router.post('/new-coach', (req, res) => {
     const LastName = req.body.LastName;
 
     // Built the register coach url
-    const URL = req.protocol + '://' + req.get("host") + '/coach/Sign-Up';
+    const URL_form = req.protocol + '://' + req.get("host") + '/coach/Sign-Up';
 
     // Check that the request has the complete body
     if (!Email ||
@@ -41,7 +42,7 @@ router.post('/new-coach', (req, res) => {
         dynamic_template_data: {
             name: FirstName + ' ' + LastName,
             subject: '¡Registrate como Entrenador!',
-            URL: url
+            URL: URL_form
         }
     }
     
