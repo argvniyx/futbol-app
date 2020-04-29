@@ -196,4 +196,48 @@ router.put(
         });
     });
 
+// ---------------------------------------------------------
+router.delete(
+    '/children/:id',
+    authenticated,
+    isParent,
+    (req, res) => {
+        const firestore = admin.firestore();
+        const userId = req.user_id;
+        const childDelete = req.params.id;
+
+        firestore.collection(
+            'users'
+        ).doc(userId).get().then((snapshot) => {
+            let user = snapshot.data();
+            let exists = user.children.includes(childDelete);
+            if(exists) {
+
+                firestore.collection(
+                    'users'
+                ).doc(userId).update({
+                    // this helps us add our children if it has data in the array
+                    children: admin.firestore.FieldValue.arrayRemove(childDelete)
+                }).then(() => {
+
+                    firestore.collection(
+                        'children'
+                    ).doc(childDelete).delete().then(() => {
+                        return res.status(200).send('Child deleted');
+                    }).catch((error) => {
+                        return res.status(500).send(error.message);
+                    });
+
+                }).catch((error) => {
+                    return res.status(500).send(error.message);
+                });
+
+            } else {
+                return res.status(404).send('Could not find child');
+            }
+        }).catch((error) => {
+            return res.status(500).send(error.message);
+        });
+    });
+
 module.exports = router;
