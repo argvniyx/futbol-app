@@ -117,17 +117,6 @@ const Home = () => {
           </Grid>
         </div>
       </Modal>
-
-      <style global jsx>{`
-            html,
-            body,
-            body > div:first-child,
-            div#__next,
-            div#__next > div {
-              height: 100%;
-              overflow-x: hidden;
-            }
-      `}</style>
     </Grid>
   )
 };
