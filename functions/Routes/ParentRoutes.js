@@ -111,4 +111,44 @@ router.post(
         }
     });
 
+// ---------------------------------------------------------
+router.get(
+    '/children',
+    authenticated,
+    isParent,
+    (req, res) => {
+        const firestore  = admin.firestore();
+        const userID     = req.user_id;
+        let fullChildren = [];
+
+        firestore.collection(
+            'users'
+        ).doc(userID).get().then((snapshot) => {
+
+            let children = snapshot.data().children;
+
+            children.forEach((child) => {
+
+                firestore.collection(
+                    'children'
+                ).doc(child).get().then((snap) => {
+
+                    let childData = snap.data();
+                    childData.id = child;
+                    fullChildren.push(childData);
+                    if(
+                        fullChildren.length === children.length
+                    ) {
+                        return res.status(200).json(fullChildren);
+                    }
+                    
+                }).catch((error) => {
+                   return res.status(500).send(error.message);
+                });
+            });
+        }).catch((error) => {
+            return res.status(500).send(error.message);
+        });
+    });
+
 module.exports = router;
