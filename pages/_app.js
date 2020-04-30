@@ -13,6 +13,7 @@ if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }
 
+
 export default function MyApp(props) {
   const { Component, pageProps } = props;
 

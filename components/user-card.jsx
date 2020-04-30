@@ -5,9 +5,6 @@ import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    display: 'flex',
-  },
   details: {
     display: 'flex',
     flexDirection: 'column',
@@ -30,11 +27,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function UserCard() {
+export default function UserCard(props) {
   const classes = useStyles();
 
   return (
-    <Card className={classes.root}>
+    <Card className={props.className}>
       <div className={classes.details}>
         <CardContent className={classes.content}>
           <Typography component="h5" variant="h5">
@@ -53,8 +50,6 @@ export default function UserCard() {
             Faltas: 2
           </Typography>
         </CardContent>
-        <div className={classes.controls}>
-        </div>
       </div>
       <CardMedia
         className={classes.cover}

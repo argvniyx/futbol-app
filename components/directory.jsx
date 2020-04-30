@@ -1,4 +1,3 @@
-import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -6,12 +5,6 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-
-const useStyles = makeStyles({
-  table: {
-    minWidth: 650,
-  },
-});
 
 function createData(id, firstName, lastName, email, phone) {
   return {id, firstName, lastName, email, phone};
@@ -22,12 +15,10 @@ const rows = [
     createData(2, 'Napoleon', 'Lazo', 'napo@gmail.com', '811787878')
 ];
 
-export default function Directory() {
-  const classes = useStyles();
-
+export default function Directory(props) {
   return (
-    <TableContainer component={Paper}>
-      <Table className={classes.table} aria-label="phone directory">
+    <TableContainer component={Paper} className={props.className}>
+      <Table aria-label="phone directory">
         <TableHead>
           <TableRow>
             <TableCell>Nombre</TableCell>

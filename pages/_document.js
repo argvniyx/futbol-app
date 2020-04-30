@@ -19,6 +19,17 @@ export default class MyDocument extends Document {
           <Main />
           <NextScript />
         </body>
+        <style global jsx>{`
+          html,
+          body,
+          body > div:first-child,
+          div#__next
+          div#__next,
+          div#__next > div {
+            height: 100vh;
+            overflow-x: hidden;
+          }
+      `}</style>
       </Html>
     );
   }
