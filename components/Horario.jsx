@@ -5,14 +5,13 @@ import FormGroup from '@material-ui/core/FormGroup'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import TextField from '@material-ui/core/TextField'
 
-
 const Horario = () => {
   
   const days = ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes']
 
   const [state, setState] = React.useState({
     checkedLunes: false,
-    checkedmartes: false,
+    checkedMartes: false,
     checkedMiercoles: false,
     checkedJueves: false,
     checkedViernes: false,
@@ -50,7 +49,7 @@ const Horario = () => {
           <Typography variant='h6'>Dia</Typography>
           {days.map((day) => (
             <FormControlLabel
-              control = {<Checkbox checked={state['checked' + day]} onChange={handleCheckboxChange} color='primary' name={'checked' + day}/>}
+              control = {<Checkbox checked={state['checked' + day]} onChange={handleCheckboxChange} color='primary' name={'checked' + day} />}
               label={day}
               key={day}
             />
