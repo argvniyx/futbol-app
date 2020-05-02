@@ -1,7 +1,7 @@
 import Modal from '@material-ui/core/Modal'
 import { makeStyles } from '@material-ui/core'
 import { forwardRef, useImperativeHandle } from 'react'
-import Grid from '@material-ui/core/grid'
+import Grid from '@material-ui/core/Grid'
 import Box from '@material-ui/core/Box'
 import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
