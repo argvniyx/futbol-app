@@ -31,6 +31,21 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
+let son = {
+  firstName: "Fulano",
+  lastName: "Uno",
+  teamNumber: 1,
+  absenceCount: 4
+};
+
+let person = {
+  firstName: "Andrés Ricardo",
+  lastName: "Garza Vela",
+  email: "aricav96@gmail.com",
+  phone: "8166699778",
+  children: [son]
+};
+
 const DashboardComponent = props => {
   const classes = useStyles();
   const fixedHeightPaperT = clsx(classes.paper, classes.fixedHeightTop);
@@ -52,7 +67,7 @@ const DashboardComponent = props => {
               <Directory className={fixedHeightPaperB}/>
             </Grid>
             <Grid item xs={12} lg={6}>
-              <UserCard className={fixedHeightPaperB}/>
+              <UserCard className={fixedHeightPaperB} person={person}/>
             </Grid>
           </Grid>
         </Container>

@@ -1,16 +1,22 @@
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
-import CardMedia from '@material-ui/core/CardMedia';
+import CardActions from '@material-ui/core/CardActions'
 import Typography from '@material-ui/core/Typography';
+import Avatar from '@material-ui/core/Avatar'
+import TextField from '@material-ui/core/TextField'
+import IconButton from '@material-ui/core/IconButton'
+import Edit from '@material-ui/icons/Edit'
 
 const useStyles = makeStyles((theme) => ({
-  details: {
+  content: {
+    display: 'flex',
+    alignItems: 'center'
+  },
+  info: {
     display: 'flex',
     flexDirection: 'column',
-  },
-  content: {
-    flex: '1 0 auto',
+    flexGrow: 1
   },
   cover: {
     width: 151,
@@ -21,41 +27,47 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: theme.spacing(1),
     paddingBottom: theme.spacing(1),
   },
-  playIcon: {
-    height: 38,
-    width: 38,
+  avatar: {
+    width: theme.spacing(12),
+    height: theme.spacing(12),
+    margin: theme.spacing(1),
+    fontSize: theme.spacing(5)
   },
 }));
 
 export default function UserCard(props) {
   const classes = useStyles();
+  const {firstName, lastName, email, phone, children} = props.person;
+  const fullName = firstName + " " + lastName;
+  const childFullName = children[0].firstName + " " + children[0].lastName
 
   return (
     <Card className={props.className}>
-      <div className={classes.details}>
-        <CardContent className={classes.content}>
+      <CardContent className={classes.content}>
+        <div className={classes.info}>
           <Typography component="h5" variant="h5">
-            Andrés Ricardo Garza Vela
+            {fullName}
           </Typography>
           <Typography variant="subtitle1" color="textSecondary">
-            aricav96@gmail.com
+            {email}
           </Typography>
           <Typography variant="subtitle2" color="textSecondary">
-            8166699777
+            {phone}
           </Typography>
           <Typography variant="body2">
-            Hijo: Fulano
+            Hijo: {childFullName}
           </Typography>
           <Typography variant="subtitle2">
-            Faltas: 2
+            Faltas: {children[0].absenceCount}
           </Typography>
-        </CardContent>
-      </div>
-      <CardMedia
-        className={classes.cover}
-        image="/user-icon.png"
-        title="Profile picture"
-      />
+        </div>
+        <Avatar className={classes.avatar} alt={fullName} src="/broken.jpg"/>
+      </CardContent>
+      <CardActions>
+        <IconButton>
+          <Edit/>
+        </IconButton>
+      </CardActions>
     </Card>
   );
 }
