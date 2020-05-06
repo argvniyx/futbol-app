@@ -1,43 +1,64 @@
 import firebase from "firebase";
-import Typography from '@material-ui/core/Typography'
-import Grid from '@material-ui/core/Grid'
-import SoccerBall from '@material-ui/icons/SportsSoccer'
-import Button from '@material-ui/core/Button'
-import Modal from '@material-ui/core/Modal'
-import { makeStyles } from '@material-ui/core'
-import TextField from '@material-ui/core/TextField'
-import Box from '@material-ui/core/Box'
+import React from 'react';
+import Avatar from '@material-ui/core/Avatar';
+import Button from '@material-ui/core/Button';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import TextField from '@material-ui/core/TextField';
+import Link from 'next/link';
+import Paper from '@material-ui/core/Paper';
+import Grid from '@material-ui/core/Grid';
+import SoccerBall from '@material-ui/icons/SportsSoccer';
+import Icon from '@mdi/react'
+import { mdiGoogle } from '@mdi/js'
+import Typography from '@material-ui/core/Typography';
+import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
-  login: {
-    width: 'auto',
-    padding: '20px',
-    backgroundColor: theme.palette.background.paper,
-    position:'absolute',
-    top: '45%',
-    left: '50%',
-    transform: 'translate(-45%, -50%)'
-  }
-}))
+  root: {
+    height: '100vh',
+  },
+  image: {
+    backgroundImage: 'url(/index-image.jpg)',
+    backgroundRepeat: 'no-repeat',
+    backgroundColor:
+      theme.palette.type === 'light' ? theme.palette.grey[50] : theme.palette.grey[900],
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+  },
+  paper: {
+    margin: theme.spacing(8, 4),
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  avatar: {
+    margin: theme.spacing(1),
+    backgroundColor: theme.palette.background.secondary,
+    width: theme.spacing(15),
+    height: theme.spacing(15),
+    color: theme.palette.primary.main
+  },
+  form: {
+    width: '100%', // Fix IE 11 issue.
+    marginTop: theme.spacing(1),
+  },
+  submit: {
+    margin: theme.spacing(3, 0, 2),
+  },
+}));
 
-const Home = () => {
+const GoogleIcon = () => {
+  return (
+    <Icon path={mdiGoogle} size={1} color="white"/>
+  )
+}
 
-  const [open, setOpen] = React.useState(false);
+export default function SignInSide() {
+  const classes = useStyles();
   const [userInfo, setInfo] = React.useState({
     username: '',
     password: ''
   })
-  const classes = useStyles()
-
-  const handleOpen = (event) =>{
-    console.log('login')
-    setOpen(true)
-  }
-
-  const handleClose = (event) => {
-    console.log('close')
-    setOpen(false)
-  }
 
   const handleUserInfo = (event) => {
     setInfo({...userInfo, [event.target.name]: event.target.value})
@@ -51,7 +72,6 @@ const Home = () => {
     ).then(
         (result) => {
           getUserToken();
-          setOpen(false)
         },
         (err) => {
           alert("Oops " + err.message);
@@ -75,50 +95,74 @@ const Home = () => {
       });
   }
 
-  return(
-    <Grid
-      container
-      direction="column"
-      alignItems="center"
-      justify="center">
-
-      <Typography variant="h1" align="center">
-        Futbol App
-      </Typography>
-
-      <SoccerBall style={{fontSize: "20em"}}/>
-
-      <Grid container justify="center" spacing={2}>
-        {["Registrarse", "Iniciar Sesión"].map((value, i) =>(
-          <Grid key={i} item>
+  return (
+    <Grid container component="main" className={classes.root}>
+      <CssBaseline />
+      <Grid item xs={false} sm={4} md={7} className={classes.image} />
+      <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
+        <div className={classes.paper}>
+          <Avatar className={classes.avatar}>
+            <SoccerBall className={classes.avatar}/>
+          </Avatar>
+          <Typography component="h1" variant="h5">
+            Futbol App
+          </Typography>
+          <form className={classes.form} noValidate>
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              id="email"
+              label="Email Address"
+              name="email"
+              autoComplete="email"
+              autoFocus
+              onChange={handleUserInfo}
+            />
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="Password"
+              type="password"
+              id="password"
+              autoComplete="current-password"
+              onChange={handleUserInfo}
+            />
             <Button
+              type="submit"
+              fullWidth
               variant="contained"
               color="primary"
-              size="large"
-              onClick={value == 'Iniciar Sesión' ? handleOpen : null}>
-
-              {value}
+              className={classes.submit}
+              onClick={handleLogin}
+            >
+              Iniciar Sesión
             </Button>
-          </Grid>
-        ))}
-      </Grid>
-      <Modal
-        open={open}
-        onClose={handleClose}>
-        <div className={classes.login}>
-          <Grid container direction='column' alignItems='center'>
-            <Typography variant='h2'>Ingresa tus datos</Typography>
-            <TextField label='Nombre' margin='dense' variant='filled' name='username' onChange={handleUserInfo}></TextField>
-            <TextField label='Contrase;a' margin='dense' variant='filled' type='password' name='password' onChange={handleUserInfo}></TextField>
-            <Box style={{marginTop:'10px'}}>
-              <Button color='primary' variant='contained' size='medium' onClick={handleLogin}>Login</Button>
-              <Button color='primary' variant='contained' size='medium' onClick={handleLoginGoogle}>Login with Google</Button>
-            </Box>
-          </Grid>
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="secondary"
+              className={classes.submit}
+              startIcon={<GoogleIcon/>}
+              onClick={handleLoginGoogle}
+            >
+              Iniciar Sesión con Google
+            </Button>
+            <Grid container>
+              <Grid item>
+                <Link href="register-user">
+                  <a> {"¿No tienes cuenta? Regístrate"} </a>
+                </Link>
+              </Grid>
+            </Grid>
+          </form>
         </div>
-      </Modal>
+      </Grid>
     </Grid>
-  )
-};
-
-export default Home
+  );
+}
