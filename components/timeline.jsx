@@ -9,39 +9,12 @@ import IconButton from '@material-ui/core/IconButton'
 import NavigateNext from '@material-ui/icons/NavigateNext'
 import NavigateBefore from '@material-ui/icons/NavigateBefore'
 
-const events = [
-  {
-    id: 0,
-    name: "Partido",
-    date: new Date(2019, 4, 3).toDateString()
-  },
-  {
-    id: 1,
-    name: "Entrenamiento",
-    date: new Date(2019, 4, 5).toDateString()
-  },
-  {
-    id: 2,
-    name: "Junta",
-    date: new Date(2019, 4, 8).toDateString()
-  },
-  {
-    id: 3,
-    name: "Entrenamiento",
-    date: new Date(2019, 4, 12).toDateString()
-  },
-  {
-    id: 4,
-    name: "Entrenamiento",
-    date: new Date(2019, 4, 13).toDateString()
-  },
-];
-
 export default function Timeline(props) {
-  const [selectedIndex, setSelectedIndex] = React.useState(1);
+  const [selectedIndex, setSelectedIndex] = React.useState(0);
 
   const handleListItemClick = (event, index) => {
     setSelectedIndex(index);
+    props.handler(index);
   };
 
   return (
@@ -49,7 +22,7 @@ export default function Timeline(props) {
       <CardHeader title="Timeline"/>
       <CardContent>
         <List>
-          {events.map((e) => (
+          {props.events.map((e) => (
             <ListItem
               key={e.id}
               button
