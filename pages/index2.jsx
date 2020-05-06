@@ -7,6 +7,8 @@ import Link from '@material-ui/core/Link';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import SoccerBall from '@material-ui/icons/SportsSoccer';
+import Icon from '@mdi/react'
+import { mdiGoogle } from '@mdi/js'
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -44,8 +46,48 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const GoogleIcon = () => {
+  return (
+    <Icon path={mdiGoogle} size={1} color="white"/>
+  )
+}
+
 export default function SignInSide() {
   const classes = useStyles();
+  const handleUserInfo = (event) => {
+    setInfo({...userInfo, [event.target.name]: event.target.value})
+  }
+
+  const handleLogin = (event) => {
+
+    firebase.auth().signInWithEmailAndPassword(
+        userInfo['username'],
+        userInfo['password']
+    ).then(
+        (result) => {
+          getUserToken();
+        },
+        (err) => {
+          alert("Oops " + err.message);
+        }
+    );
+  }
+
+  const handleLoginGoogle = (event) => {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      firebase.auth().signInWithPopup(provider).then((result) => {
+          console.log(result);
+          getUserToken();
+      }).catch((error) => {
+          console.log(error.message);
+      });
+  }
+
+  const getUserToken = () => {
+      firebase.auth().currentUser.getIdToken(true).then((result) => {
+          console.log(result);
+      });
+  }
 
   return (
     <Grid container component="main" className={classes.root}>
@@ -90,6 +132,16 @@ export default function SignInSide() {
               className={classes.submit}
             >
               Iniciar Sesión
+            </Button>
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="secondary"
+              className={classes.submit}
+              startIcon={<GoogleIcon/>}
+            >
+              Iniciar Sesión con Google
             </Button>
             <Grid container>
               <Grid item>
