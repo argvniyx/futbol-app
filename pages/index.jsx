@@ -29,15 +29,9 @@ const Home = () => {
   })
   const classes = useStyles()
 
-  const handleOpen = (event) =>{
-    console.log('login')
-    setOpen(true)
-  }
+  const handleOpen = (event) => setOpen(true);
 
-  const handleClose = (event) => {
-    console.log('close')
-    setOpen(false)
-  }
+  const handleClose = (event) => setOpen(false);
 
   const handleUserInfo = (event) => {
     setInfo({...userInfo, [event.target.name]: event.target.value})
@@ -96,12 +90,12 @@ const Home = () => {
               color="primary"
               size="large"
               onClick={value == 'Iniciar Sesión' ? handleOpen : null}>
-
               {value}
             </Button>
           </Grid>
         ))}
       </Grid>
+
       <Modal
         open={open}
         onClose={handleClose}>
@@ -109,7 +103,7 @@ const Home = () => {
           <Grid container direction='column' alignItems='center'>
             <Typography variant='h2'>Ingresa tus datos</Typography>
             <TextField label='Nombre' margin='dense' variant='filled' name='username' onChange={handleUserInfo}></TextField>
-            <TextField label='Contrase;a' margin='dense' variant='filled' type='password' name='password' onChange={handleUserInfo}></TextField>
+            <TextField label='Contraseña' margin='dense' variant='filled' type='password' name='password' onChange={handleUserInfo}></TextField>
             <Box style={{marginTop:'10px'}}>
               <Button color='primary' variant='contained' size='medium' onClick={handleLogin}>Login</Button>
               <Button color='primary' variant='contained' size='medium' onClick={handleLoginGoogle}>Login with Google</Button>
