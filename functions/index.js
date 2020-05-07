@@ -24,11 +24,13 @@ admin.initializeApp({
 const adminRoutes = require('./Routes/AdminRoutes');
 const coachRoutes = require('./Routes/CoachRoutes');
 const parentRoutes = require('./Routes/ParentRoutes');
+const teamsRoutes = require('./Routes/TeamsRoutes');
 
 // Routes for Request
 app.use('/admin', adminRoutes);
 app.use('/coach', coachRoutes);
 app.use('/parent', parentRoutes);
+app.use('/teams', teamsRoutes);
 
 // Export the app
 exports.app = functions.https.onRequest(app);
