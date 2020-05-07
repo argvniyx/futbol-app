@@ -60,16 +60,16 @@ router.post('/', authenticated, isAdmin, (req, res) => {
                 })
 
                 // Catch any posible error
-                .catch((error) => {
-                    return res.status(500).send(error.message);
+                .catch((err) => {
+                    return res.status(500).send(err.message);
                 });
         }
 
         return res.status(200).send('Team created successfully');
     })
     // Return the error code and message
-    .catch((error) => {
-        return res.status(500).json(error.message);
+    .catch((err) => {
+        return res.status(500).json(err.message);
     });
 });
 
@@ -132,14 +132,14 @@ router.put('/add-Coach', (req, res) => {
                     })
 
                     // Catch any posible error
-                    .catch((error) => {
-                        return res.status(500).send(error.message);
+                    .catch((err) => {
+                        return res.status(500).send(err.message);
                     });
             })
 
             // Catch any posible error
-            .catch((error) => {
-                return res.status(500).send(error.message);
+            .catch((err) => {
+                return res.status(500).send(err.message);
             });
             
         })
@@ -183,7 +183,7 @@ router.get('/listTeams', (req, res) => {
 
     // Catch any error
     .catch(err => {
-        return res.status(500).json(error.message);
+        return res.status(500).json(err.message);
     });
     
 });
@@ -215,10 +215,88 @@ router.get('/noCoach', (req, res) => {
 
     })
     .catch(err => {
-        return res.status(500).json(error.message);
+        return res.status(500).json(err.message);
     });    
 });
 
+
+
+// ---------------------------------------------------------
+// Get all the information about all the other parents of the team
+router.get('/:id', (req, res) => {
+
+    //Get the Team ID
+    const TeamID = req.params.id;
+
+    // List to store the ParentsID
+    ParentsID = []
+    // List to store the Parents Object
+    ParentsList = []
+
+    // Check that the request has the complete body
+    if (!TeamID) {
+        return res.status(400).send('The TeamID is missing');
+    }
+
+    // Get the team object
+    admin.firestore().collection('teams').doc(TeamID)
+    .get().then(TeamObj => {
+        
+        // Check if the Team exists
+        if(!TeamObj.exists){
+            return res.status(404).send('The Teams does not exists');
+        }
+
+        // For each child, search the parent
+        TeamObj.data().MembersID.forEach((ChildID) => {
+            
+            // Get the child object
+            admin.firestore().collection('children').doc(ChildID).get()
+            .then((ChildObj) => {                
+                // Store the ParentID
+                ParentsID.push(ChildObj.data().ParentID)
+                
+                // Check if it has all parents ID
+                if(ParentsID.length == TeamObj.data().MembersID.length){
+
+                    // Get all the users list
+                    admin.auth().listUsers()
+                    .then((listUsers) => {
+
+                        // Filter the list to just the one that are parents from the team
+                        filtered = listUsers['users'].filter(f => ParentsID.includes(f['uid']));
+
+                        // Filter the user information
+                        filtered.forEach(userObj => {
+                            ParentsList.push({
+                                "UserID": userObj.uid, 
+                                "Email": userObj.email,
+                                "Phone": userObj.phone,
+                                "Name": userObj.displayName
+                            })
+                        });
+
+                        // Send the success code and array
+                        return res.status(200).json(ParentsList);
+                    })
+                    // Catch any error
+                    .catch(err => {
+                        return res.status(500).json(err.message);
+                    });
+                }
+
+            })
+            // Catch any error
+            .catch(err => {
+                return res.status(500).json(err.message);
+            }); 
+        })
+    })
+    // Catch any error
+    .catch(err => {
+        return res.status(500).json(err.message);
+    }); 
+});
 
 
 // ---------------------------------------------------------
@@ -262,10 +340,12 @@ router.delete('/:id', (req, res) => {
             return res.status(200).send("Team successfully deleted!");
 
         // Send the error code and message
-        }).catch((error) => {
-            return res.status(500).json(error.message);
+        }).catch((err) => {
+            return res.status(500).json(err.message);
         });
      });
 });
+
+
 
 module.exports = router;
