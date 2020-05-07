@@ -48,30 +48,29 @@ router.post('/', authenticated, isAdmin, (req, res) => {
         Events: []
     })
 
-        // Return the success code and message
-        .then((teams) => {
+    // Return the success code and message
+    .then((teams) => {
 
-            // If the request has a CoachID
-            if (CoachID != "") {
-                console.log(teams);
-                // Add the TeamID to the Coach
-                admin.firestore().collection('users')
-                    .doc(CoachID).update({
-                        "TeamID": teams.id
-                    })
+        // If the request has a CoachID
+        if (CoachID != "") {
+            // Add the TeamID to the Coach
+            admin.firestore().collection('users')
+                .doc(CoachID).update({
+                    "TeamID": teams.id
+                })
 
-                    // Catch any posible error
-                    .catch((error) => {
-                        return res.status(500).send(error.message);
-                    });
-            }
+                // Catch any posible error
+                .catch((error) => {
+                    return res.status(500).send(error.message);
+                });
+        }
 
-            return res.status(200).send('Team created successfully');
-        })
-        // Return the error code and message
-        .catch((error) => {
-            return res.status(500).json(error.message);
-        });
+        return res.status(200).send('Team created successfully');
+    })
+    // Return the error code and message
+    .catch((error) => {
+        return res.status(500).json(error.message);
+    });
 });
 
 
@@ -114,9 +113,6 @@ router.put('/add-Coach', (req, res) => {
                 return res.status(409).send('The Coach already has a Team');
             }
 
-            console.log("Here")
-
-
             // Add the CoachID to the Team
             admin.firestore().collection('teams')
             .doc(TeamID).update({
@@ -125,7 +121,6 @@ router.put('/add-Coach', (req, res) => {
 
             // If all was correct...
             .then(() => {
-                console.log("Here2");
                 // Add the TeamID to the Coach
                 admin.firestore().collection('users')
                     .doc(CoachID).update({
@@ -133,7 +128,6 @@ router.put('/add-Coach', (req, res) => {
                     })
                     // Coach added succesfully
                     .then(() => {
-                        console.log("Here3");
                         return res.status(200).send("Coach Added!");
                     })
 
@@ -151,14 +145,47 @@ router.put('/add-Coach', (req, res) => {
         })
         // Catch any posible error
         .catch(err => {
-            console.log('Error searching the team', err);
+            return res.status(500).send(error.message);
         });        
     })
     // Catch any posible error
     .catch(err => {
-        console.log('Error searching the team', err);
+        return res.status(500).send(error.message);
     });
 
+});
+
+
+
+// ---------------------------------------------------------
+// Get a list of teams (For children registration)
+router.get('/listTeams', (req, res) => {
+
+    // Temporal array for saving the teams
+    listTeams = []
+
+    // Get the list of documents from the teams collections
+    admin.firestore().collection('teams')
+    .get().then(Teams => {
+        
+        // Make the list with just the Team ID and Name
+        Teams.forEach(team => {
+          listTeams.push({
+              "TeamID": team.id,
+              "Name": team.data().Name
+          })
+        });
+
+        // Send the list to the client
+        return res.status(200).send(listTeams);
+
+      })
+
+    // Catch any error
+    .catch(err => {
+        return res.status(500).json(error.message);
+    });
+    
 });
 
 
@@ -173,7 +200,7 @@ router.put('/add-Coach', (req, res) => {
 //         return res.status(400).send('The TeamID is missing');
 //     }
 
-//     console.log(ID)
+//    
 
 //     // Send the success code and messa  ge
 //     admin.firestore().collection("teams").doc(ID).delete().then(() => {
