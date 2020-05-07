@@ -189,6 +189,7 @@ router.get('/listTeams', (req, res) => {
 });
 
 
+
 // ---------------------------------------------------------
 // Get a list of teams (For children registration)
 router.get('/noCoach', (req, res) => {
@@ -218,27 +219,53 @@ router.get('/noCoach', (req, res) => {
     });    
 });
 
-// // ---------------------------------------------------------
-// router.delete('/:id', (req, res) => {
 
-//     //Get the Team ID
-//     const ID = req.params.id;
 
-//     // Check that the request has the complete body
-//     if (!ID) {
-//         return res.status(400).send('The TeamID is missing');
-//     }
+// ---------------------------------------------------------
+// Delete a team
+router.delete('/:id', (req, res) => {
 
-//    
+    //Get the Team ID
+    const TeamID = req.params.id;
 
-//     // Send the success code and messa  ge
-//     admin.firestore().collection("teams").doc(ID).delete().then(() => {
-//         return res.status(200).send("Team successfully deleted!");
+    // Check that the request has the complete body
+    if (!TeamID) {
+        return res.status(400).send('The TeamID is missing');
+    }
 
-//     // Send the error code and message
-//     }).catch((error) => {
-//         return res.status(500).json(error.message);
-//     });
-// });
+     // Get the team object
+     admin.firestore().collection('teams').doc(TeamID)
+     .get().then(TeamObj => {
+        
+         // Check if the Team exists
+         if(!TeamObj.exists){
+             return res.status(404).send('The Teams does not exists');
+         }
+
+         // Unlink the coach from the team
+         admin.firestore().collection('users')
+         .doc(TeamObj.data().CoachID).update({
+             "TeamID": ""
+         })
+
+
+         // Unlink all the memebers (childrens) from the team
+         TeamObj.data().MembersID.forEach((Child) => {
+            admin.firestore().collection('children')
+            .doc(Child).update({
+                "TeamID": ""
+            })  
+         });
+
+        // Send the success code and messa  ge
+        admin.firestore().collection("teams").doc(TeamID).delete().then(() => {
+            return res.status(200).send("Team successfully deleted!");
+
+        // Send the error code and message
+        }).catch((error) => {
+            return res.status(500).json(error.message);
+        });
+     });
+});
 
 module.exports = router;
