@@ -189,6 +189,35 @@ router.get('/listTeams', (req, res) => {
 });
 
 
+// ---------------------------------------------------------
+// Get a list of teams (For children registration)
+router.get('/noCoach', (req, res) => {
+
+    // Temporal array for saving the teams
+    listTeams = []
+
+    // Get all the teams that has no coach
+    admin.firestore().collection('teams')
+    .where('CoachID', '==', '').get()
+    .then(Teams => {
+
+        // Make the list with just the Team ID and Name
+        Teams.forEach(team => {
+            listTeams.push({
+                "TeamID": team.id,
+                "Name": team.data().Name
+            })
+          });
+  
+        // Send the list to the client
+        return res.status(200).send(listTeams);
+
+    })
+    .catch(err => {
+        return res.status(500).json(error.message);
+    });    
+});
+
 // // ---------------------------------------------------------
 // router.delete('/:id', (req, res) => {
 
