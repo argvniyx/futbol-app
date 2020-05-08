@@ -10,7 +10,7 @@ const useStyles = makeStyles((theme) => ({
     height: '100vh',
   },
   image: {
-    backgroundImage: 'url(/index-image.jpg)',
+    backgroundImage: props => `url(/${props.imgPath})`,
     backgroundRepeat: 'no-repeat',
     backgroundColor:
       theme.palette.type === 'light' ? theme.palette.grey[50] : theme.palette.grey[900],
@@ -40,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function SignInSide(props) {
-  const classes = useStyles();
+  const classes = useStyles(props);
 
   return (
     <Grid container component="main" className={classes.root}>

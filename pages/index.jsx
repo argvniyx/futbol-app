@@ -63,7 +63,7 @@ export default function Index() {
   }
 
   return (
-    <SideImageForm>
+    <SideImageForm imgPath="index-image.jpg">
       <TextField
         variant="outlined"
         margin="normal"
