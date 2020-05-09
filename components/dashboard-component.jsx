@@ -1,23 +1,14 @@
 import clsx from 'clsx'
 import Box from '@material-ui/core/Box'
-import Container from '@material-ui/core/Container'
-import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/core';
 import Header from './header'
 import UserCard from '../components/user-card'
 import EventDetails from '../components/event-details'
 import Directory from '../components/directory'
 import Timeline from '../components/timeline'
-import { useState } from 'react';
+import Content from '../components/content-component'
 
 const useStyles = makeStyles((theme) => ({
-  content: {
-    height: '100vh',
-  },
-  container: {
-    paddingTop: theme.spacing(4),
-    paddingBottom: theme.spacing(4)
-  },
   paper: {
     padding: theme.spacing(1),
     display: 'flex',
@@ -111,24 +102,12 @@ const DashboardComponent = props => {
   return (
     <Box className={classes.root}>
       <Header/>
-      <main className={classes.content}>
-        <Container maxWidth="lg" className={classes.container}>
-          <Grid container spacing={3}>
-            <Grid item xs={12} lg={6}>
-              <Timeline className={fixedHeightPaperT} events={events} handler={handleEventDetails}/>
-            </Grid>
-            <Grid item xs={12} lg={6}>
-              <EventDetails className={fixedHeightPaperT} event={currentEvent}/>
-            </Grid>
-            <Grid item xs={12} lg={6}>
-              <Directory className={fixedHeightPaperB}/>
-            </Grid>
-            <Grid item xs={12} lg={6}>
-              <UserCard className={fixedHeightPaperB} person={person}/>
-            </Grid>
-          </Grid>
-        </Container>
-      </main>
+      <Content>
+        <Timeline className={fixedHeightPaperT} events={events} handler={handleEventDetails}/>
+        <EventDetails className={fixedHeightPaperT} event={currentEvent}/>
+        <Directory className={fixedHeightPaperB}/>
+        <UserCard className={fixedHeightPaperB} person={person}/>
+      </Content>
     </Box>
   );
 }
