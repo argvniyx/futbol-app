@@ -8,7 +8,7 @@ export default function UserTextFields() {
             <Grid item xs={12} md={12} lg={6}>
               <TextField
                 variant="outlined"
-                margin="normal"
+                margin="dense"
                 fullWidth
                 required
                 id="Nombre"
@@ -21,7 +21,7 @@ export default function UserTextFields() {
             <Grid item xs={12} md={12} lg={6}>
               <TextField
                 variant="outlined"
-                margin="normal"
+                margin="dense"
                 fullWidth
                 required
                 id="lastName"
@@ -34,7 +34,7 @@ export default function UserTextFields() {
 
           <TextField
             variant="outlined"
-            margin="normal"
+            margin="dense"
             required
             fullWidth
             id="email"
@@ -45,7 +45,7 @@ export default function UserTextFields() {
 
           <TextField
             variant="outlined"
-            margin="normal"
+            margin="dense"
             required
             fullWidth
             name="password"
@@ -57,7 +57,7 @@ export default function UserTextFields() {
 
           <TextField
             variant="outlined"
-            margin="normal"
+            margin="dense"
             required
             fullWidth
             id="phone"
