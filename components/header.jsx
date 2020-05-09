@@ -1,9 +1,7 @@
 import AppBar from '@material-ui/core/AppBar'
 import Typography from '@material-ui/core/Typography'
 import Toolbar from '@material-ui/core/Toolbar'
-import FormControl from '@material-ui/core/FormControl'
-import InputLabel from '@material-ui/core/InputLabel'
-import Select from '@material-ui/core/Select'
+import TextField from '@material-ui/core/TextField'
 import MenuItem from '@material-ui/core/MenuItem'
 import Button from '@material-ui/core/Button'
 import { makeStyles } from '@material-ui/core/styles'
@@ -11,13 +9,18 @@ import { makeStyles } from '@material-ui/core/styles'
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 0,
+    '& .MuiTextField-root': {
+      margin: theme.spacing(1),
+      width: '25ch',
+    },
+    '& .MuiFormLabel-root, & .MuiSelect-icon': {
+      color: theme.palette.background.default
+    },
   },
-  formControl: {
-    margin: theme.spacing(1),
-    minWidth: 120,
-  },
-  selectForm: {
-    color: "white"
+  input: {
+    paddingLeft: theme.spacing(1),
+    paddingRight: theme.spacing(1),
+    color: theme.palette.background.default,
   },
   title: {
     flexGrow: 1,
@@ -36,27 +39,14 @@ const Header = () => {
   return (
     <AppBar position="static" className={classes.root}>
       <Toolbar>
-        <FormControl className={classes.formControl}>
-          <InputLabel id='team-select-label'
-                      classes={{root: classes.selectForm}}
+          <TextField
+            select
+            label="Equipo"
+            SelectProps={{className: classes.input, disableUnderline: true}}
           >
-            Equipo
-          </InputLabel>
-          <Select
-            labelId='team-select-label'
-            id='team-select'
-            value={team}
-            onChange={handleChange}
-            classes={{
-              root: classes.selectForm,
-              icon: classes.selectForm
-            }}
-            disableUnderline
-          >
-            <MenuItem value={1}>Team 1</MenuItem>
-            <MenuItem value={2}>Team 2</MenuItem>
-          </Select>
-        </FormControl>
+          <MenuItem value={1}>Team 1</MenuItem>
+          <MenuItem value={2}>Team 2</MenuItem>
+        </TextField>
         <Typography variant="h5" className={classes.title}>
           Futbol App
         </Typography>
