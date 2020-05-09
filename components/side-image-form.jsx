@@ -50,7 +50,7 @@ export default function SignInSide(props) {
           <Avatar className={classes.avatar}>
             <SoccerBall className={classes.avatar}/>
           </Avatar>
-          <Typography component="h1" variant="h5">
+          <Typography component="h1" variant="h5" gutterBottom>
             Futbol App
           </Typography>
           <Typography component="h1" variant="h6">
