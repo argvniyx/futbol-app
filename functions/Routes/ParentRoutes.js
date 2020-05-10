@@ -82,6 +82,8 @@ router.post(
                     FirstName: child.FirstName,
                     LastName: child.LastName,
                     TeamNumber: child.TeamNumber,
+                    parentID: userID,
+                    TeamID: child.TeamID,
                     Absence: 0
                 }).then((docRef) => {
 
@@ -92,7 +94,16 @@ router.post(
                     ).doc(userID).update({
                         // this helps us add our children if it has data in the array
                         children: admin.firestore.FieldValue.arrayUnion(docRef.id)
-                    }).catch((error) => {
+                    }).then().catch((error) => {
+                        return res.status(500).send(error.message);
+                    });
+
+                    firestore.collection(
+                        'teams'
+                    ).doc(child.TeamID).update({
+                        // this helps us add our children if it has data in the array
+                        MembersID: admin.firestore.FieldValue.arrayUnion(docRef.id)
+                    }).then().catch((error) => {
                         return res.status(500).send(error.message);
                     });
 
@@ -162,7 +173,8 @@ router.put(
         const childEdit  = req.params.id;
         const FirstName = req.body.FirstName;
         const LastName = req.body.LastName;
-        const TeamNumber = req.body.TeamNumber
+        const TeamNumber = req.body.TeamNumber;
+        const Absence = req.body.Absence;
 
         if (!FirstName && !LastName && !TeamNumber) {
             return res.status(401).send('Missing body');
@@ -180,7 +192,9 @@ router.put(
                 ).doc(childEdit).update({
                     FirstName: FirstName,
                     LastName: LastName,
-                    TeamNumber: TeamNumber
+                    TeamNumber: TeamNumber,
+                    parentID: userId,
+                    Absence: Absence
                 }).then(() => {
                     return res.status(200).send('Child updated');
                 }).catch((error) => {
