@@ -18,16 +18,16 @@ const SelectTeam = () =>{
     
   return(
     <Grid container direction='column' alignItems='center'>
-    <Box>
-    <TextField
-      select
-      label='Equipo existente'
-      className={classes.equipoExistente}>
-      <MenuItem value={'Equipo1'}>Equipo1</MenuItem>
-      <MenuItem value={'Equipo2'}>Equipo2</MenuItem>
-      <MenuItem value={'Equipo3'}>Equipo3</MenuItem>
-    </TextField>
-    </Box>
+      <Box>
+        <TextField
+          select
+          label='Equipo existente'
+          className={classes.equipoExistente}>
+          <MenuItem value={'Equipo1'}>Equipo1</MenuItem>
+          <MenuItem value={'Equipo2'}>Equipo2</MenuItem>
+          <MenuItem value={'Equipo3'}>Equipo3</MenuItem>
+        </TextField>
+      </Box>
     </Grid>
   )   
 }
