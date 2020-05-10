@@ -1,35 +1,18 @@
 import Autocomplete from '@material-ui/lab/Autocomplete'
-import Grid from '@material-ui/core/Grid'
-import Box from '@material-ui/core/Box'
-import MenuItem from '@material-ui/core/MenuItem'
 import TextField from '@material-ui/core/TextField'
-import { makeStyles } from '@material-ui/core'
-
-const useStyles = makeStyles((theme) => ({
-    equipoExistente: {
-        width: 150,
-        marginTop: '75%',
-        marginBottom: '75%'
-    }
-}))
 
 const SelectTeam = () =>{
-  const classes = useStyles()
-
   return(
-    <Grid container direction='column' alignItems='center'>
-      <Box>
-        <TextField
-          select
-          label='Equipo existente'
-          className={classes.equipoExistente}>
-          <MenuItem value={'Equipo1'}>Equipo1</MenuItem>
-          <MenuItem value={'Equipo2'}>Equipo2</MenuItem>
-          <MenuItem value={'Equipo3'}>Equipo3</MenuItem>
-        </TextField>
-      </Box>
-    </Grid>
-  )   
+    <Autocomplete
+      id="select-team"
+      options={teams}
+      getOptionLabel={(option) => option.name}
+      style={{width: 300}}
+      renderInput={(params) => <TextField {...params} label="Combo box" variant="outlined" />}
+    />
+  )
 }
+
+const teams = [{name: "team1"}, {name: "team2"}, {name: "team3"}];
 
 export default SelectTeam;
