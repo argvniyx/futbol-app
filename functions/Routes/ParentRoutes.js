@@ -101,24 +101,17 @@ router.post(
                     firestore.collection(
                         'teams'
                     ).doc(child.TeamID).update({
-                        // this helps us add our children if it has data in the array
                         MembersID: admin.firestore.FieldValue.arrayUnion(docRef.id)
                     }).then().catch((error) => {
                         return res.status(500).send(error.message);
                     });
-
-                    if (
-                        // just checks if we have completed adding all our children
-                        arrRefChildren.length === arrRefChildren.length
-                    ) {
-                        return res.status(200).send('Children added correctly');
-                    }
 
                 }).catch((error) => {
                     return res.status(500).send(error.message);
                 });
             });
 
+            return res.status(200).send('Children added correctly');
         }
     });
 
@@ -174,9 +167,17 @@ router.put(
         const FirstName = req.body.FirstName;
         const LastName = req.body.LastName;
         const TeamNumber = req.body.TeamNumber;
+        const TeamID = req.body.TeamID;
         const Absence = req.body.Absence;
 
-        if (!FirstName && !LastName && !TeamNumber) {
+        if (
+            // validate we have everything
+            !FirstName &&
+            !LastName &&
+            !TeamNumber &&
+            !TeamID &&
+            !Absence
+        ) {
             return res.status(401).send('Missing body');
         }
 
@@ -185,19 +186,62 @@ router.put(
         ).doc(userId).get().then((snapshot) => {
             let user = snapshot.data();
             let exists = user.children.includes(childEdit);
-            if (exists) {
+            if (
+                // makes sure the child exist for the parent
+                exists
+            ) {
 
+                let orgTeamID;
                 firestore.collection(
                     'children'
-                ).doc(childEdit).update({
-                    FirstName: FirstName,
-                    LastName: LastName,
-                    TeamNumber: TeamNumber,
-                    parentID: userId,
-                    Absence: Absence
-                }).then(() => {
-                    return res.status(200).send('Child updated');
-                }).catch((error) => {
+                ).doc(childEdit).get().then((doc) => {
+
+                    orgTeamID = doc.data().TeamID;
+                    if(
+                        // check the original team if we have it
+                        orgTeamID !== ""
+                    ) {
+                        // remove the original team
+                        firestore.collection(
+                            'teams'
+                        ).doc(orgTeamID).update({
+                            MembersID: admin.firestore.FieldValue.arrayRemove(childEdit)
+                        }).catch((error) => {
+                            return res.status(500).send(error.message);
+                        });
+                    }
+
+                    // update the child
+                    firestore.collection(
+                        'children'
+                    ).doc(childEdit).update({
+                        FirstName: FirstName,
+                        LastName: LastName,
+                        TeamNumber: TeamNumber,
+                        parentID: userId,
+                        Absence: Absence,
+                        TeamID: TeamID
+                    }).then(() => {
+
+                        if(
+                            // if we have the teamID, we added to the team
+                            TeamID !== ""
+                        ) {
+                            firestore.collection(
+                                'teams'
+                            ).doc(TeamID).update({
+                                MembersID: admin.firestore.FieldValue.arrayUnion(childEdit)
+                            }).catch((error) => {
+                                return res.status(500).send(error.message);
+                            });
+                        }
+                        return res.status(200).send('Child updated');
+
+                    }).catch((error) => {
+                        return res.status(500).send(error.message);
+                    });
+
+                }).then((error) => {
                     return res.status(500).send(error.message);
                 });
 
@@ -225,22 +269,49 @@ router.delete(
         ).doc(userId).get().then((snapshot) => {
             let user = snapshot.data();
             let exists = user.children.includes(childDelete);
-            if(exists) {
+            if(
+                // just verify it exists
+                exists
+            ) {
 
+                // rmove from parent
                 firestore.collection(
                     'users'
                 ).doc(userId).update({
-                    // this helps us add our children if it has data in the array
                     children: admin.firestore.FieldValue.arrayRemove(childDelete)
                 }).then(() => {
 
+                    // get the team id to eliminate him from there
                     firestore.collection(
                         'children'
-                    ).doc(childDelete).delete().then(() => {
-                        return res.status(200).send('Child deleted');
+                    ).doc(childDelete).get().then((doc) => {
+                        const teamID =  doc.data().TeamID;
+
+                        if(
+                            // verify the team exists and remove it
+                            teamID !== ""
+                        ) {
+                            firestore.collection(
+                                'teams'
+                            ).doc(teamID).update({
+                                MembersID: admin.firestore.FieldValue.arrayRemove(childDelete)
+                            }).catch((error) => {
+                               return res.status(500).send(error.message);
+                            });
+                        }
+
+                        // delete the child from the children table
+                        firestore.collection(
+                            'children'
+                        ).doc(childDelete).delete().then(() => {
+                            return res.status(200).send('Child deleted');
+                        }).catch((error) => {
+                            return res.status(500).send(error.message);
+                        });
+
                     }).catch((error) => {
-                        return res.status(500).send(error.message);
-                    });
+                        return res.status(500).send(error.message());
+                    })
 
                 }).catch((error) => {
                     return res.status(500).send(error.message);
