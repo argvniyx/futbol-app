@@ -101,7 +101,7 @@ const DashboardComponent = props => {
 
   return (
     <Box className={classes.root}>
-      <Header/>
+      <Header user/>
       <Content>
         <Timeline className={fixedHeightPaperT} events={events} handler={handleEventDetails}/>
         <EventDetails className={fixedHeightPaperT} event={currentEvent}/>
