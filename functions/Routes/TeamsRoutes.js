@@ -12,13 +12,13 @@ const isAdmin = require('../Middlewares/isAdmin.js');
 // ---------------------------------------------------------
 // Create a new team
 router.post('/', authenticated, isAdmin, (req, res) => {
-    // Get the request body 
+    // Get the request body
     const Name = req.body.Name;
     const ColorFont = req.body.ColorFont;
     const ColorBackground = req.body.ColorBackground;
     const SeasonStart = req.body.SeasonStart;
     const SeasonEnd = req.body.SeasonEnd;
-    var CoachID = req.body.CoachID;
+    let CoachID = req.body.CoachID;
 
     // Check that the request has the complete body
     if (!Name ||
@@ -30,7 +30,7 @@ router.post('/', authenticated, isAdmin, (req, res) => {
         return res.status(400).send('Missing body');
     }
 
-    // Check if the Coach ID does not 
+    // Check if the Coach ID does not
     // exists on the request
     if (!CoachID) {
         CoachID = "";
@@ -52,7 +52,7 @@ router.post('/', authenticated, isAdmin, (req, res) => {
     .then((teams) => {
 
         // If the request has a CoachID
-        if (CoachID != "") {
+        if (CoachID !== "") {
             // Add the TeamID to the Coach
             admin.firestore().collection('users')
                 .doc(CoachID).update({
@@ -90,12 +90,12 @@ router.put('/add-Coach', (req, res) => {
     // Get the team object
     admin.firestore().collection('teams').doc(TeamID)
     .get().then(TeamObj => {
-       
+
         // Check if the Team exists
         if(!TeamObj.exists){
             return res.status(404).send('The Teams does not exists');
 
-        // Check if the team already has a Coach        
+        // Check if the team already has a Coach
         }else if (TeamObj.data().CoachID != ''){
             return res.status(409).send('The Team already has a Coach');
         }
@@ -103,12 +103,12 @@ router.put('/add-Coach', (req, res) => {
         // Get the Coach object
         admin.firestore().collection('users').doc(CoachID)
         .get().then(CoachObj => {
-        
+
             // Check if the Team exists
             if(!CoachObj.exists){
                 return res.status(404).send('The Coach does not exists');
 
-            // Check if the team already has a Coach        
+            // Check if the team already has a Coach
             }else if (CoachObj.data().TeamID != ""){
                 return res.status(409).send('The Coach already has a Team');
             }
@@ -141,12 +141,12 @@ router.put('/add-Coach', (req, res) => {
             .catch((err) => {
                 return res.status(500).send(err.message);
             });
-            
+
         })
         // Catch any posible error
         .catch(err => {
             return res.status(500).send(error.message);
-        });        
+        });
     })
     // Catch any posible error
     .catch(err => {
@@ -167,7 +167,7 @@ router.get('/listTeams', (req, res) => {
     // Get the list of documents from the teams collections
     admin.firestore().collection('teams')
     .get().then(Teams => {
-        
+
         // Make the list with just the Team ID and Name
         Teams.forEach(team => {
           listTeams.push({
@@ -185,7 +185,7 @@ router.get('/listTeams', (req, res) => {
     .catch(err => {
         return res.status(500).json(err.message);
     });
-    
+
 });
 
 
@@ -209,14 +209,14 @@ router.get('/noCoach', (req, res) => {
                 "Name": team.data().Name
             })
           });
-  
+
         // Send the list to the client
         return res.status(200).send(listTeams);
 
     })
     .catch(err => {
         return res.status(500).json(err.message);
-    });    
+    });
 });
 
 
@@ -241,7 +241,7 @@ router.get('/:id', (req, res) => {
     // Get the team object
     admin.firestore().collection('teams').doc(TeamID)
     .get().then(TeamObj => {
-        
+
         // Check if the Team exists
         if(!TeamObj.exists){
             return res.status(404).send('The Teams does not exists');
@@ -249,13 +249,13 @@ router.get('/:id', (req, res) => {
 
         // For each child, search the parent
         TeamObj.data().MembersID.forEach((ChildID) => {
-            
+
             // Get the child object
             admin.firestore().collection('children').doc(ChildID).get()
-            .then((ChildObj) => {                
+            .then((ChildObj) => {
                 // Store the ParentID
                 ParentsID.push(ChildObj.data().ParentID)
-                
+
                 // Check if it has all parents ID
                 if(ParentsID.length == TeamObj.data().MembersID.length){
 
@@ -269,7 +269,7 @@ router.get('/:id', (req, res) => {
                         // Filter the user information
                         filtered.forEach(userObj => {
                             ParentsList.push({
-                                "UserID": userObj.uid, 
+                                "UserID": userObj.uid,
                                 "Email": userObj.email,
                                 "Phone": userObj.phone,
                                 "Name": userObj.displayName
@@ -289,13 +289,13 @@ router.get('/:id', (req, res) => {
             // Catch any error
             .catch(err => {
                 return res.status(500).json(err.message);
-            }); 
+            });
         })
     })
     // Catch any error
     .catch(err => {
         return res.status(500).json(err.message);
-    }); 
+    });
 });
 
 
@@ -314,7 +314,7 @@ router.delete('/:id', (req, res) => {
      // Get the team object
      admin.firestore().collection('teams').doc(TeamID)
      .get().then(TeamObj => {
-        
+
          // Check if the Team exists
          if(!TeamObj.exists){
              return res.status(404).send('The Teams does not exists');
@@ -332,7 +332,7 @@ router.delete('/:id', (req, res) => {
             admin.firestore().collection('children')
             .doc(Child).update({
                 "TeamID": ""
-            })  
+            })
          });
 
         // Send the success code and messa  ge
