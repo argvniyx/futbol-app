@@ -27,7 +27,7 @@ export default function Admin() {
   return (
     <Box>
       <Header/>
-      <Content>
+      <Content fullWidth>
         <AdminList className={fixedHeightPaperT}/>
       </Content>
     </Box>
