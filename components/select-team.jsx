@@ -1,3 +1,4 @@
+import Autocomplete from '@material-ui/lab/Autocomplete'
 import Grid from '@material-ui/core/Grid'
 import Box from '@material-ui/core/Box'
 import MenuItem from '@material-ui/core/MenuItem'
@@ -13,9 +14,8 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 const SelectTeam = () =>{
-
   const classes = useStyles()
-    
+
   return(
     <Grid container direction='column' alignItems='center'>
       <Box>
