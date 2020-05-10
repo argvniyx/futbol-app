@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import Box from '@material-ui/core/Box'
 import Header from '../components/header'
 import Content from '../components/content-component'
@@ -6,7 +7,7 @@ import { makeStyles } from '@material-ui/styles'
 
 const useStyles = makeStyles((theme) => ({
   paper: {
-    padding: theme.spacing(1),
+    padding: theme.spacing(2),
     display: 'flex',
     overflow: 'auto',
     flexDirection: 'column',
@@ -20,14 +21,15 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function Admin() {
-    const classes = useStyles();
-    return (
-        <Box>
-          <Header/>
-          <Content>
-            <AdminList/>
-            <AdminList/>
-          </Content>
-        </Box>
-    );
+  const classes = useStyles();
+  const fixedHeightPaperT = clsx(classes.paper, classes.fixedHeightTop)
+
+  return (
+    <Box>
+      <Header/>
+      <Content>
+        <AdminList className={fixedHeightPaperT}/>
+      </Content>
+    </Box>
+  );
 }

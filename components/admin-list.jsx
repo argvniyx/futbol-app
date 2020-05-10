@@ -1,10 +1,12 @@
 import SelectTeam from '../components/select-team'
-import Paper from '@material-ui/core/Paper'
+import Card from '@material-ui/core/Card'
+import TeamDetails from '../components/team-details'
 
-export default function AdminList() {
+export default function AdminList(props) {
     return (
-        <Paper>
+        <Card className={props.className}>
           <SelectTeam/>
-        </Paper>
+          <TeamDetails/>
+        </Card>
     );
 }

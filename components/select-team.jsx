@@ -7,8 +7,8 @@ const SelectTeam = () =>{
       id="select-team"
       options={teams}
       getOptionLabel={(option) => option.name}
-      style={{width: 300}}
       renderInput={(params) => <TextField {...params} label="Combo box" variant="outlined" />}
+      fullWidth
     />
   )
 }

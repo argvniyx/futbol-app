@@ -13,21 +13,22 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Content = (props) => {
-    const classes = useStyles();
+  const classes = useStyles();
+  const children = React.Children.toArray(props.children)
 
-    return (
-        <main className={classes.root}>
-          <Container maxWidth="lg" className={classes.container}>
-            <Grid container spacing={3}>
-              {props.children.map((child, index) => (
-                  <Grid item xs={12} lg={6} key={index}>
-                    {child}
-                  </Grid>
-              ))}
+  return (
+    <main className={classes.root}>
+      <Container maxWidth="lg" className={classes.container}>
+        <Grid container spacing={3}>
+          {children.map((child, index) => (
+            <Grid item xs={12} lg={6} key={index}>
+              {child}
             </Grid>
-          </Container>
-        </main>
-    );
+          ))}
+        </Grid>
+      </Container>
+    </main>
+  );
 }
 
 export default Content;
