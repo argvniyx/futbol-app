@@ -11,7 +11,7 @@ const isAdmin = require('../Middlewares/isAdmin.js');
 
 // ---------------------------------------------------------
 // Create a new team
-router.post('/', authenticated, isAdmin, (req, res) => {
+router.post('/', (req, res) => {
     // Get the request body
     const Name = req.body.Name;
     const ColorFont = req.body.ColorFont;
