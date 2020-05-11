@@ -254,7 +254,8 @@ router.get('/:id', (req, res) => {
                         "UserID": CoachObj.uid,
                         "Email": CoachObj.email,
                         "Phone": CoachObj.phone,
-                        "Name": CoachObj.displayName,
+                        "FirstName": CoachObj.displayName.split(" ")[0],
+                        "LastName": CoachObj.displayName.split(" ")[1],
                         "isCoach": true
                     })
 
@@ -285,7 +286,8 @@ router.get('/:id', (req, res) => {
                                                         "UserID": userObj.uid,
                                                         "Email": userObj.email,
                                                         "Phone": userObj.phone,
-                                                        "Name": userObj.displayName,
+                                                        "FirstName": userObj.displayName.split(" ")[0],
+                                                        "LastName": userObj.displayName.split(" ")[1],
                                                         "isCoach": false
                                                     })
                                                 });
@@ -320,6 +322,7 @@ router.get('/:id', (req, res) => {
             return res.status(500).json(err.message);
         });
 });
+
 
 
 // ---------------------------------------------------------
