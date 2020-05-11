@@ -7,6 +7,13 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import theme from '../src/theme';
 
 const firebaseConfig = {
+  apiKey: "AIzaSyCYUZMgpkT9eOt1YgZqwoM9QsdqAkF-v7o",
+    authDomain: "futbol-app-8b521.firebaseapp.com",
+    databaseURL: "https://futbol-app-8b521.firebaseio.com",
+    projectId: "futbol-app-8b521",
+    storageBucket: "futbol-app-8b521.appspot.com",
+    messagingSenderId: "173423653380",
+    appId: "1:173423653380:web:f553cc0a81931c548b7b51"
 };
 // Initialize Firebase
 if (!firebase.apps.length) {
