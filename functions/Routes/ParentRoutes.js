@@ -3,7 +3,7 @@ const admin = require('firebase-admin');
 
 const router = express.Router();
 
-const authenticated = require('../Middlewares/Authenticated');
+const authenticated = require('../Middlewares/authenticated');
 const isParent = require('../Middlewares/isParent');
 
 // ---------------------------------------------------------
