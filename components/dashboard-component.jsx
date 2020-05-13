@@ -103,7 +103,12 @@ const DashboardComponent = props => {
     <Box className={classes.root}>
       <Header user={props.user}/>
       <Content>
-        <Timeline className={fixedHeightPaperT} events={events} handler={handleEventDetails}/>
+        <Timeline
+          className={fixedHeightPaperT}
+          events={events}
+          handler={handleEventDetails}
+          user={props.user}
+        />
         <EventDetails className={fixedHeightPaperT} event={currentEvent} user={props.user}/>
         <Directory className={fixedHeightPaperB}/>
         <UserCard className={fixedHeightPaperB} person={person}/>
