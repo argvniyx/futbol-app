@@ -20,7 +20,7 @@ export default function Timeline(props) {
   return (
     <Card className={props.className}>
       <CardHeader title="Timeline"/>
-      <CardContent>
+      <CardContent style={{flexGrow: 1}}>
         <List>
           {props.events.map((e) => (
             <ListItem
