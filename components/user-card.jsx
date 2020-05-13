@@ -11,7 +11,8 @@ import Edit from '@material-ui/icons/Edit'
 const useStyles = makeStyles((theme) => ({
   content: {
     display: 'flex',
-    alignItems: 'center'
+    alignItems: 'center',
+    flexGrow: 1
   },
   info: {
     display: 'flex',
