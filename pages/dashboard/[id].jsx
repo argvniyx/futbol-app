@@ -1,4 +1,4 @@
-import DashboardComponent from '../components/dashboard-component'
+import DashboardComponent from '../../components/dashboard-component'
 
 const Dashboard = () => (
     <DashboardComponent user/>
