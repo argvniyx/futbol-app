@@ -1,7 +1,7 @@
 import DashboardComponent from '../components/dashboard-component'
 
 const Dashboard = () => (
-    <DashboardComponent/>
+    <DashboardComponent user/>
 );
 
 export default Dashboard;

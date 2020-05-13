@@ -8,6 +8,7 @@ import CardActions from '@material-ui/core/CardActions'
 import IconButton from '@material-ui/core/IconButton'
 import NavigateNext from '@material-ui/icons/NavigateNext'
 import NavigateBefore from '@material-ui/icons/NavigateBefore'
+import AddBox from '@material-ui/icons/AddBox'
 
 export default function Timeline(props) {
   const [selectedIndex, setSelectedIndex] = React.useState(0);
@@ -20,7 +21,7 @@ export default function Timeline(props) {
   return (
     <Card className={props.className}>
       <CardHeader title="Timeline"/>
-      <CardContent>
+      <CardContent style={{flexGrow: 1}}>
         <List>
           {props.events.map((e) => (
             <ListItem
@@ -42,6 +43,11 @@ export default function Timeline(props) {
         <IconButton>
           <NavigateNext/>
         </IconButton>
+        {props.user ? null :
+            <IconButton>
+              <AddBox/>
+            </IconButton>
+        }
       </CardActions>
     </Card>
   );
