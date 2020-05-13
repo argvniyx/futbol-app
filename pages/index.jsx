@@ -33,6 +33,7 @@ export default function Index() {
   }
 
   const handleLogin = (event) => {
+    event.preventDefault();
     firebase.auth().signInWithEmailAndPassword(
         userInfo['username'],
         userInfo['password']
@@ -47,6 +48,7 @@ export default function Index() {
   }
 
   const handleLoginGoogle = (event) => {
+    event.preventDefault();
       const provider = new firebase.auth.GoogleAuthProvider();
       firebase.auth().signInWithPopup(provider).then((result) => {
           console.log(result);
