@@ -50,6 +50,7 @@ const Header = (props) => {
         </TextField>
          :
          null}
+        {props.component ? props.component : null}
         <Typography variant="h5" className={classes.title}>
           Futbol App
         </Typography>

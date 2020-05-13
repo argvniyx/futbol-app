@@ -1,5 +1,6 @@
 import clsx from 'clsx'
 import Box from '@material-ui/core/Box'
+import Button from '@material-ui/core/Button'
 import Header from '../components/header'
 import Content from '../components/content-component'
 import AdminList from '../components/admin-list'
@@ -20,13 +21,21 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
+const InviteButton = () => {
+  return (
+    <Button color="inherit" size="large">
+      Generar Invitación
+    </Button>
+  );
+}
+
 export default function Admin() {
   const classes = useStyles();
   const fixedHeightPaperT = clsx(classes.paper, classes.fixedHeightTop)
 
   return (
     <Box>
-      <Header/>
+      <Header component={<InviteButton/>}/>
       <Content fullWidth>
         <AdminList className={fixedHeightPaperT}/>
       </Content>
