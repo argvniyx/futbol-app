@@ -13,6 +13,8 @@ import Icon from '@mdi/react'
 import { mdiGoogle } from '@mdi/js'
 import { makeStyles } from '@material-ui/core/styles';
 import SideImageForm from '../components/side-image-form'
+import Router from "next/router"
+import Cookies from '../node_modules/js-cookie'
 var $ = require( "jquery" );
 
 const useStyles = makeStyles((theme) => ({
@@ -75,14 +77,16 @@ export default function Index() {
 
   const handleLogin = (event) => {
     event.preventDefault()
+    // Router.push('/dashboard/' + '123')
+    console.log(userInfo['email'], userInfo['password'])
     firebase.auth().signInWithEmailAndPassword(
         userInfo['email'],
         userInfo['password']
     ).then(
         (result) => {
           getUserToken()
-          console.log(result['user']['xa'])
-          console.log(result['user']['_lat'])
+          result.user.getIdTokenResult().then((x) => Cookies.set('token',  x.token))
+          // console.log(result['user']['_lat'])
           $.ajax({
             method: 'GET',
             url: 'http://localhost:5001/futbol-app-8b521/us-central1/app/parent/children',
@@ -90,7 +94,14 @@ export default function Index() {
               authorization: 'Bearer ' + result['user']['xa']
             }
           }).done((children) => {
-            console.log(children)
+            if (children.length > 0){
+              console.log(children)
+              Router.push('/dashboard/' + result.user.uid)
+            }
+            else{
+              console.log('Padre no tiene hijos')
+            }
+            
           })
         },
         (err) => {
