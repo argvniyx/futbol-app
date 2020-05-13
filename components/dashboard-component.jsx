@@ -101,10 +101,15 @@ const DashboardComponent = props => {
 
   return (
     <Box className={classes.root}>
-      <Header user/>
+      <Header user={props.user}/>
       <Content>
-        <Timeline className={fixedHeightPaperT} events={events} handler={handleEventDetails}/>
-        <EventDetails className={fixedHeightPaperT} event={currentEvent}/>
+        <Timeline
+          className={fixedHeightPaperT}
+          events={events}
+          handler={handleEventDetails}
+          user={props.user}
+        />
+        <EventDetails className={fixedHeightPaperT} event={currentEvent} user={props.user}/>
         <Directory className={fixedHeightPaperB}/>
         <UserCard className={fixedHeightPaperB} person={person}/>
       </Content>
