@@ -27,6 +27,7 @@ module.exports = (req, res, next) => {
             ).doc(uid).set({
                 uid: uid,
                 UserType: UserType,
+                children: []
             }).then(() => {
                 next();
             }).catch((error) => {
