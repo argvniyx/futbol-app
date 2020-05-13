@@ -1,7 +1,59 @@
 import TextField from '@material-ui/core/TextField'
 import Grid from '@material-ui/core/Grid'
+import { forwardRef, useImperativeHandle } from 'react'
 
-export default function UserTextFields() {
+
+const UserTextFields = forwardRef((props, ref) => {
+
+  // const {refTextValues, invalidTextRef} = ref
+  const [textState, setText] = React.useState({
+    FirstName : '',
+    LastName : '',
+    Email : '',
+    Password : '',
+    Phone : ''
+  })
+
+  const [firstNameInvalid, setFirstNameInvalid] = React.useState(false)
+  const [lastNameInvalid, setLastNameInvalid] = React.useState(false)
+  const [emailInvalid, setEmailInvalid] = React.useState(false)
+  const [passwordInvalid, setPasswordInvalid] = React.useState(false)
+  const [phoneInvalid, setPhoneInvalid] = React.useState(false)
+
+  const handleTextChange = (event) => {
+    setText({...textState, [event.target.name]: event.target.value})
+  }
+
+  const validateFields = () =>{
+
+    let counter = 0
+
+    for (var key in textState){
+      var attrName = key;
+      var attrValue = textState[key];
+      if(attrValue.trim() == ''){
+        console.log(attrName + ' is missing')
+        eval('set' + attrName + 'Invalid' + '(true)')
+        counter++
+      }
+      else {
+        eval('set' + attrName + 'Invalid' + '(false)')
+      }
+    }
+
+    if (counter > 0){
+      return false
+    }
+    else{
+      return true
+    }
+
+  }
+
+  useImperativeHandle(ref, () => {
+    return {validateFields, textState};
+  })
+
     return (
         <div>
           <Grid container spacing={1}>
@@ -13,8 +65,11 @@ export default function UserTextFields() {
                 required
                 id="Nombre"
                 label="Nombre"
-                name="nombre"
+                name="FirstName"
                 autoComplete="name"
+                onChange = {handleTextChange}
+                error = {firstNameInvalid}
+                helperText = {firstNameInvalid ? 'Necesita escribir su nombre' : ''}
               />
             </Grid>
 
@@ -26,8 +81,11 @@ export default function UserTextFields() {
                 required
                 id="lastName"
                 label="Apellido"
-                name="apellido"
+                name="LastName"
                 autoComplete="name"
+                onChange = {handleTextChange}
+                error = {lastNameInvalid}
+                helperText = {lastNameInvalid ? 'Necesita escribir su apellido' : ''}
               />
             </Grid>
           </Grid>
@@ -39,8 +97,11 @@ export default function UserTextFields() {
             fullWidth
             id="email"
             label="Correo Electrónico"
-            name="email"
+            name="Email"
             autoComplete="email"
+            onChange = {handleTextChange}
+            error = {emailInvalid}
+            helperText = {emailInvalid ? 'Necesita escribir su correo' : ''}
           />
 
           <TextField
@@ -48,11 +109,14 @@ export default function UserTextFields() {
             margin="dense"
             required
             fullWidth
-            name="password"
+            name="Password"
             label="Contraseña"
             type="password"
             id="password"
             autoComplete="current-password"
+            onChange = {handleTextChange}
+            error = {passwordInvalid}
+            helperText = {passwordInvalid ? 'Necesita escribir su contrase;a' : ''}
           />
 
           <TextField
@@ -60,12 +124,18 @@ export default function UserTextFields() {
             margin="dense"
             required
             fullWidth
-            id="phone"
+            id="Phone"
             label="Teléfono"
+            type="tel"
             name="Phone"
             autoComplete="phone"
+            onChange = {handleTextChange}
+            error = {phoneInvalid}
+            helperText = {phoneInvalid ? 'Necesita escribir su telefono' : ''}
           />
 
         </div>
     );
-}
+})
+
+export default UserTextFields;
