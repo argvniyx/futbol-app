@@ -9,6 +9,7 @@ const authenticated = require('../Middlewares/authenticated');
 const isCoach = require('../Middlewares/isCoach.js');
 
 // ---------------------------------------------------------
+// Create a new coach
 router.post('/sign-up', (req, res) => {
 
     // Get the request body 
@@ -17,7 +18,7 @@ router.post('/sign-up', (req, res) => {
     const FirstName = req.body.FirstName;
     const LastName = req.body.LastName;
     const Cellphone = req.body.Cellphone;
-    const IDTeam = req.body.IDTeam;
+    let TeamID = req.body.TeamID; 
     const UserType = 2;
 
     // Check that the request has the complete body
@@ -25,9 +26,14 @@ router.post('/sign-up', (req, res) => {
         !Password ||
         !FirstName ||
         !LastName || 
-        !Cellphone ||
-        !IDTeam) {
+        !Cellphone) {
         return res.status(400).send('Missing body');
+    }
+
+    // Check if the Team ID does not
+    // exists on the request
+    if(!TeamID){
+        TeamID = "";
     }
 
     // Create a user on the Auth collection of firebase
@@ -46,11 +52,27 @@ router.post('/sign-up', (req, res) => {
             .doc(user.uid).set({
                 uid: user.uid,
                 UserType: UserType,
-                IDTeam: IDTeam })
+                TeamID: TeamID })
 
         // Return the success code and message
         .then(() => {
-                return res.status(200).send( 'Coach created successfully'); })
+            
+            // If the request has a TeamID
+            if (TeamID != "") {
+
+                // Add the CoachID to the TeamID
+                admin.firestore().collection('teams')
+                .doc(TeamID).update({
+                    "CoachID": user.uid
+                })
+
+                // Catch any posible error
+                .catch((err) => {
+                    return res.status(500).send(err.message);
+                });
+            }
+            
+            return res.status(200).send( 'Coach created successfully'); })
         
         // Return the error code and message
         .catch((error) => {
@@ -62,5 +84,65 @@ router.post('/sign-up', (req, res) => {
     });
 });
 
+
+// ---------------------------------------------------------
+// Update coach info
+router.put('/:id', (req, res) => {
+    
+    // Get the request body 
+    const Email = req.body.Email;
+    const FirstName = req.body.FirstName;
+    const LastName = req.body.LastName;
+    const Cellphone = req.body.Cellphone;
+
+    // Get the param id
+    const CoachID = req.params.id;
+
+    // Check if the request has the CoachID as param
+    if(!CoachID){
+        return res.status(400).send('Missing CoachID as param');
+    }
+    
+    // Check that the request has the complete body
+    if (!Email ||
+        !FirstName ||
+        !LastName || 
+        !Cellphone) {
+        return res.status(400).send('Missing body');
+    }
+
+     // Get the coach object
+     admin.firestore().collection('users').doc(CoachID)
+     .get().then(UserObj => {
+
+        // Check if the coch exists
+        if(!UserObj.exists){
+            return res.status(404).send('The Coach does not exists');
+        }
+
+        // Check that the user it is a Coach
+        if(UserObj.data().UserType != 2){
+            return res.status(401).send('The user it is not a coach');
+        }
+
+        // Make the update
+        admin.auth().updateUser(CoachID, {
+            email: Email,
+            displayName: FirstName + ' ' + LastName,
+            phoneNumber: Cellphone
+        })
+        .then(()=>{
+            return res.status(200).send("Coach Updated!")
+        })
+        // Catch any error
+        .catch((error) => {
+            return res.status(500).json(error.message);
+        });
+    })
+    // Catch any error
+    .catch((error) => {
+        return res.status(500).json(error.message);
+    });
+});
 
 module.exports = router;
