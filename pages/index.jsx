@@ -2,12 +2,18 @@ import firebase from "firebase";
 import React from 'react';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
+import Dialog from '@material-ui/core/Dialog'
+import DialogTitle from '@material-ui/core/DialogTitle'
+import DialogContent from '@material-ui/core/DialogContent'
+import DialogActions from '@material-ui/core/DialogActions'
+import DialogContentText from '@material-ui/core/DialogContentText'
 import Link from 'next/link';
 import Grid from '@material-ui/core/Grid';
 import Icon from '@mdi/react'
 import { mdiGoogle } from '@mdi/js'
 import { makeStyles } from '@material-ui/core/styles';
 import SideImageForm from '../components/side-image-form'
+var $ = require( "jquery" );
 
 const useStyles = makeStyles((theme) => ({
   submit: {
@@ -21,28 +27,78 @@ const GoogleIcon = () => {
   )
 }
 
+const LoginError = props => {
+  let errorText = "";
+  if(props.code == 1)
+    errorText = "No existe un usuario asociado a ese correo. Verifica que esté bien escrito, o regístrate si no lo has hecho."
+  else if(props.code == 2)
+    errorText = "La contraseña proporcionada es incorrecta. Inténtalo de nuevo."
+
+  return (
+      <Dialog
+        open={props.open}
+        onClose={props.handleClose}
+      >
+        <DialogTitle>{"No se pudo iniciar sesión"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            {errorText}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={props.handleClose}
+          >
+            Entendido
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+  );
+}
+
 export default function Index() {
   const classes = useStyles();
   const [userInfo, setInfo] = React.useState({
-    username: '',
+    email: '',
     password: ''
   })
+  const [open, setOpen] = React.useState(false);
+  const [errorCode, setErrorCode] = React.useState(0)
+  const handleCloseDialog = () => setOpen(false);
 
   const handleUserInfo = (event) => {
     setInfo({...userInfo, [event.target.name]: event.target.value})
   }
 
   const handleLogin = (event) => {
-    event.preventDefault();
+    event.preventDefault()
     firebase.auth().signInWithEmailAndPassword(
-        userInfo['username'],
+        userInfo['email'],
         userInfo['password']
     ).then(
         (result) => {
-          getUserToken();
+          getUserToken()
+          console.log(result['user']['xa'])
+          console.log(result['user']['_lat'])
+          $.ajax({
+            method: 'GET',
+            url: 'http://localhost:5001/futbol-app-8b521/us-central1/app/parent/children',
+            headers: {
+              authorization: 'Bearer ' + result['user']['xa']
+            }
+          }).done((children) => {
+            console.log(children)
+          })
         },
         (err) => {
-          alert("Oops " + err.message);
+          if(err.code == "auth/invalid-email")
+            setErrorCode(1);
+          else
+            setErrorCode(2);
+          setOpen(true);
         }
     );
   }
@@ -118,6 +174,11 @@ export default function Index() {
           </Link>
         </Grid>
       </Grid>
+      <LoginError
+        open={open}
+        handleClose={handleCloseDialog}
+        code={errorCode}
+      />
     </SideImageForm>
   );
 }
