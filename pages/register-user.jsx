@@ -26,6 +26,7 @@ export default function RegisterParent() {
                 data: ref.current.textState
             }).done(() => {
                 console.log('finished sign-up')
+                window.location.href = 'http://localhost:3000'
             }).fail(() => {
                 console.log('sign-up failed')
             }) 

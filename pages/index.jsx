@@ -24,7 +24,7 @@ const GoogleIcon = () => {
 export default function Index() {
   const classes = useStyles();
   const [userInfo, setInfo] = React.useState({
-    username: '',
+    email: '',
     password: ''
   })
 
@@ -33,8 +33,9 @@ export default function Index() {
   }
 
   const handleLogin = (event) => {
+    event.preventDefault()
     firebase.auth().signInWithEmailAndPassword(
-        userInfo['username'],
+        userInfo['email'],
         userInfo['password']
     ).then(
         (result) => {
