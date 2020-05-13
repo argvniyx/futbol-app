@@ -3,7 +3,7 @@ const admin = require('firebase-admin');
 
 const router = express.Router();
 
-const authenticated = require('../Middlewares/Authenticated');
+const authenticated = require('../Middlewares/authenticated');
 const isParent = require('../Middlewares/isParent');
 
 // ---------------------------------------------------------
@@ -39,6 +39,7 @@ router.post('/sign-up', (req, res) => {
         ).doc(user.uid).set({
             uid: user.uid,
             UserType: UserType,
+            children: []
         }).then(() => {
             return res.status(200).send(
                 'User created successfully'
@@ -130,26 +131,31 @@ router.get(
         ).doc(userID).get().then((snapshot) => {
 
             let children = snapshot.data().children;
+            console.log(children)
+            if(children.length > 0) {
+                children.forEach((child) => {
 
-            children.forEach((child) => {
+                    firestore.collection(
+                        'children'
+                    ).doc(child).get().then((snap) => {
 
-                firestore.collection(
-                    'children'
-                ).doc(child).get().then((snap) => {
+                        let childData = snap.data();
+                        childData.id = child;
+                        fullChildren.push(childData);
+                        if (
+                            fullChildren.length === children.length
+                        ) {
+                            return res.status(200).json(fullChildren);
+                        }
+                    }).catch((error) => {
+                        return res.status(500).send(error.message);
+                    });
 
-                    let childData = snap.data();
-                    childData.id = child;
-                    fullChildren.push(childData);
-                    if(
-                        fullChildren.length === children.length
-                    ) {
-                        return res.status(200).json(fullChildren);
-                    }
-
-                }).catch((error) => {
-                   return res.status(500).send(error.message);
                 });
-            });
+            } else {
+                return res.status(200).json([]);
+            }
+
         }).catch((error) => {
             return res.status(500).send(error.message);
         });
