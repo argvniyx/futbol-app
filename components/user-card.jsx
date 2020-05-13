@@ -44,7 +44,9 @@ const useStyles = makeStyles((theme) => ({
 
 export default function UserCard(props) {
   const classes = useStyles();
-  const {firstName, lastName, email, phone, children} = props.person;
+
+  const [user, modifyUser] = React.useState(props.person)
+  const {firstName, lastName, email, phone, children} = user;
   const fullName = firstName + " " + lastName;
   const childFullName = children[0].firstName + " " + children[0].lastName
 
@@ -52,7 +54,17 @@ export default function UserCard(props) {
   const handleOpenEdit = () => setOpenEdit(true);
   const handleCloseEdit = () => setOpenEdit(false);
 
-  const handleSaveClick = () => console.log('clicked');
+  const handleSaveClick = () => {
+    // modifyUser({
+    //   ...user,
+    //   firstName: "Changed"
+    // })
+    console.log('clicked');
+  }
+
+  const handleFieldChange = (event) => {
+    modifyUser({...user, [event.target.id]: event.target.value})
+  }
  
   return (
     <Card className={props.className}>
@@ -94,6 +106,8 @@ export default function UserCard(props) {
             id="firstName"
             label="Nombre"
             type="name"
+            defaultValue={user.firstName}
+            onChange={handleFieldChange}
             fullWidth
           />
           <TextField
@@ -101,6 +115,8 @@ export default function UserCard(props) {
             id="lastName"
             label="Apellido"
             type="name"
+            defaultValue={user.lastName}
+            onChange={handleFieldChange}
             fullWidth
           />
           <TextField
@@ -108,6 +124,8 @@ export default function UserCard(props) {
             id="email"
             label="Correo Electrónico"
             type="email"
+            defaultValue={user.email}
+            onChange={handleFieldChange}
             fullWidth
           />
           <TextField
@@ -115,6 +133,8 @@ export default function UserCard(props) {
             id="phone"
             label="Teléfono"
             type="tel"
+            defaultValue={user.phone}
+            onChange={handleFieldChange}
             fullWidth
           />
         </DialogContent>
