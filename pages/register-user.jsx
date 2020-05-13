@@ -3,7 +3,7 @@ import UserTextFields from '../components/user-textfields'
 import Button from '@material-ui/core/Button'
 import { makeStyles } from '@material-ui/styles'
 import { useRef } from 'react';
-import { useImperativeHandle } from 'react'
+var $ = require( "jquery" );
 
 const useStyles = makeStyles((theme) => ({
     submit: {
@@ -20,6 +20,15 @@ export default function RegisterParent() {
     const handleRegister = () => {
         if (ref.current.validateFields()){
             console.log(ref.current.textState)
+            $.ajax({
+                method: 'POST',
+                url: 'http://localhost:5001/futbol-app-8b521/us-central1/app/parent/sign-up',
+                data: ref.current.textState
+            }).done(() => {
+                console.log('finished sign-up')
+            }).fail(() => {
+                console.log('sign-up failed')
+            }) 
         }
     }
 

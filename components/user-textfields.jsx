@@ -2,19 +2,20 @@ import TextField from '@material-ui/core/TextField'
 import Grid from '@material-ui/core/Grid'
 import { forwardRef, useImperativeHandle } from 'react'
 
+
 const UserTextFields = forwardRef((props, ref) => {
 
   // const {refTextValues, invalidTextRef} = ref
   const [textState, setText] = React.useState({
-    nombre : '',
-    apellido : '',
-    email : '',
-    password : '',
-    phone : ''
+    FirstName : '',
+    LastName : '',
+    Email : '',
+    Password : '',
+    Phone : ''
   })
 
-  const [nombreInvalid, setNombreInvalid] = React.useState(false)
-  const [apellidoInvalid, setApellidoInvalid] = React.useState(false)
+  const [firstNameInvalid, setFirstNameInvalid] = React.useState(false)
+  const [lastNameInvalid, setLastNameInvalid] = React.useState(false)
   const [emailInvalid, setEmailInvalid] = React.useState(false)
   const [passwordInvalid, setPasswordInvalid] = React.useState(false)
   const [phoneInvalid, setPhoneInvalid] = React.useState(false)
@@ -27,53 +28,26 @@ const UserTextFields = forwardRef((props, ref) => {
 
     let counter = 0
 
-    if(textState.nombre.trim() == ''){
-      console.log('Necesita escribir su nombre')
-      setNombreInvalid(true)
-      counter++
-    }
-    else {
-      setNombreInvalid(false)
-    }
-
-    if(textState.apellido.trim() == ''){
-        console.log('Necesita escribir su apellido')
-        setApellidoInvalid(true)
+    for (var key in textState){
+      var attrName = key;
+      var attrValue = textState[key];
+      if(attrValue.trim() == ''){
+        console.log(attrName + ' is missing')
+        eval('set' + attrName + 'Invalid' + '(true)')
         counter++
-    }
-    else {
-        setApellidoInvalid(false)
-    }
-    if(textState.email.trim() == ''){
-        console.log('Necesita escribir un email')
-        setEmailInvalid(true)
-        counter++
-    }
-    else {
-        setEmailInvalid(false)
+      }
+      else {
+        eval('set' + attrName + 'Invalid' + '(false)')
+      }
     }
 
-    if(textState.password.trim() == ''){
-        console.log('Se necesita escribir un contrase;a')
-        setPasswordInvalid(true)
-    }
-    else {
-        setPasswordInvalid(false)
-    }
-
-    if(textState.phone.trim() == ''){
-        console.log('Se necesita escribir un telefono')
-        setPhoneInvalid(true)
-    }
-    else {
-        setPhoneInvalid(false)
-    }
     if (counter > 0){
       return false
     }
     else{
       return true
     }
+
   }
 
   useImperativeHandle(ref, () => {
@@ -91,11 +65,11 @@ const UserTextFields = forwardRef((props, ref) => {
                 required
                 id="Nombre"
                 label="Nombre"
-                name="nombre"
+                name="FirstName"
                 autoComplete="name"
                 onChange = {handleTextChange}
-                error = {nombreInvalid}
-                helperText = {nombreInvalid ? 'Necesita escribir su nombre' : ''}
+                error = {firstNameInvalid}
+                helperText = {firstNameInvalid ? 'Necesita escribir su nombre' : ''}
               />
             </Grid>
 
@@ -107,11 +81,11 @@ const UserTextFields = forwardRef((props, ref) => {
                 required
                 id="lastName"
                 label="Apellido"
-                name="apellido"
+                name="LastName"
                 autoComplete="name"
                 onChange = {handleTextChange}
-                error = {apellidoInvalid}
-                helperText = {apellidoInvalid ? 'Necesita escribir su apellido' : ''}
+                error = {lastNameInvalid}
+                helperText = {lastNameInvalid ? 'Necesita escribir su apellido' : ''}
               />
             </Grid>
           </Grid>
@@ -123,7 +97,7 @@ const UserTextFields = forwardRef((props, ref) => {
             fullWidth
             id="email"
             label="Correo Electrónico"
-            name="email"
+            name="Email"
             autoComplete="email"
             onChange = {handleTextChange}
             error = {emailInvalid}
@@ -135,7 +109,7 @@ const UserTextFields = forwardRef((props, ref) => {
             margin="dense"
             required
             fullWidth
-            name="password"
+            name="Password"
             label="Contraseña"
             type="password"
             id="password"
@@ -150,10 +124,10 @@ const UserTextFields = forwardRef((props, ref) => {
             margin="dense"
             required
             fullWidth
-            id="phone"
+            id="Phone"
             label="Teléfono"
             type="tel"
-            name="phone"
+            name="Phone"
             autoComplete="phone"
             onChange = {handleTextChange}
             error = {phoneInvalid}

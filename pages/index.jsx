@@ -47,6 +47,8 @@ export default function Index() {
   }
 
   const handleLoginGoogle = (event) => {
+      event.preventDefault()
+
       const provider = new firebase.auth.GoogleAuthProvider();
       firebase.auth().signInWithPopup(provider).then((result) => {
           console.log(result);
