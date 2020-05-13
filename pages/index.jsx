@@ -2,6 +2,11 @@ import firebase from "firebase";
 import React from 'react';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
+import Dialog from '@material-ui/core/Dialog'
+import DialogTitle from '@material-ui/core/DialogTitle'
+import DialogContent from '@material-ui/core/DialogContent'
+import DialogActions from '@material-ui/core/DialogActions'
+import DialogContentText from '@material-ui/core/DialogContentText'
 import Link from 'next/link';
 import Grid from '@material-ui/core/Grid';
 import Icon from '@mdi/react'
@@ -21,12 +26,47 @@ const GoogleIcon = () => {
   )
 }
 
+const LoginError = props => {
+  let errorText = "";
+  if(props.code == 1)
+    errorText = "No existe un usuario asociado a ese correo. Verifica que esté bien escrito, o regístrate si no lo has hecho."
+  else if(props.code == 2)
+    errorText = "La contraseña proporcionada es incorrecta. Inténtalo de nuevo."
+
+  return (
+      <Dialog
+        open={props.open}
+        onClose={props.handleClose}
+      >
+        <DialogTitle>{"No se pudo iniciar sesión"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            {errorText}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={props.handleClose}
+          >
+            Entendido
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+  );
+}
+
 export default function Index() {
   const classes = useStyles();
   const [userInfo, setInfo] = React.useState({
     email: '',
     password: ''
   })
+  const [open, setOpen] = React.useState(false);
+  const [errorCode, setErrorCode] = React.useState(0)
+  const handleCloseDialog = () => setOpen(false);
 
   const handleUserInfo = (event) => {
     setInfo({...userInfo, [event.target.name]: event.target.value})
@@ -42,7 +82,11 @@ export default function Index() {
           getUserToken();
         },
         (err) => {
-          alert("Oops " + err.message);
+          if(err.code == "auth/invalid-email")
+            setErrorCode(1);
+          else
+            setErrorCode(2);
+          setOpen(true);
         }
     );
   }
@@ -119,6 +163,11 @@ export default function Index() {
           </Link>
         </Grid>
       </Grid>
+      <LoginError
+        open={open}
+        handleClose={handleCloseDialog}
+        code={errorCode}
+      />
     </SideImageForm>
   );
 }
