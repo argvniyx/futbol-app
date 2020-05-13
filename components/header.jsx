@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const Header = () => {
+const Header = (props) => {
   const classes = useStyles();
   const [team, setTeam] = React.useState('');
 
@@ -39,6 +39,7 @@ const Header = () => {
   return (
     <AppBar position="static" className={classes.root}>
       <Toolbar>
+        {props.user ?
           <TextField
             select
             label="Equipo"
@@ -47,6 +48,9 @@ const Header = () => {
           <MenuItem value={1}>Team 1</MenuItem>
           <MenuItem value={2}>Team 2</MenuItem>
         </TextField>
+         :
+         null}
+        {props.component ? props.component : null}
         <Typography variant="h5" className={classes.title}>
           Futbol App
         </Typography>
