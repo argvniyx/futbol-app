@@ -7,6 +7,12 @@ import Avatar from '@material-ui/core/Avatar'
 import TextField from '@material-ui/core/TextField'
 import IconButton from '@material-ui/core/IconButton'
 import Edit from '@material-ui/icons/Edit'
+import Dialog from '@material-ui/core/Dialog'
+import DialogTitle from '@material-ui/core/DialogTitle'
+import DialogContent from '@material-ui/core/DialogContent'
+import DialogActions from '@material-ui/core/DialogActions'
+import DialogContentText from '@material-ui/core/DialogContentText'
+import Button from '@material-ui/core/Button';
 
 const useStyles = makeStyles((theme) => ({
   content: {
@@ -42,6 +48,12 @@ export default function UserCard(props) {
   const fullName = firstName + " " + lastName;
   const childFullName = children[0].firstName + " " + children[0].lastName
 
+  const [openEdit, setOpenEdit] = React.useState(false);
+  const handleOpenEdit = () => setOpenEdit(true);
+  const handleCloseEdit = () => setOpenEdit(false);
+
+  const handleSaveClick = () => console.log('clicked');
+ 
   return (
     <Card className={props.className}>
       <CardContent className={classes.content}>
@@ -65,10 +77,57 @@ export default function UserCard(props) {
         <Avatar className={classes.avatar} alt={fullName} src="/broken.jpg"/>
       </CardContent>
       <CardActions>
-        <IconButton>
+        <IconButton onClick={handleOpenEdit}>
           <Edit/>
         </IconButton>
       </CardActions>
+
+      <Dialog
+        open={openEdit}
+        onClose={handleCloseEdit}
+      >
+        <DialogTitle>Editar Información</DialogTitle>
+        <DialogContent>
+          <DialogContentText>Aquí puedes editar tu información de usuario</DialogContentText>
+          <TextField
+            margin="dense"
+            id="firstName"
+            label="Nombre"
+            type="name"
+            fullWidth
+          />
+          <TextField
+            margin="dense"
+            id="lastName"
+            label="Apellido"
+            type="name"
+            fullWidth
+          />
+          <TextField
+            margin="dense"
+            id="email"
+            label="Correo Electrónico"
+            type="email"
+            fullWidth
+          />
+          <TextField
+            margin="dense"
+            id="phone"
+            label="Teléfono"
+            type="tel"
+            fullWidth
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleSaveClick}
+          >
+            Guardar
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Card>
   );
 }
