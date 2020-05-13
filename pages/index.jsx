@@ -8,6 +8,7 @@ import Icon from '@mdi/react'
 import { mdiGoogle } from '@mdi/js'
 import { makeStyles } from '@material-ui/core/styles';
 import SideImageForm from '../components/side-image-form'
+var $ = require( "jquery" );
 
 const useStyles = makeStyles((theme) => ({
   submit: {
@@ -39,7 +40,18 @@ export default function Index() {
         userInfo['password']
     ).then(
         (result) => {
-          getUserToken();
+          getUserToken()
+          console.log(result['user']['xa'])
+          console.log(result['user']['_lat'])
+          $.ajax({
+            method: 'GET',
+            url: 'http://localhost:5001/futbol-app-8b521/us-central1/app/parent/children',
+            headers: {
+              authorization: 'Bearer ' + result['user']['xa']
+            }
+          }).done((children) => {
+            console.log(children)
+          })
         },
         (err) => {
           alert("Oops " + err.message);
