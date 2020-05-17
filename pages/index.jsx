@@ -77,16 +77,11 @@ export default function Index() {
 
   const handleLogin = (event) => {
     event.preventDefault()
-    // Router.push('/dashboard/' + '123')
-    console.log(userInfo['email'], userInfo['password'])
     firebase.auth().signInWithEmailAndPassword(
         userInfo['email'],
         userInfo['password']
     ).then(
         (result) => {
-          getUserToken()
-          result.user.getIdTokenResult().then((x) => Cookies.set('token',  x.token))
-          // console.log(result['user']['_lat'])
           $.ajax({
             method: 'GET',
             url: 'http://localhost:5001/futbol-app-8b521/us-central1/app/parent/children',
@@ -95,7 +90,8 @@ export default function Index() {
             }
           }).done((children) => {
             if (children.length > 0){
-              console.log(children)
+              let userData = {'displayName': result.user.displayName, 'email': result.user.email, 'phone': result.user.phoneNumber, 'uid': result.user.uid, 'token': result.user.xa, 'children': children }
+              Cookies.set('user', JSON.stringify(userData))
               Router.push('/dashboard/' + result.user.uid)
             }
             else{
