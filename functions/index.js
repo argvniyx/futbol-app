@@ -26,9 +26,11 @@ const coachRoutes = require('./Routes/CoachRoutes');
 const parentRoutes = require('./Routes/ParentRoutes');
 const teamsRoutes = require('./Routes/TeamsRoutes');
 const eventRoutes = require('./Routes/EventRoutes');
+const userRoutes = require('./Routes/UserRoutes');
 
 // Routes for Request
 app.use('/admin', adminRoutes);
+app.use('/user', userRoutes);
 app.use('/coach', coachRoutes);
 app.use('/parent', parentRoutes);
 app.use('/teams', teamsRoutes);
