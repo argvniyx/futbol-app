@@ -44,11 +44,8 @@ const useStyles = makeStyles((theme) => ({
 
 export default function UserCard(props) {
   const classes = useStyles();
-
-  const [user, modifyUser] = React.useState(props.person)
-  const {firstName, lastName, email, phone, children} = user;
-  const fullName = firstName + " " + lastName;
-  const childFullName = children[0].firstName + " " + children[0].lastName
+  const {displayName, email, phone, children} = props.person.person;
+  const childFullName = children[0].FirstName + " " + children[0].LastName
 
   const [openEdit, setOpenEdit] = React.useState(false);
   const handleOpenEdit = () => setOpenEdit(true);
@@ -71,7 +68,7 @@ export default function UserCard(props) {
       <CardContent className={classes.content}>
         <div className={classes.info}>
           <Typography component="h5" variant="h5">
-            {fullName}
+            {displayName}
           </Typography>
           <Typography variant="subtitle1" color="textSecondary">
             {email}
@@ -83,10 +80,10 @@ export default function UserCard(props) {
             Hijo: {childFullName}
           </Typography>
           <Typography variant="subtitle2">
-            Faltas: {children[0].absenceCount}
+            Faltas: {children[0].Absence}
           </Typography>
         </div>
-        <Avatar className={classes.avatar} alt={fullName} src="/broken.jpg"/>
+        <Avatar className={classes.avatar} alt={displayName} src="/broken.jpg"/>
       </CardContent>
       <CardActions>
         <IconButton onClick={handleOpenEdit}>

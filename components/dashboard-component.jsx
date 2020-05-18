@@ -23,21 +23,6 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-let son = {
-  firstName: "Fulano",
-  lastName: "Uno",
-  teamNumber: 1,
-  absenceCount: 4
-};
-
-let person = {
-  firstName: "Andrés Ricardo",
-  lastName: "Garza Vela",
-  email: "aricav96@gmail.com",
-  phone: "8166699778",
-  children: [son]
-};
-
 const events = [
   {
     id: 0,
@@ -111,10 +96,14 @@ const DashboardComponent = props => {
         />
         <EventDetails className={fixedHeightPaperT} event={currentEvent} user={props.user}/>
         <Directory className={fixedHeightPaperB}/>
-        <UserCard className={fixedHeightPaperB} person={person}/>
+        <UserCard className={fixedHeightPaperB} person={props.person}/>
       </Content>
     </Box>
   );
+}
+
+export async function getServerSideProps(){
+  
 }
 
 export default DashboardComponent;

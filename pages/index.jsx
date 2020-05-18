@@ -13,6 +13,8 @@ import Icon from '@mdi/react'
 import { mdiGoogle } from '@mdi/js'
 import { makeStyles } from '@material-ui/core/styles';
 import SideImageForm from '../components/side-image-form'
+import Router from "next/router"
+import Cookies from '../node_modules/js-cookie'
 var $ = require( "jquery" );
 
 const useStyles = makeStyles((theme) => ({
@@ -73,6 +75,26 @@ export default function Index() {
     setInfo({...userInfo, [event.target.name]: event.target.value})
   }
 
+  function routeLogin(result){
+    $.ajax({
+      method: 'GET',
+      url: 'http://localhost:5001/futbol-app-8b521/us-central1/app/parent/children',
+      headers: {
+        authorization: 'Bearer ' + result['user']['xa']
+      }
+    }).done((children) => {
+      if (children.length > 0){
+        let userData = {'displayName': result.user.displayName, 'email': result.user.email, 'phone': result.user.phoneNumber, 'uid': result.user.uid, 'token': result.user.xa, 'children': children }
+        Cookies.set('user', JSON.stringify(userData))
+        Router.push('/dashboard/' + result.user.uid)
+      }
+      else{
+        console.log('Padre no tiene hijos')
+      }
+      
+    })
+  }
+
   const handleLogin = (event) => {
     event.preventDefault()
     firebase.auth().signInWithEmailAndPassword(
@@ -80,18 +102,7 @@ export default function Index() {
         userInfo['password']
     ).then(
         (result) => {
-          getUserToken()
-          console.log(result['user']['xa'])
-          console.log(result['user']['_lat'])
-          $.ajax({
-            method: 'GET',
-            url: 'http://localhost:5001/futbol-app-8b521/us-central1/app/parent/children',
-            headers: {
-              authorization: 'Bearer ' + result['user']['xa']
-            }
-          }).done((children) => {
-            console.log(children)
-          })
+          routeLogin(result)
         },
         (err) => {
           if(err.code == "auth/invalid-email")
@@ -107,8 +118,7 @@ export default function Index() {
     event.preventDefault();
       const provider = new firebase.auth.GoogleAuthProvider();
       firebase.auth().signInWithPopup(provider).then((result) => {
-          console.log(result);
-          getUserToken();
+        routeLogin(result)
       }).catch((error) => {
           console.log(error.message);
       });
