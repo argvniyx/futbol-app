@@ -98,7 +98,7 @@ export default function UserCard(props) {
             Faltas: {children[0].Absence}
           </Typography>
         </div>
-        <Avatar className={classes.avatar} alt={displayName} src="/broken.jpg"/>
+        <Avatar className={classes.avatar} alt={firstName} src="/broken.jpg"/>
       </CardContent>
       <CardActions>
         <IconButton onClick={handleOpenEdit}>
