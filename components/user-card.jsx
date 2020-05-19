@@ -57,8 +57,11 @@ export default function UserCard(props) {
   // User info setup
   const split = splitName(props.person.person.displayName)
   const [user, modifyUser] = React.useState({...props.person.person, firstName: split.firstName, lastName: split.lastName})
-  const {displayName, email, phone, children, firstName, lastName} = user;
-  const childFullName = children[0].FirstName + " " + children[0].LastName
+  const {displayName, email, phone, firstName, lastName} = user;
+  if (props.person.person.role == 3){
+    const childFullName = children[0].FirstName + " " + children[0].LastName
+  }
+
 
   //// Used as intermediate object before saving
   const [userInfo, modifyUserInfo] = React.useState({...props.person.person, firstName: split.firstName, lastName: split.lastName})
@@ -94,12 +97,16 @@ export default function UserCard(props) {
           <Typography variant="subtitle2" color="textSecondary">
             {phone}
           </Typography>
-          <Typography variant="body2">
-            Hijo: {childFullName}
-          </Typography>
-          <Typography variant="subtitle2">
-            Faltas: {children[0].Absence}
-          </Typography>
+          {props.person.person.role == 3 ? 
+            <View>
+            <Typography variant="body2">
+              Hijo: {childFullName}
+            </Typography>
+            <Typography variant="subtitle2">
+              Faltas: {children[0].Absence}
+            </Typography>
+            </View>
+            : null}
         </div>
         <Avatar className={classes.avatar} alt={firstName} src="/broken.jpg"/>
       </CardContent>

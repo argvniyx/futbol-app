@@ -1,11 +1,16 @@
 import DashboardComponent from '../../components/dashboard-component'
 import {useRouter} from 'next/router'
-import Cookies from '../../node_modules/js-cookie'
 import cookies from '../../node_modules/next-cookies'
+import Router from "next/router"
 
 var $ = require( "jquery" );
 
 const Dashboard = (person) => {
+    console.log(person)
+    // if(!person.person){
+    //     Router.push('/')
+    // }
+
     const router = useRouter()
     return <DashboardComponent user={person.person.role > 2} person={person}/>
 };

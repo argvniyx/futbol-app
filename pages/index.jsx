@@ -115,7 +115,7 @@ export default function Index() {
       if (children.length > 0){
         let userData = {'displayName': result.user.displayName, 'email': result.user.email, 'phone': result.user.phoneNumber, 'uid': result.user.uid, 'token': result.user.xa, 'children': children }
         Cookies.set('user', JSON.stringify(userData))
-        // Router.push('/dashboard/' + result.user.uid)
+        Router.push('/dashboard/' + result.user.uid)
       }
       else{
         console.log('Padre no tiene hijos')
