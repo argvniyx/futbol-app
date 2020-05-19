@@ -96,12 +96,12 @@ const DashboardComponent = props => {
         />
         <EventDetails className={fixedHeightPaperT} event={currentEvent} user={props.user}/>
         <Directory className={fixedHeightPaperB}/>
-        <UserCard className={fixedHeightPaperB} person={props.person}/>
+
       </Content>
     </Box>
   );
 }
-
+        // <UserCard className={fixedHeightPaperB} person={props.person}/>
 export async function getServerSideProps(){
   
 }

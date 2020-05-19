@@ -75,18 +75,47 @@ export default function Index() {
     setInfo({...userInfo, [event.target.name]: event.target.value})
   }
 
-  function routeLogin(result){
+  function getOtherParams(result){
+    let otherParams = $.ajax({
+      method: 'GET',
+      url: 'http://localhost:5001/futbol-app-8b521/us-central1/app/user/fillOtherUserParams',
+      headers: {
+        authorization: 'Bearer ' + result['user']['xa']
+      },
+    }).then((otherParams) => {
+      console.log(otherParams)
+
+      if(otherParams.Role == 1){
+        // Route to admin dashboard
+      }
+      else if (otherParams.Role == 2){
+        console.log('es coach')
+        let userData = {'displayName': result.user.displayName, 'email': result.user.email, 'phone': result.user.phoneNumber, 
+                        'uid': result.user.uid, 'token': result.user.xa,  'role': otherParams.Role}
+        Cookies.set('user', JSON.stringify(userData))
+        Router.push('/dashboard/' + result.user.uid)
+      }
+      else{
+        routeLogin(result, otherParams.Role)
+      }
+
+    }).catch((error) => {
+      console.log(error.message)
+    })
+  }
+
+  function routeLogin(result, role){
     $.ajax({
       method: 'GET',
       url: 'http://localhost:5001/futbol-app-8b521/us-central1/app/parent/children',
       headers: {
         authorization: 'Bearer ' + result['user']['xa']
       }
-    }).done((children) => {
+    }).then((children) => {
       if (children.length > 0){
         let userData = {'displayName': result.user.displayName, 'email': result.user.email, 'phone': result.user.phoneNumber, 'uid': result.user.uid, 'token': result.user.xa, 'children': children }
         Cookies.set('user', JSON.stringify(userData))
-        Router.push('/dashboard/' + result.user.uid)
+        // Router.push('/dashboard/' + result.user.uid)
       }
       else{
         console.log('Padre no tiene hijos')
@@ -102,7 +131,7 @@ export default function Index() {
         userInfo['password']
     ).then(
         (result) => {
-          routeLogin(result)
+          getOtherParams(result)
         },
         (err) => {
           if(err.code == "auth/invalid-email")
@@ -118,7 +147,7 @@ export default function Index() {
     event.preventDefault();
       const provider = new firebase.auth.GoogleAuthProvider();
       firebase.auth().signInWithPopup(provider).then((result) => {
-        routeLogin(result)
+        getOtherParams(result)
       }).catch((error) => {
           console.log(error.message);
       });

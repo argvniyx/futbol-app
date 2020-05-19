@@ -7,11 +7,11 @@ var $ = require( "jquery" );
 
 const Dashboard = (person) => {
     const router = useRouter()
-
-    return <DashboardComponent user person={person}/>
+    return <DashboardComponent user={person.person.role > 2} person={person}/>
 };
 
 Dashboard.getInitialProps = async context => {
+    // NO BORAR PLZ UWU
     // let {token} = cookies(context)
     // console.log(token)
     // let res = await fetch('http://localhost:5001/futbol-app-8b521/us-central1/app/parent/children', {
