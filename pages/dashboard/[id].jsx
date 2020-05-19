@@ -1,7 +1,6 @@
 import DashboardComponent from '../../components/dashboard-component'
 import {useRouter} from 'next/router'
 import cookies from '../../node_modules/next-cookies'
-import Router from "next/router"
 
 var $ = require( "jquery" );
 
