@@ -8,10 +8,9 @@ import { makeStyles } from '@material-ui/core/styles'
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    flexGrow: 0,
     '& .MuiTextField-root': {
       margin: theme.spacing(1),
-      width: '25ch',
+      width: '12ch',
     },
     '& .MuiFormLabel-root, & .MuiSelect-icon': {
       color: theme.palette.background.default
