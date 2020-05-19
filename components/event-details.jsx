@@ -57,12 +57,13 @@ export default function EventDetails(props) {
         <Typography variant="h6">Comentarios</Typography>
         {comments}
       </CardContent>
-      {/* {props.user ? null :} */}
+      {props.user ? null :
        <CardActions>
          <IconButton onClick={handleOpenEdit}>
            <Edit/>
          </IconButton>
        </CardActions>
+      }
       <Dialog
         open={openEdit}
         onClose={handleCloseEdit}
