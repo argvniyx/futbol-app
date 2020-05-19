@@ -45,14 +45,13 @@ function a11yProps(index) {
   };
 }
 
-export default function RegisterCoach() {
+const RegisterCoach = (props) => {
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
-
   return (
     <SideImageForm imgPath='register-coach-image.jpg' title="Registro Entrenador">
       <UserTextFields/>
@@ -68,7 +67,7 @@ export default function RegisterCoach() {
         <Horario/>
       </TabPanel>
       <TabPanel value={value} index={1}>
-        <SelectTeam/>
+        <SelectTeam teams={props.teams}/>
       </TabPanel>
 
 
@@ -82,3 +81,17 @@ export default function RegisterCoach() {
     </SideImageForm>
   );
 }
+
+RegisterCoach.getInitialProps = async context => {
+
+  let res = await fetch('http://localhost:5001/futbol-app-8b521/us-central1/app/teams/noCoach', {
+      method: 'GET',
+  })
+  let teams = await res.json()
+
+  return {
+      'teams' : teams
+  }
+}
+
+export default RegisterCoach;
