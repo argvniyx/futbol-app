@@ -58,8 +58,11 @@ export default function UserCard(props) {
   const split = splitName(props.person.person.displayName)
   const [user, modifyUser] = React.useState({...props.person.person, firstName: split.firstName, lastName: split.lastName})
   const {displayName, email, phone, firstName, lastName} = user;
+  let children = ''
+  let childFullName = ''
   if (props.person.person.role == 3){
-    const childFullName = children[0].FirstName + " " + children[0].LastName
+    children = user.children;
+    childFullName = children[0].FirstName + " " + children[0].LastName
   }
 
 
@@ -98,14 +101,14 @@ export default function UserCard(props) {
             {phone}
           </Typography>
           {props.person.person.role == 3 ? 
-            <View>
+            <div>
             <Typography variant="body2">
               Hijo: {childFullName}
             </Typography>
             <Typography variant="subtitle2">
               Faltas: {children[0].Absence}
             </Typography>
-            </View>
+            </div>
             : null}
         </div>
         <Avatar className={classes.avatar} alt={firstName} src="/broken.jpg"/>

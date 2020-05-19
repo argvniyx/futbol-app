@@ -75,36 +75,41 @@ export default function Index() {
     setInfo({...userInfo, [event.target.name]: event.target.value})
   }
 
-  function getOtherParams(result){
-    let otherParams = $.ajax({
-      method: 'GET',
-      url: 'http://localhost:5001/futbol-app-8b521/us-central1/app/user/fillOtherUserParams',
-      headers: {
-        authorization: 'Bearer ' + result['user']['xa']
-      },
-    }).then((otherParams) => {
-      console.log(otherParams)
+  function getOtherParams(result, googleLogin){
+    if (!googleLogin){
+      $.ajax({
+        method: 'GET',
+        url: 'http://localhost:5001/futbol-app-8b521/us-central1/app/user/fillOtherUserParams',
+        headers: {
+          authorization: 'Bearer ' + result['user']['xa']
+        },
+      }).then((otherParams) => {
 
-      if(otherParams.Role == 1){
-        // Route to admin dashboard
-      }
-      else if (otherParams.Role == 2){
-        console.log('es coach')
-        let userData = {'displayName': result.user.displayName, 'email': result.user.email, 'phone': result.user.phoneNumber, 
-                        'uid': result.user.uid, 'token': result.user.xa,  'role': otherParams.Role}
-        Cookies.set('user', JSON.stringify(userData))
-        Router.push('/dashboard/' + result.user.uid)
-      }
-      else{
-        routeLogin(result, otherParams.Role)
-      }
+        if(otherParams.Role == 1){
+          // Route to admin dashboard
+        }
+        else if (otherParams.Role == 2){
+          console.log('es coach')
+            let userData = {'displayName': result.user.displayName, 'email': result.user.email, 'phone': result.user.phoneNumber, 
+                            'uid': result.user.uid, 'token': result.user.xa,  'role': otherParams.Role}
+            Cookies.set('user', JSON.stringify(userData))
+            Router.push('/dashboard/' + result.user.uid)
+          
+        }
+        else if (otherParams.Role == 3){
+          routeLogin(result)
+        }
 
-    }).catch((error) => {
-      console.log(error.message)
-    })
+      }).catch((error) => {
+        console.log(error.message)
+      })
+    }
+    else{
+      routeLogin(result)
+    }
   }
 
-  function routeLogin(result, role){
+  function routeLogin(result){
     $.ajax({
       method: 'GET',
       url: 'http://localhost:5001/futbol-app-8b521/us-central1/app/parent/children',
@@ -113,14 +118,16 @@ export default function Index() {
       }
     }).then((children) => {
       if (children.length > 0){
-        let userData = {'displayName': result.user.displayName, 'email': result.user.email, 'phone': result.user.phoneNumber, 'uid': result.user.uid, 'token': result.user.xa, 'children': children }
+        let userData = {'displayName': result.user.displayName, 'email': result.user.email, 'phone': result.user.phoneNumber, 
+                        'uid': result.user.uid, 'token': result.user.xa, 'role': 3, 'children': children}
         Cookies.set('user', JSON.stringify(userData))
         Router.push('/dashboard/' + result.user.uid)
       }
       else{
-        console.log('Padre no tiene hijos')
+        //TODO: route to child creation
+        console.log('padre no tiene hijos')
+        
       }
-      
     })
   }
 
@@ -131,7 +138,7 @@ export default function Index() {
         userInfo['password']
     ).then(
         (result) => {
-          getOtherParams(result)
+          getOtherParams(result, false)
         },
         (err) => {
           if(err.code == "auth/invalid-email")
@@ -147,9 +154,10 @@ export default function Index() {
     event.preventDefault();
       const provider = new firebase.auth.GoogleAuthProvider();
       firebase.auth().signInWithPopup(provider).then((result) => {
-        getOtherParams(result)
+        getOtherParams(result, true)
       }).catch((error) => {
           console.log(error.message);
+          console.log(result)
       });
   }
 
