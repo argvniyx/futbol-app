@@ -5,12 +5,16 @@ import TextField from '@material-ui/core/TextField'
 import MenuItem from '@material-ui/core/MenuItem'
 import Button from '@material-ui/core/Button'
 import { makeStyles } from '@material-ui/core/styles'
+import firebase from "firebase";
+import Router from "next/router"
+import Cookies from '../node_modules/js-cookie'
 
 const useStyles = makeStyles((theme) => ({
   root: {
+    flexGrow: 0,
     '& .MuiTextField-root': {
       margin: theme.spacing(1),
-      width: '12ch',
+      width: '25ch',
     },
     '& .MuiFormLabel-root, & .MuiSelect-icon': {
       color: theme.palette.background.default
@@ -26,6 +30,12 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'center'
   }
 }));
+
+const handleLogout = (event) => {
+  firebase.auth().signOut()
+  Cookies.remove('user')
+  Router.push('/')
+}
 
 const Header = (props) => {
   const classes = useStyles();
@@ -53,7 +63,7 @@ const Header = (props) => {
         <Typography variant="h5" className={classes.title}>
           Futbol App
         </Typography>
-        <Button color="inherit" size="large">Logout</Button>
+        <Button color="inherit" size="large" onClick={handleLogout}>Logout</Button>
       </Toolbar>
     </AppBar>
   );
