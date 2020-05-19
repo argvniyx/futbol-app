@@ -60,22 +60,25 @@ export default function UserCard(props) {
   const {displayName, email, phone, children, firstName, lastName} = user;
   const childFullName = children[0].FirstName + " " + children[0].LastName
 
+  //// Used as intermediate object before saving
+  const [userInfo, modifyUserInfo] = React.useState({...props.person.person, firstName: split.firstName, lastName: split.lastName})
+
   // Dialog open/close
   const [openEdit, setOpenEdit] = React.useState(false);
   const handleOpenEdit = () => setOpenEdit(true);
-  const handleCloseEdit = () => setOpenEdit(false);
+  const handleCloseEdit = () => {
+    // If there is no change, we should rollback the state
+    modifyUserInfo(user)
+    setOpenEdit(false);
+  }
 
   // Post to server
   const handleSaveClick = () => {
-    // modifyUser({
-    //   ...user,
-    //   firstName: "Changed"
-    // })
-    console.log('clicked');
+    modifyUser(userInfo)
   }
 
   const handleFieldChange = (event) => {
-    modifyUser({...user, [event.target.id]: event.target.value})
+    modifyUserInfo({...userInfo, [event.target.id]: event.target.value})
   }
  
   return (
