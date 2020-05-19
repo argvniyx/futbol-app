@@ -17,11 +17,23 @@ export default function EventDetails(props) {
   const [currentEvent, modifyEvent] = React.useState(props.event)
   const {name, place, date, hour, length, comments} = currentEvent;
 
+  // Use as intermediate object before saving in dialog
+  const [eventInfo, modifyEventInfo] = React.useState(props.event)
+
   const [openEdit, setOpenEdit] = React.useState(false);
   const handleOpenEdit = () => setOpenEdit(true);
-  const handleCloseEdit = () => setOpenEdit(false);
+  const handleCloseEdit = () => {
+    modifyEventInfo(currentEvent)
+    setOpenEdit(false);
+  }
+
   const handleFieldChange = (event) => {
-    modifyEvent({...currentEvent, [event.target.id]: event.target.value})
+    modifyEventInfo({...eventInfo, [event.target.id]: event.target.value})
+  }
+
+  const handleSaveClick = () => {
+    modifyEvent(eventInfo)
+    setOpenEdit(false)
   }
 
   return (
@@ -41,13 +53,12 @@ export default function EventDetails(props) {
         <Typography variant="h6">Comentarios</Typography>
         {comments}
       </CardContent>
-      {props.user ? null :
+      {/* {props.user ? null :} */}
        <CardActions>
          <IconButton onClick={handleOpenEdit}>
            <Edit/>
          </IconButton>
        </CardActions>
-      }
       <Dialog
         open={openEdit}
         onClose={handleCloseEdit}
@@ -105,7 +116,7 @@ export default function EventDetails(props) {
           <Button
             variant="contained"
             color="primary"
-            /* onClick={handleSaveClick} */
+            onClick={handleSaveClick}
           >
             Guardar
           </Button>
