@@ -42,15 +42,30 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+function splitName(fullName) {
+  const splitName = fullName.split(/[ ]/);
+  const amountOfNames = splitName.length;
+  return {
+    firstName: splitName.slice(0, amountOfNames - 1).join(' '),
+    lastName: splitName.slice(amountOfNames - 1).join(' ')
+  }
+}
+
 export default function UserCard(props) {
   const classes = useStyles();
-  const {displayName, email, phone, children} = props.person.person;
+
+  // User info setup
+  const split = splitName(props.person.person.displayName)
+  const [user, modifyUser] = React.useState({...props.person.person, firstName: split.firstName, lastName: split.lastName})
+  const {displayName, email, phone, children, firstName, lastName} = user;
   const childFullName = children[0].FirstName + " " + children[0].LastName
 
+  // Dialog open/close
   const [openEdit, setOpenEdit] = React.useState(false);
   const handleOpenEdit = () => setOpenEdit(true);
   const handleCloseEdit = () => setOpenEdit(false);
 
+  // Post to server
   const handleSaveClick = () => {
     // modifyUser({
     //   ...user,
@@ -68,7 +83,7 @@ export default function UserCard(props) {
       <CardContent className={classes.content}>
         <div className={classes.info}>
           <Typography component="h5" variant="h5">
-            {displayName}
+            {firstName + ' ' + lastName}
           </Typography>
           <Typography variant="subtitle1" color="textSecondary">
             {email}
