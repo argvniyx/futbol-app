@@ -17,6 +17,10 @@ export default function EventDetails(props) {
   const [currentEvent, modifyEvent] = React.useState(props.event)
   const {name, place, date, hour, length, comments} = currentEvent;
 
+  React.useEffect(() => {
+    modifyEvent(props.event)
+  }, [props.event]);
+
   // Use as intermediate object before saving in dialog
   const [eventInfo, modifyEventInfo] = React.useState(props.event)
 

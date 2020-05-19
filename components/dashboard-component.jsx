@@ -76,7 +76,7 @@ const DashboardComponent = props => {
   const fixedHeightPaperT = clsx(classes.paper, classes.fixedHeightTop);
   const fixedHeightPaperB = clsx(classes.paper, classes.fixedHeightBottom);
   const [selectedIndex, setSelectedIndex] = React.useState(0);
-  const [currentEvent, setCurrentEvent] = React.useState(events[0]);
+  const [currentEvent, setCurrentEvent] = React.useState(events[selectedIndex]);
 
   // Handle the event details logic
   const handleEventDetails = (index) => {
