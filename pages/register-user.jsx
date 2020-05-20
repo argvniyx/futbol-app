@@ -3,6 +3,9 @@ import UserTextFields from '../components/user-textfields'
 import Button from '@material-ui/core/Button'
 import { makeStyles } from '@material-ui/styles'
 import { useRef } from 'react';
+import Router from "next/router"
+import firebase from "firebase";
+import Cookies from '../node_modules/js-cookie'
 var $ = require( "jquery" );
 
 const useStyles = makeStyles((theme) => ({
@@ -24,9 +27,18 @@ export default function RegisterParent() {
                 method: 'POST',
                 url: 'http://localhost:5001/futbol-app-8b521/us-central1/app/parent/sign-up',
                 data: ref.current.textState
-            }).done(() => {
-                console.log('finished sign-up')
-                window.location.href = 'http://localhost:3000'
+            }).then(() => {
+                firebase.auth().signInWithEmailAndPassword(
+                    ref.current.textState.Email,
+                    ref.current.textState.Password
+                ).then((result) => {
+                    let userData = {'displayName': result.user.displayName, 'email': result.user.email, 'phone': result.user.phoneNumber, 
+                                    'uid': result.user.uid, 'token': result.user.xa, 'role': 3}
+                    Cookies.set('user', JSON.stringify(userData))
+                    //TODO: route to child creation
+                    // Router.push('/dashboard/' + result.user.uid)
+                    console.log('sign up completado')
+                })
             }).fail(() => {
                 console.log('sign-up failed')
             }) 
