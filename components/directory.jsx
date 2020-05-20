@@ -16,6 +16,24 @@ const rows = [
 ];
 
 export default function Directory(props) {
+  const [directory, setDirectory] = React.useState([]);
+
+  React.useEffect(() => {
+    fetch(`http://localhost:5001/futbol-app-8b521/us-central1/app/teams/${props.teamId}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${props.token}`,
+        'Content-Type': 'application/json'
+      }
+    })
+      .then(res => res.json())
+      .then(
+        (result) => setDirectory(result),
+        (error) => console.log(error)
+      )
+  }, [props.teamId])
+
+  console.log(directory)
   return (
     <TableContainer component={Paper} className={props.className}>
       <Table aria-label="phone directory">
