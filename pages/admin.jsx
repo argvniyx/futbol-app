@@ -11,6 +11,7 @@ import TextField from '@material-ui/core/TextField'
 import Content from '../components/content-component'
 import AdminList from '../components/admin-list'
 import { makeStyles } from '@material-ui/styles'
+import $ from 'jquery'
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -40,9 +41,35 @@ export default function Admin() {
   const fixedHeightPaperT = clsx(classes.paper, classes.fixedHeightTop)
 
   // Handling the Dialog opening and closing
-  const [open, setOpen] = React.useState(false)
-  const handleCloseDialog = () => setOpen(false)
-  const handleOpenDialog = () => setOpen(true)
+  const [open, setOpen] = React.useState(false);
+  const handleCloseDialog = () => setOpen(false);
+  const handleOpenDialog = () => setOpen(true);
+
+  // State for invitation sending
+  const [coach, modifyCoach] = React.useState({
+    firstName: "",
+    lastName: "",
+    email: ""
+  });
+
+  const handleChange = (event) => modifyCoach({...coach, [event.target.id]: event.target.value})
+  const sendInvitation = () => {
+    fetch('http://localhost:5001/futbol-app-8b521/us-central1/app/admin/new-coach', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(coach)
+    })
+      .then(
+        (result) => {
+          console.log("in success")
+          console.log(result)
+        },
+        (error) => {
+          console.log('in error')
+          console.log(error)
+        }
+      )
+  }
 
   return (
     <Box>
@@ -61,21 +88,41 @@ export default function Admin() {
             El sistema generará un correo con un token especial para su registro.
           </DialogContentText>
           <TextField
-            variant="outlined"
             margin="normal"
             required
             fullWidth
             id="email"
-            label="Email Address"
+            label="Correo electrónico"
             name="email"
             autoComplete="email"
+            onChange={handleChange}
+          />
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="firstName"
+            label="Nombre"
+            name="name"
+            autoComplete="name"
+            onChange={handleChange}
+          />
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="lastName"
+            label="Apellido"
+            name="lastName"
+            autoComplete="name"
+            onChange={handleChange}
           />
         </DialogContent>
         <DialogActions>
           <Button
             variant="contained"
             color="primary"
-            /* onClick={props.handleClose} */
+            onClick={sendInvitation}
           >
             Mandar Invitación
           </Button>
