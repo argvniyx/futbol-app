@@ -131,7 +131,6 @@ router.get(
         ).doc(userID).get().then((snapshot) => {
 
             let children = snapshot.data().children;
-            console.log(children)
             if(children.length > 0) {
                 children.forEach((child) => {
 
