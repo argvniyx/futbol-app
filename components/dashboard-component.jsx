@@ -79,13 +79,20 @@ const DashboardComponent = props => {
   const [currentEvent, setCurrentEvent] = React.useState(events[selectedIndex]);
 
   // The current child is the first child on first load
-  const [children, setChildren] = React.useState(props.person.person.children)
-  const [currentChild, setCurrentChild] = React.useState(children[0])
-  const [teamId, setTeamId] = React.useState(currentChild.TeamID);
+  // A coach does not have children
+  const [children, setChildren] = React.useState(
+    props.person.person.children ?
+      props.person.person.children : null
+  )
+  const [currentChild, setCurrentChild] = React.useState(children ? children[0] : null)
+  const [teamId, setTeamId] = React.useState(
+    currentChild ?
+      currentChild.TeamID : props.person.person.TeamID
+  );
 
   React.useEffect(() => {
-    setTeamId(currentChild.TeamID)
-  }, [currentChild])
+    setTeamId(currentChild ? currentChild.TeamID : teamId)
+  }, [currentChild ? currentChild : null])
 
   // Handle the event details logic
   const handleEventDetails = (index) => {

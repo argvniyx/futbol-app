@@ -24,7 +24,6 @@ export default function Directory(props) {
       )
   }, [props.teamId])
 
-  console.log(directory)
   return (
     <TableContainer component={Paper} className={props.className}>
       <Table aria-label="phone directory">
@@ -38,7 +37,7 @@ export default function Directory(props) {
         </TableHead>
         <TableBody>
           {directory.map((row) => (
-            <TableRow key={row.id}>
+            <TableRow key={row.UserID}>
               <TableCell component="th" scope="row">
                 {row.FirstName}
               </TableCell>
