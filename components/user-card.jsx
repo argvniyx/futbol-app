@@ -73,7 +73,7 @@ export default function UserCard(props) {
   const [openEdit, setOpenEdit] = React.useState(false);
   const handleOpenEdit = () => setOpenEdit(true);
   const handleCloseEdit = () => {
-    // If there is no change, we should rollback the state
+    // If there is no change, we should rollback the stat
     modifyUserInfo(user)
     setOpenEdit(false);
   }
@@ -81,6 +81,7 @@ export default function UserCard(props) {
   // Post to server
   const handleSaveClick = () => {
     modifyUser(userInfo)
+    setOpenEdit(false)
   }
 
   const handleFieldChange = (event) => {
