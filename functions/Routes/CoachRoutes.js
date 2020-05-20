@@ -17,7 +17,7 @@ router.post('/sign-up', (req, res) => {
     const Password = req.body.Password;
     const FirstName = req.body.FirstName;
     const LastName = req.body.LastName;
-    const Cellphone = req.body.Cellphone;
+    const Phone = req.body.Phone;
     let TeamID = req.body.TeamID; 
     const UserType = 2;
 
@@ -26,7 +26,7 @@ router.post('/sign-up', (req, res) => {
         !Password ||
         !FirstName ||
         !LastName || 
-        !Cellphone) {
+        !Phone) {
         return res.status(400).send('Missing body');
     }
 
@@ -41,7 +41,7 @@ router.post('/sign-up', (req, res) => {
         email: Email,
         password: Password,
         displayName: FirstName + ' ' + LastName,
-        phoneNumber: Cellphone })
+        phoneNumber: Phone })
 
     // If the user were added correctly...
     .then((user) => {
@@ -93,7 +93,7 @@ router.put('/:id', (req, res) => {
     const Email = req.body.Email;
     const FirstName = req.body.FirstName;
     const LastName = req.body.LastName;
-    const Cellphone = req.body.Cellphone;
+    const Phone = req.body.Phone;
 
     // Get the param id
     const CoachID = req.params.id;
@@ -107,7 +107,7 @@ router.put('/:id', (req, res) => {
     if (!Email ||
         !FirstName ||
         !LastName || 
-        !Cellphone) {
+        !Phone) {
         return res.status(400).send('Missing body');
     }
 
@@ -129,7 +129,7 @@ router.put('/:id', (req, res) => {
         admin.auth().updateUser(CoachID, {
             email: Email,
             displayName: FirstName + ' ' + LastName,
-            phoneNumber: Cellphone
+            phoneNumber: Phone
         })
         .then(()=>{
             return res.status(200).send("Coach Updated!")
