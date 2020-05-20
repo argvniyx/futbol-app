@@ -253,7 +253,7 @@ router.get('/:id', (req, res) => {
                     DirectoryList.push({
                         "UserID": CoachObj.uid,
                         "Email": CoachObj.email,
-                        "Phone": CoachObj.phone,
+                        "Phone": CoachObj.phoneNumber,
                         "FirstName": CoachObj.displayName.split(" ")[0],
                         "LastName": CoachObj.displayName.split(" ")[1],
                         "isCoach": true
@@ -285,7 +285,7 @@ router.get('/:id', (req, res) => {
                                                     DirectoryList.push({
                                                         "UserID": userObj.uid,
                                                         "Email": userObj.email,
-                                                        "Phone": userObj.phone,
+                                                        "Phone": userObj.phoneNumber,
                                                         "FirstName": userObj.displayName.split(" ")[0],
                                                         "LastName": userObj.displayName.split(" ")[1],
                                                         "isCoach": false
