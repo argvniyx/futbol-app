@@ -8,6 +8,13 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import { makeStyles } from '@material-ui/styles'
 import Box from '@material-ui/core/Box'
+import { useRef } from 'react';
+import firebase from "firebase";
+import Cookies from '../node_modules/js-cookie'
+import Router from "next/router"
+import { TextField } from '@material-ui/core'
+import Grid from '@material-ui/core/Grid'
+var $ = require( "jquery" );
 
 const useStyles = makeStyles((theme) => ({
   submit: {
@@ -45,17 +52,97 @@ function a11yProps(index) {
   };
 }
 
-export default function RegisterCoach() {
+const RegisterCoach = (props) => {
+  const ref = useRef(null)
+  const teamRef = useRef(null)
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
+  const [teamName, setTeamName] = React.useState('')
+  const [teamNameInvalid, setTeamNameInvalid] = React.useState(false)
+
+  const handleRegister = () => {
+    let valid = true
+    let userData = {
+          'FirstName' : ref.current.textState.FirstName,
+          'LastName' : ref.current.textState.LastName,
+          'Email' : ref.current.textState.Email,
+          'Password' : ref.current.textState.Password,
+          'Phone' : ref.current.textState.Phone,
+          'TeamID' : ''
+        }
+    if (!ref.current.validateFields()){
+      valid = false
+    }
+
+    if(value == 0 && teamName == ''){
+      valid = false
+      setTeamNameInvalid(true)
+    }
+    else{
+      userData['TeamID'] = ''
+      setTeamNameInvalid(false)
+    }
+
+    if(!teamRef.current && value == 1){
+      valid = false
+      userData['TeamID'] = ''
+    }
+    else if(value == 1){
+      userData['TeamID'] = teamRef.current
+    }
+
+
+    console.log(userData)
+    if (valid){
+        $.ajax({
+          method: 'POST',
+          url: 'http://localhost:5001/futbol-app-8b521/us-central1/app/coach/sign-up',
+          data: userData
+        }).then(() => {
+          firebase.auth().signInWithEmailAndPassword(
+            ref.current.textState.Email,
+            ref.current.textState.Password
+          ).then((result) =>{
+            let userData = {'displayName': result.user.displayName, 'email': result.user.email, 'phone': result.user.phoneNumber, 
+                            'uid': result.user.uid, 'token': result.user.xa, 'role': 2}
+            Cookies.set('user', JSON.stringify(userData))
+            if (value == 0){
+              $.ajax({
+                method: 'POST',
+                url: 'http://localhost:5001/futbol-app-8b521/us-central1/app/teams',
+                data: {
+                  Name : teamName,
+                  ColorFont : 'ColorFont',
+                  ColorBackground : 'ColorBackground',
+                  SeasonStart : 'SeasonStart',
+                  SeasonEnd : 'SeasonEnd',
+                  CoachID : result.user.uid
+                }
+              }).then(() =>{
+                Router.push('/dashboard/' + result.user.uid)
+              })
+            }
+            else if (value == 1){
+              Router.push('/dashboard/' + result.user.uid)
+            }
+          })
+        })
+      
+      console.log('Intento de registro')
+    }
+  }
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
+  const handleTextChange = (event) => {
+    setTeamName(event.target.value)
+  }
+
   return (
     <SideImageForm imgPath='register-coach-image.jpg' title="Registro Entrenador">
-      <UserTextFields/>
+      <UserTextFields ref={ref}/>
 
       <AppBar position="static" className={classes.tabBar}>
         <Tabs value={value} onChange={handleChange} variant="fullWidth" aria-label="Team Selection Method">
@@ -65,10 +152,21 @@ export default function RegisterCoach() {
       </AppBar>
 
       <TabPanel value={value} index={0}>
+        <Grid container direction='column' alignItems='center'>
+          <TextField
+            margin='dense'
+            variant='outlined'
+            label='Nombre Equipo'
+            autoComplete="name"
+            onChange = {handleTextChange}
+            error = {teamNameInvalid}
+            helperText = {teamNameInvalid ? 'Necesita escribir el nombre del equipo' : ''}
+          />
+        </Grid>
         <Horario/>
       </TabPanel>
       <TabPanel value={value} index={1}>
-        <SelectTeam/>
+        <SelectTeam ref={teamRef} teams={props.teams}/>
       </TabPanel>
 
 
@@ -76,9 +174,24 @@ export default function RegisterCoach() {
         className={classes.submit}
         variant="contained"
         color="primary"
-        fullWidth>
+        fullWidth
+        onClick={handleRegister}>
         Registrarse
       </Button>
     </SideImageForm>
   );
 }
+
+RegisterCoach.getInitialProps = async context => {
+
+  let res = await fetch('http://localhost:5001/futbol-app-8b521/us-central1/app/teams/noCoach', {
+      method: 'GET',
+  })
+  let teams = await res.json()
+
+  return {
+      'teams' : teams
+  }
+}
+
+export default RegisterCoach;

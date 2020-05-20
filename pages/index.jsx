@@ -91,7 +91,7 @@ export default function Index() {
         else if (otherParams.Role == 2){
           console.log('es coach')
             let userData = {'displayName': result.user.displayName, 'email': result.user.email, 'phone': result.user.phoneNumber, 
-                            'uid': result.user.uid, 'token': result.user.xa,  'role': otherParams.Role}
+                            'uid': result.user.uid, 'token': result.user.xa,  'role': otherParams.Role, 'TeamID': otherParams.TeamID}
             Cookies.set('user', JSON.stringify(userData))
             Router.push('/dashboard/' + result.user.uid)
           

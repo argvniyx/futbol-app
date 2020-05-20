@@ -5,7 +5,6 @@ import { forwardRef, useImperativeHandle } from 'react'
 
 const UserTextFields = forwardRef((props, ref) => {
 
-  // const {refTextValues, invalidTextRef} = ref
   const [textState, setText] = React.useState({
     FirstName : '',
     LastName : '',
