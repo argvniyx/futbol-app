@@ -78,6 +78,15 @@ const DashboardComponent = props => {
   const [selectedIndex, setSelectedIndex] = React.useState(0);
   const [currentEvent, setCurrentEvent] = React.useState(events[selectedIndex]);
 
+  // The current child is the first child on first load
+  const [children, setChildren] = React.useState(props.person.person.children)
+  const [currentChild, setCurrentChild] = React.useState(children[0])
+  const [teamId, setTeamId] = React.useState(currentChild.TeamID);
+
+  React.useEffect(() => {
+    setTeamId(currentChild.TeamID)
+  }, [currentChild])
+
   // Handle the event details logic
   const handleEventDetails = (index) => {
     setSelectedIndex(index);
