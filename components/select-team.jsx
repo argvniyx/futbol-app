@@ -1,27 +1,34 @@
 import Autocomplete from '@material-ui/lab/Autocomplete'
 import TextField from '@material-ui/core/TextField'
+import { forwardRef, useImperativeHandle } from 'react'
 
-const SelectTeam = (props) =>{
+const SelectTeam = forwardRef((props, ref) =>{
 
-function convertToArray(){
-  const teamsList = []
-  props.teams.forEach(team => {
-    teamsList.push({'name' : team.Name})
-  });
-  return teamsList
+const [teamID, setTeamID] = React.useState('')
+const handleTeamChange = (event, newValue) => {
+
+  if(props.teams[event.target.value]){
+    setTeamID(newValue['TeamID'])
+  }
+  else{
+    setTeamID('')
+  }
 }
+
+useImperativeHandle(ref, () =>{
+  return teamID
+})
 
   return(
     <Autocomplete
       id="select-team"
-      options={convertToArray()}
-      getOptionLabel={(option) => option.name}
-      renderInput={(params) => <TextField {...params} label="Combo box" variant="outlined" />}
+      options={props.teams}
+      getOptionLabel={(option) => option.Name}
+      renderInput={(params) => <TextField {...params} label="Seleccione un equipo" variant="outlined" />}
       fullWidth
+      onChange={handleTeamChange}
     />
   )
-}
-
-const teamsList = [{name: "team1"}, {name: "team2"}, {name: "team3"}];
+})
 
 export default SelectTeam;

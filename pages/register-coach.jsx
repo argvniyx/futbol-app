@@ -8,6 +8,11 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import { makeStyles } from '@material-ui/styles'
 import Box from '@material-ui/core/Box'
+import { useRef } from 'react';
+import firebase from "firebase";
+import Cookies from '../node_modules/js-cookie'
+import Router from "next/router"
+var $ = require( "jquery" );
 
 const useStyles = makeStyles((theme) => ({
   submit: {
@@ -46,15 +51,57 @@ function a11yProps(index) {
 }
 
 const RegisterCoach = (props) => {
+  const ref = useRef(null)
+  const teamRef = useRef(null)
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
+
+  const handleRegister = () => {
+    let valid = true
+    console.log(ref.current.textState)
+    if (!ref.current.validateFields()){
+      valid = false
+    }
+    //TODO: add logic to decide when to create or use existing team
+    if(!teamRef.current){
+      valid = false
+    }
+    if (valid){
+      $.ajax({
+        method: 'POST',
+        url: 'http://localhost:5001/futbol-app-8b521/us-central1/app/coach/sign-up',
+        data: {
+          'FirstName' : ref.current.textState.FirstName,
+          'LastName' : ref.current.textState.LastName,
+          'Email' : ref.current.textState.Email,
+          'Password' : ref.current.textState.Password,
+          'Phone' : ref.current.textState.Phone,
+          'TeamID' : teamRef.current
+        }
+      }).then(() => {
+        firebase.auth().signInWithEmailAndPassword(
+          ref.current.textState.Email,
+          ref.current.textState.Password
+        ).then((result) =>{
+          console.log(result)
+          let userData = {'displayName': result.user.displayName, 'email': result.user.email, 'phone': result.user.phoneNumber, 
+                        'uid': result.user.uid, 'token': result.user.xa, 'role': 2}
+          Cookies.set('user', JSON.stringify(userData))
+          Router.push('/dashboard/' + result.user.uid)
+        })
+      }).catch((err) => {
+        console.log(err.message)
+      })
+      console.log('Intento de registro')
+    }
+  }
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
   return (
     <SideImageForm imgPath='register-coach-image.jpg' title="Registro Entrenador">
-      <UserTextFields/>
+      <UserTextFields ref={ref}/>
 
       <AppBar position="static" className={classes.tabBar}>
         <Tabs value={value} onChange={handleChange} variant="fullWidth" aria-label="Team Selection Method">
@@ -67,7 +114,7 @@ const RegisterCoach = (props) => {
         <Horario/>
       </TabPanel>
       <TabPanel value={value} index={1}>
-        <SelectTeam teams={props.teams}/>
+        <SelectTeam ref={teamRef} teams={props.teams}/>
       </TabPanel>
 
 
@@ -75,7 +122,8 @@ const RegisterCoach = (props) => {
         className={classes.submit}
         variant="contained"
         color="primary"
-        fullWidth>
+        fullWidth
+        onClick={handleRegister}>
         Registrarse
       </Button>
     </SideImageForm>
