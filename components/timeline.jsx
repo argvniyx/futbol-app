@@ -30,6 +30,10 @@ export default function Timeline(props) {
   const handleNewEventOpen = () => setOpen(true)
   const handleNewEventClose = () => setOpen(false)
 
+  // Handling navigation
+  const handleBack = () => console.log('click back')
+  const handleNext = () => console.log('click next')
+
   return (
     <Card className={props.className}>
       <CardHeader title="Timeline"/>
@@ -49,10 +53,10 @@ export default function Timeline(props) {
         </List>
       </CardContent>
       <CardActions disableSpacing>
-        <IconButton>
+        <IconButton onClick={handleBack}>
           <NavigateBefore/>
         </IconButton>
-        <IconButton>
+        <IconButton onClick={handleNext}>
           <NavigateNext/>
         </IconButton>
         {props.user ? null :
