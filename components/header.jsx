@@ -39,11 +39,14 @@ const handleLogout = (event) => {
 
 const Header = (props) => {
   const classes = useStyles();
-  const [team, setTeam] = React.useState('');
   const [children, setChildren] = React.useState(props.items)
 
+  // A coach does not have registered children,
+  // If children is null, we are in a coach dashboard, and should use a dummy value
+  const [currentChildId, setCurrentChildId] = React.useState(children ? children[0].id : 0);
+
   const handleChange = (event) => {
-    setTeam(event.target.value);
+    setCurrentChildId(event.target.value);
   };
 
   return (
@@ -55,6 +58,7 @@ const Header = (props) => {
             label="Equipo"
             SelectProps={{className: classes.input, disableUnderline: true}}
             defaultValue={children[0].FirstName}
+            onChange={handleChange}
           >
             {children.map((i) => (
               <MenuItem
