@@ -54,8 +54,9 @@ const Header = (props) => {
             label="Equipo"
             SelectProps={{className: classes.input, disableUnderline: true}}
           >
-          <MenuItem value={1}>Team 1</MenuItem>
-          <MenuItem value={2}>Team 2</MenuItem>
+          <MenuItem>Team 1</MenuItem>
+          <MenuItem>Team 2</MenuItem>
+          <MenuItem>Team 3</MenuItem>
         </TextField>
          :
          null}
