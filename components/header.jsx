@@ -40,6 +40,7 @@ const handleLogout = (event) => {
 const Header = (props) => {
   const classes = useStyles();
   const [team, setTeam] = React.useState('');
+  const [children, setChildren] = React.useState(props.items)
 
   const handleChange = (event) => {
     setTeam(event.target.value);
@@ -53,10 +54,15 @@ const Header = (props) => {
             select
             label="Equipo"
             SelectProps={{className: classes.input, disableUnderline: true}}
+            defaultValue={children[0].FirstName}
           >
-          <MenuItem>Team 1</MenuItem>
-          <MenuItem>Team 2</MenuItem>
-          <MenuItem>Team 3</MenuItem>
+            {children.map((i) => (
+              <MenuItem
+                key={i.id}
+                label={i.FirstName}
+                value={i.FirstName}
+              >{i.FirstName}</MenuItem>
+            ))}
         </TextField>
          :
          null}

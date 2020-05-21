@@ -102,7 +102,7 @@ const DashboardComponent = props => {
 
   return (
     <Box className={classes.root}>
-      <Header user={props.user}/>
+      <Header user={props.user} items={children}/>
       <Content>
         <Timeline
           className={fixedHeightPaperT}
