@@ -43,10 +43,11 @@ const Header = (props) => {
 
   // A coach does not have registered children,
   // If children is null, we are in a coach dashboard, and should use a dummy value
-  const [currentChildId, setCurrentChildId] = React.useState(children ? children[0].id : 0);
+  const [currentChild, setCurrentChild] = React.useState(children ? children[0] : 0);
 
   const handleChange = (event) => {
-    setCurrentChildId(event.target.value);
+    setCurrentChild(children[event.target.key]);
+    props.handler(currentChild)
   };
 
   return (
@@ -60,9 +61,9 @@ const Header = (props) => {
             defaultValue={children[0].FirstName}
             onChange={handleChange}
           >
-            {children.map((i) => (
+            {children.map((i, k) => (
               <MenuItem
-                key={i.id}
+                key={k}
                 label={i.FirstName}
                 value={i.FirstName}
               >{i.FirstName}</MenuItem>

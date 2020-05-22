@@ -94,15 +94,23 @@ const DashboardComponent = props => {
     setTeamId(currentChild ? currentChild.TeamID : teamId)
   }, [currentChild ? currentChild : null])
 
-  // Handle the event details logic
+  // Handle the event details logic. This is a callback to propagate changes upwards
+  // from Timeline (child) to DashboardComponent (parent) so that EventDetails can be set
   const handleEventDetails = (index) => {
     setSelectedIndex(index);
     setCurrentEvent(events[index]);
   }
 
+  // Another callback. This time, to the Header, since the header determines the
+  // current child (for team information loading)
+  const handleHeaderList = (selectedChild) => {
+    setCurrentChild(selectedChild)
+  }
+  console.log(children)
+
   return (
     <Box className={classes.root}>
-      <Header user={props.user} items={children}/>
+      <Header user={props.user} items={children} handler={handleHeaderList}/>
       <Content>
         <Timeline
           className={fixedHeightPaperT}
