@@ -248,74 +248,138 @@ router.get('/:id', (req, res) => {
                 return res.status(404).send('The Teams does not exists');
             }
 
-            admin.auth().getUser(TeamObj.data().CoachID)
-                .then((CoachObj) => {
-                    DirectoryList.push({
-                        "UserID": CoachObj.uid,
-                        "Email": CoachObj.email,
-                        "Phone": CoachObj.phoneNumber,
-                        "FirstName": CoachObj.displayName.split(" ")[0],
-                        "LastName": CoachObj.displayName.split(" ")[1],
-                        "isCoach": true
-                    })
+            // Check if the team have a Coach
+            if (TeamObj.data().CoachID != "") {
 
-                    if (TeamObj.data().MembersID.length > 0) {
-
-                        // For each child, search the parent
-                        TeamObj.data().MembersID.forEach((ChildID) => {
-
-                            // Get the child object
-                            admin.firestore().collection('children').doc(ChildID).get()
-                                .then((ChildObj) => {
-                                    // Store the ParentID
-                                    DirectoryIDs.push(ChildObj.data().ParentID)
-
-                                    // Check if it has all parents ID
-                                    if (DirectoryIDs.length == TeamObj.data().MembersID.length) {
-
-                                        // Get all the users list
-                                        admin.auth().listUsers()
-                                            .then((listUsers) => {
-
-                                                // Filter the list to just the one that are parents from the team
-                                                filtered = listUsers['users'].filter(f => DirectoryIDs.includes(f['uid']));
-
-                                                // Filter the user information
-                                                filtered.forEach(userObj => {
-                                                    DirectoryList.push({
-                                                        "UserID": userObj.uid,
-                                                        "Email": userObj.email,
-                                                        "Phone": userObj.phoneNumber,
-                                                        "FirstName": userObj.displayName.split(" ")[0],
-                                                        "LastName": userObj.displayName.split(" ")[1],
-                                                        "isCoach": false
-                                                    })
-                                                });
-
-                                                // Send the success code and array
-                                                return res.status(200).json(DirectoryList);
-                                            })
-                                            // Catch any error
-                                            .catch(err => {
-                                                return res.status(500).json(err.message);
-                                            });
-                                    }
-
-                                })
-                                // Catch any error
-                                .catch(err => {
-                                    return res.status(500).json(err.message);
-                                });
+                // Gets the Coach data
+                admin.auth().getUser(TeamObj.data().CoachID)
+                    .then((CoachObj) => {
+                        DirectoryList.push({
+                            "UserID": CoachObj.uid,
+                            "Email": CoachObj.email,
+                            "Phone": CoachObj.phoneNumber,
+                            "FirstName": CoachObj.displayName.split(" ")[0],
+                            "LastName": CoachObj.displayName.split(" ")[1],
+                            "isCoach": true
                         })
-                    } else {
-                        // Send the success code and array
-                        return res.status(200).json(DirectoryList);
-                    }
-                })
-                // Catch any error
-                .catch(err => {
-                    return res.status(500).json(err.message);
-                });
+                        
+                        // And checks if it have members
+                        if (TeamObj.data().MembersID.length > 0) {
+
+                            // For each child, search the parent
+                            TeamObj.data().MembersID.forEach((ChildID) => {
+
+                                // Get the child object
+                                admin.firestore().collection('children').doc(ChildID).get()
+                                    .then((ChildObj) => {
+                                        // Store the parentID
+                                        DirectoryIDs.push(ChildObj.data().parentID)
+
+
+                                        // Check if it has all parents ID
+                                        if (DirectoryIDs.length == TeamObj.data().MembersID.length) {
+
+                                            // Get all the users list
+                                            admin.auth().listUsers()
+                                                .then((listUsers) => {
+
+                                                    // Filter the list to just the one that are parents from the team
+                                                    filtered = listUsers['users'].filter(f => DirectoryIDs.includes(f['uid']));
+
+                                                    // Filter the user information
+                                                    filtered.forEach(userObj => {
+                                                        DirectoryList.push({
+                                                            "UserID": userObj.uid,
+                                                            "Email": userObj.email,
+                                                            "Phone": userObj.phoneNumber,
+                                                            "FirstName": userObj.displayName.split(" ")[0],
+                                                            "LastName": userObj.displayName.split(" ")[1],
+                                                            "isCoach": false
+                                                        })
+                                                    });
+
+                                                    // Send the success code and array
+                                                    return res.status(200).json(DirectoryList);
+                                                })
+                                                // Catch any error
+                                                .catch(err => {
+                                                    return res.status(500).json(err.message);
+                                                });
+                                        }
+
+                                    })
+                                    // Catch any error
+                                    .catch(err => {
+                                        return res.status(500).json(err.message);
+                                    });
+                            })
+                        } else {
+                            // Send the success code and array
+                            return res.status(200).json(DirectoryList);
+                        }
+                    })
+                    // Catch any error
+                    .catch(err => {
+                        return res.status(500).json(err.message);
+                    });
+
+                // If the the team does not have a Coach
+            } else {
+                // Just checks if has memebers
+                if (TeamObj.data().MembersID.length > 0) {
+
+                    // For each child, search the parent
+                    TeamObj.data().MembersID.forEach((ChildID) => {
+
+                        // Get the child object
+                        admin.firestore().collection('children').doc(ChildID).get()
+                            .then((ChildObj) => {
+                                // Store the parentID
+                                DirectoryIDs.push(ChildObj.data().parentID)
+
+                                // Check if it has all parents ID
+                                if (DirectoryIDs.length == TeamObj.data().MembersID.length) {
+
+                                    // Get all the users list
+                                    admin.auth().listUsers()
+                                        .then((listUsers) => {
+
+                                            // Filter the list to just the one that are parents from the team
+                                            filtered = listUsers['users'].filter(f => DirectoryIDs.includes(f['uid']));
+
+                                            // Filter the user information
+                                            filtered.forEach(userObj => {
+                                                DirectoryList.push({
+                                                    "UserID": userObj.uid,
+                                                    "Email": userObj.email,
+                                                    "Phone": userObj.phoneNumber,
+                                                    "FirstName": userObj.displayName.split(" ")[0],
+                                                    "LastName": userObj.displayName.split(" ")[1],
+                                                    "isCoach": false
+                                                })
+                                            });
+
+                                            // Send the success code and array
+                                            return res.status(200).json(DirectoryList);
+                                        })
+                                        // Catch any error
+                                        .catch(err => {
+                                            return res.status(500).json(err.message);
+                                        });
+                                }
+
+                            })
+                            // Catch any error
+                            .catch(err => {
+                                return res.status(500).json(err.message);
+                            });
+                    })
+                } else {
+                    // Send the success code and array
+                    return res.status(200).json(DirectoryList);
+                }
+            }
+
         })
         // Catch any error
         .catch(err => {
