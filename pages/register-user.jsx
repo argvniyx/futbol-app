@@ -36,7 +36,7 @@ export default function RegisterParent() {
                                     'uid': result.user.uid, 'token': result.user.xa, 'role': 3}
                     Cookies.set('user', JSON.stringify(userData))
                     //TODO: route to child creation
-                    // Router.push('/dashboard/' + result.user.uid)
+                    Router.push('/register-child')
                     console.log('sign up completado')
                 })
             }).fail(() => {

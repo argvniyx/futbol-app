@@ -4,7 +4,6 @@ import { forwardRef, useImperativeHandle } from 'react'
 
 
 const UserTextFields = forwardRef((props, ref) => {
-
   const [textState, setText] = React.useState({
     FirstName : '',
     LastName : '',
@@ -26,6 +25,7 @@ const UserTextFields = forwardRef((props, ref) => {
   const validateFields = () =>{
 
     let counter = 0
+    let fieldCounter = 0
 
     for (var key in textState){
       var attrName = key;
@@ -37,6 +37,10 @@ const UserTextFields = forwardRef((props, ref) => {
       }
       else {
         eval('set' + attrName + 'Invalid' + '(false)')
+      }
+      fieldCounter++
+      if (props.child && fieldCounter == 2){
+        break
       }
     }
 
@@ -89,6 +93,8 @@ const UserTextFields = forwardRef((props, ref) => {
             </Grid>
           </Grid>
 
+          {!props.child ?
+          <div>
           <TextField
             variant="outlined"
             margin="dense"
@@ -132,6 +138,8 @@ const UserTextFields = forwardRef((props, ref) => {
             error = {phoneInvalid}
             helperText = {phoneInvalid ? 'Necesita escribir su telefono' : ''}
           />
+          </div>
+          : null}
 
         </div>
     );
