@@ -39,10 +39,15 @@ const handleLogout = (event) => {
 
 const Header = (props) => {
   const classes = useStyles();
-  const [team, setTeam] = React.useState('');
+  const [children, setChildren] = React.useState(props.items)
+
+  // A coach does not have registered children,
+  // If children is null, we are in a coach dashboard, and should use a dummy value
+  const [currentChild, setCurrentChild] = React.useState(children ? children[0] : 0);
 
   const handleChange = (event) => {
-    setTeam(event.target.value);
+    setCurrentChild(children[event.target.key]);
+    props.handler(currentChild)
   };
 
   return (
@@ -53,9 +58,16 @@ const Header = (props) => {
             select
             label="Equipo"
             SelectProps={{className: classes.input, disableUnderline: true}}
+            defaultValue={children[0].FirstName}
+            onChange={handleChange}
           >
-          <MenuItem value={1}>Team 1</MenuItem>
-          <MenuItem value={2}>Team 2</MenuItem>
+            {children.map((i, k) => (
+              <MenuItem
+                key={k}
+                label={i.FirstName}
+                value={i.FirstName}
+              >{i.FirstName}</MenuItem>
+            ))}
         </TextField>
          :
          null}

@@ -78,15 +78,39 @@ const DashboardComponent = props => {
   const [selectedIndex, setSelectedIndex] = React.useState(0);
   const [currentEvent, setCurrentEvent] = React.useState(events[selectedIndex]);
 
-  // Handle the event details logic
+  // The current child is the first child on first load
+  // A coach does not have children
+  const [children, setChildren] = React.useState(
+    props.person.person.children ?
+      props.person.person.children : null
+  )
+  const [currentChild, setCurrentChild] = React.useState(children ? children[0] : null)
+  const [teamId, setTeamId] = React.useState(
+    currentChild ?
+      currentChild.TeamID : props.person.person.TeamID
+  );
+
+  React.useEffect(() => {
+    setTeamId(currentChild ? currentChild.TeamID : teamId)
+  }, [currentChild ? currentChild : null])
+
+  // Handle the event details logic. This is a callback to propagate changes upwards
+  // from Timeline (child) to DashboardComponent (parent) so that EventDetails can be set
   const handleEventDetails = (index) => {
     setSelectedIndex(index);
     setCurrentEvent(events[index]);
   }
 
+  // Another callback. This time, to the Header, since the header determines the
+  // current child (for team information loading)
+  const handleHeaderList = (selectedChild) => {
+    setCurrentChild(selectedChild)
+  }
+  console.log(children)
+
   return (
     <Box className={classes.root}>
-      <Header user={props.user}/>
+      <Header user={props.user} items={children} handler={handleHeaderList}/>
       <Content>
         <Timeline
           className={fixedHeightPaperT}
@@ -95,7 +119,7 @@ const DashboardComponent = props => {
           user={props.user}
         />
         <EventDetails className={fixedHeightPaperT} event={currentEvent} user={props.user}/>
-        <Directory className={fixedHeightPaperB}/>
+        <Directory className={fixedHeightPaperB} teamId={teamId} token={props.person.person.token}/>
         <UserCard className={fixedHeightPaperB} person={props.person}/>
       </Content>
     </Box>
