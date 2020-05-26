@@ -54,7 +54,7 @@ export default function Admin() {
 
   const handleChange = (event) => modifyCoach({...coach, [event.target.id]: event.target.value})
   const sendInvitation = () => {
-    fetch('http://localhost:5001/futbol-app-8b521/us-central1/app/admin/new-coach', {
+    fetch(`${process.env.API_URL}/admin/new-coach`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(coach)

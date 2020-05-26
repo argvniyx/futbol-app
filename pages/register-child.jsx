@@ -57,7 +57,7 @@ const RegisterChild = (props) => {
         console.log(children.length)
         $.ajax({
           method: 'POST',
-          url: 'http://localhost:5001/futbol-app-8b521/us-central1/app/parent/children',
+          url: `${process.env.API_URL}/parent/children`,
           data : {children},
           headers: {
             authorization: 'Bearer ' + JSON.parse(Cookies.get('user'))['token']
@@ -105,7 +105,7 @@ const RegisterChild = (props) => {
 
 RegisterChild.getInitialProps = async context => {
 
-  let res = await fetch('http://localhost:5001/futbol-app-8b521/us-central1/app/teams/listTeams', {
+  let res = await fetch(`${process.env.API_URL}/teams/listTeams`, {
     method: 'GET',
   })
   let teams = await res.json()
