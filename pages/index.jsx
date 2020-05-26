@@ -75,11 +75,12 @@ export default function Index() {
     setInfo({...userInfo, [event.target.name]: event.target.value})
   }
 
+  console.log(process.env.LOCAL_URL)
   function getOtherParams(result, googleLogin){
     if (!googleLogin){
       $.ajax({
         method: 'GET',
-        url: 'http://localhost:5001/futbol-app-8b521/us-central1/app/user/fillOtherUserParams',
+        url: `${process.env.API_URL}/user/fillOtherUserParams`,
         headers: {
           authorization: 'Bearer ' + result['user']['xa']
         },
@@ -112,7 +113,7 @@ export default function Index() {
   function routeLogin(result){
     $.ajax({
       method: 'GET',
-      url: 'http://localhost:5001/futbol-app-8b521/us-central1/app/parent/children',
+      url: `${process.env.API_URL}/parent/children`,
       headers: {
         authorization: 'Bearer ' + result['user']['xa']
       }
