@@ -124,8 +124,10 @@ export default function Index() {
         Router.push('/dashboard/' + result.user.uid)
       }
       else{
-        //TODO: route to child creation
-        console.log('padre no tiene hijos')
+        let userData = {'displayName': result.user.displayName, 'email': result.user.email, 'phone': result.user.phoneNumber, 
+                        'uid': result.user.uid, 'token': result.user.xa, 'role': 3}
+        Cookies.set('user', JSON.stringify(userData))
+        Router.push('/register-child')
         
       }
     })
