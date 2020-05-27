@@ -131,7 +131,6 @@ router.get(
         ).doc(userID).get().then((snapshot) => {
 
             let children = snapshot.data().children;
-            console.log(children)
             if(children.length > 0) {
                 children.forEach((child) => {
 
@@ -259,6 +258,71 @@ router.put(
             return res.status(500).send(error.message);
         });
     });
+
+
+// ---------------------------------------------------------
+router.put(
+    '/:id',
+    // authenticated,
+    // isParent,
+    (req, res) => {
+    
+    // Get the request body 
+    const Email = req.body.Email;
+    const FirstName = req.body.FirstName;
+    const LastName = req.body.LastName;
+    const Cellphone = req.body.Cellphone;
+
+    // Get the param id
+    const ParentID = req.params.id;
+
+    
+    // Check if the request has the ParentID as param
+    if(!ParentID){
+        return res.status(400).send('Missing ParentID as param');
+    }
+    
+    // Check that the request has the complete body
+    if (!Email ||
+        !FirstName ||
+        !LastName || 
+        !Cellphone) {
+            return res.status(400).send('Missing body');
+    }
+        
+    // Get the coach object
+    admin.firestore().collection('users').doc(ParentID)
+    .get().then(UserObj => {
+        
+        // Check if the coch exists
+        if(!UserObj.exists){
+            return res.status(404).send('The Parent does not exists');
+        }
+        
+        // Check that the user it is a Coach
+        if(UserObj.data().UserType != 3){
+            return res.status(401).send('The user it is not a parent');
+        }
+        
+        // Make the update
+        admin.auth().updateUser(ParentID, {
+            email: Email,
+            displayName: FirstName + ' ' + LastName,
+            phoneNumber: Cellphone
+        })
+        .then(()=>{
+            return res.status(200).send("Parent Updated!")
+        })
+        // Catch any error
+        .catch((error) => {
+            return res.status(500).json(error.message);
+        });
+    })
+    // Catch any error
+    .catch((error) => {
+        return res.status(500).json(error.message);
+    });
+});
 
 // ---------------------------------------------------------
 router.delete(
