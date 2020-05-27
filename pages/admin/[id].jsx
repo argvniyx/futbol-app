@@ -1,17 +1,21 @@
 import clsx from 'clsx'
 import Box from '@material-ui/core/Box'
 import Button from '@material-ui/core/Button'
-import Header from '../components/header'
+import Header from '../../components/header'
 import Dialog from '@material-ui/core/Dialog'
 import DialogTitle from '@material-ui/core/DialogTitle'
 import DialogContent from '@material-ui/core/DialogContent'
 import DialogActions from '@material-ui/core/DialogActions'
 import DialogContentText from '@material-ui/core/DialogContentText'
 import TextField from '@material-ui/core/TextField'
-import Content from '../components/content-component'
-import AdminList from '../components/admin-list'
+import Content from '../../components/content-component'
+import AdminList from '../../components/admin-list'
 import { makeStyles } from '@material-ui/styles'
-import $ from 'jquery'
+import {useRouter} from 'next/router'
+import cookies from '../../node_modules/next-cookies'
+
+
+var $ = require( "jquery" );
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -36,7 +40,8 @@ const InviteButton = (props) => {
   );
 }
 
-export default function Admin() {
+const Admin = (person) => {
+  const router = useRouter()
   const classes = useStyles();
   const fixedHeightPaperT = clsx(classes.paper, classes.fixedHeightTop)
 
@@ -47,9 +52,9 @@ export default function Admin() {
 
   // State for invitation sending
   const [coach, modifyCoach] = React.useState({
-    firstName: "",
-    lastName: "",
-    email: ""
+    FirstName: "",
+    LastName: "",
+    Email: ""
   });
 
   const handleChange = (event) => modifyCoach({...coach, [event.target.id]: event.target.value})
@@ -57,6 +62,7 @@ export default function Admin() {
     fetch(`${process.env.API_URL}/admin/new-coach`, {
       method: 'POST',
       headers: {
+        'Authorization': `Bearer ${person.person.token}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(coach)
@@ -93,7 +99,7 @@ export default function Admin() {
             margin="normal"
             required
             fullWidth
-            id="email"
+            id="Email"
             label="Correo electrónico"
             name="email"
             autoComplete="email"
@@ -103,7 +109,7 @@ export default function Admin() {
             margin="normal"
             required
             fullWidth
-            id="firstName"
+            id="FirstName"
             label="Nombre"
             name="name"
             autoComplete="name"
@@ -113,7 +119,7 @@ export default function Admin() {
             margin="normal"
             required
             fullWidth
-            id="lastName"
+            id="LastName"
             label="Apellido"
             name="lastName"
             autoComplete="name"
@@ -132,4 +138,13 @@ export default function Admin() {
       </Dialog>
     </Box>
   );
+};
+
+Admin.getInitialProps = async context => {
+    let {user} = cookies(context)
+    return {
+        person : user
+    }
 }
+
+export default Admin;

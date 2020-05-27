@@ -89,7 +89,7 @@ export default function Index() {
           // Route to admin dashboard
           let userData = {'uid': result.user.uid, 'token': result.user.xa }
           Cookies.set('user', JSON.stringify(userData))
-          Router.push('/admin')
+          Router.push(`/admin/${result.user.uid}`)
         }
         else if (otherParams.Role == 2){ // the user is a coach
           let userData = {'displayName': result.user.displayName, 'email': result.user.email, 'phone': result.user.phoneNumber,
