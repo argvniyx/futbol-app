@@ -106,7 +106,6 @@ const DashboardComponent = props => {
   const handleHeaderList = (selectedChild) => {
     setCurrentChild(selectedChild)
   }
-  console.log(children)
 
   return (
     <Box className={classes.root}>
