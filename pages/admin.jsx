@@ -1,21 +1,17 @@
 import clsx from 'clsx'
 import Box from '@material-ui/core/Box'
 import Button from '@material-ui/core/Button'
-import Header from '../../components/header'
+import Header from '../components/header'
 import Dialog from '@material-ui/core/Dialog'
 import DialogTitle from '@material-ui/core/DialogTitle'
 import DialogContent from '@material-ui/core/DialogContent'
 import DialogActions from '@material-ui/core/DialogActions'
 import DialogContentText from '@material-ui/core/DialogContentText'
 import TextField from '@material-ui/core/TextField'
-import Content from '../../components/content-component'
-import AdminList from '../../components/admin-list'
+import Content from '../components/content-component'
+import AdminList from '../components/admin-list'
 import { makeStyles } from '@material-ui/styles'
-import {useRouter} from 'next/router'
-import cookies from '../../node_modules/next-cookies'
-
-
-var $ = require( "jquery" );
+import $ from 'jquery'
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -40,8 +36,7 @@ const InviteButton = (props) => {
   );
 }
 
-const Admin = (props) => {
-  const router = useRouter()
+export default function Admin() {
   const classes = useStyles();
   const fixedHeightPaperT = clsx(classes.paper, classes.fixedHeightTop)
 
@@ -52,19 +47,16 @@ const Admin = (props) => {
 
   // State for invitation sending
   const [coach, modifyCoach] = React.useState({
-    FirstName: "",
-    LastName: "",
-    Email: ""
+    firstName: "",
+    lastName: "",
+    email: ""
   });
 
   const handleChange = (event) => modifyCoach({...coach, [event.target.id]: event.target.value})
   const sendInvitation = () => {
     fetch(`${process.env.API_URL}/admin/new-coach`, {
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${props.person.person.token}`,
-        'Content-Type': 'application/json'
-      },
+      headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(coach)
     })
       .then(
@@ -83,7 +75,7 @@ const Admin = (props) => {
     <Box>
       <Header component={<InviteButton onClick={handleOpenDialog}/>}/>
       <Content fullWidth>
-        <AdminList className={fixedHeightPaperT} teams={props.teams}/>
+        <AdminList className={fixedHeightPaperT}/>
       </Content>
       <Dialog
         open={open}
@@ -99,7 +91,7 @@ const Admin = (props) => {
             margin="normal"
             required
             fullWidth
-            id="Email"
+            id="email"
             label="Correo electrónico"
             name="email"
             autoComplete="email"
@@ -109,7 +101,7 @@ const Admin = (props) => {
             margin="normal"
             required
             fullWidth
-            id="FirstName"
+            id="firstName"
             label="Nombre"
             name="name"
             autoComplete="name"
@@ -119,7 +111,7 @@ const Admin = (props) => {
             margin="normal"
             required
             fullWidth
-            id="LastName"
+            id="lastName"
             label="Apellido"
             name="lastName"
             autoComplete="name"
@@ -138,19 +130,4 @@ const Admin = (props) => {
       </Dialog>
     </Box>
   );
-};
-
-Admin.getInitialProps = async context => {
-  let {user} = cookies(context)
-
-  let res = await fetch(`${process.env.API_URL}/teams/listTeams`)
-  let teams = await res.json()
-
-  return {
-    person : user,
-    teams: teams
-  }
-
 }
-
-export default Admin;

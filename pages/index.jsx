@@ -75,6 +75,7 @@ export default function Index() {
     setInfo({...userInfo, [event.target.name]: event.target.value})
   }
 
+  console.log(process.env.LOCAL_URL)
   function getOtherParams(result, googleLogin){
     if (!googleLogin){
       $.ajax({
@@ -84,20 +85,19 @@ export default function Index() {
           authorization: 'Bearer ' + result['user']['xa']
         },
       }).then((otherParams) => {
-        console.log(otherParams)
-        if(otherParams.Role == 1){ // the user is an admin
+
+        if(otherParams.Role == 1){
           // Route to admin dashboard
-          let userData = {'uid': result.user.uid, 'token': result.user.xa }
-          Cookies.set('user', JSON.stringify(userData))
-          Router.push(`/admin/${result.user.uid}`)
         }
-        else if (otherParams.Role == 2){ // the user is a coach
-          let userData = {'displayName': result.user.displayName, 'email': result.user.email, 'phone': result.user.phoneNumber,
-                          'uid': result.user.uid, 'token': result.user.xa,  'role': otherParams.Role, 'TeamID': otherParams.TeamID}
-          Cookies.set('user', JSON.stringify(userData))
-          Router.push('/dashboard/' + result.user.uid)
+        else if (otherParams.Role == 2){
+          console.log('es coach')
+            let userData = {'displayName': result.user.displayName, 'email': result.user.email, 'phone': result.user.phoneNumber, 
+                            'uid': result.user.uid, 'token': result.user.xa,  'role': otherParams.Role, 'TeamID': otherParams.TeamID}
+            Cookies.set('user', JSON.stringify(userData))
+            Router.push('/dashboard/' + result.user.uid)
+          
         }
-        else if (otherParams.Role == 3){ // the user is a parent
+        else if (otherParams.Role == 3){
           routeLogin(result)
         }
 

@@ -46,7 +46,7 @@ const Header = (props) => {
   const [currentChild, setCurrentChild] = React.useState(children ? children[0] : 0);
 
   const handleChange = (event) => {
-    setCurrentChild(children[event.target.value]);
+    setCurrentChild(children[event.target.key]);
     props.handler(currentChild)
   };
 
@@ -64,9 +64,8 @@ const Header = (props) => {
             {children.map((i, k) => (
               <MenuItem
                 key={k}
-                name="jasjdsaf"
                 label={i.FirstName}
-                value={k}
+                value={i.FirstName}
               >{i.FirstName}</MenuItem>
             ))}
         </TextField>
