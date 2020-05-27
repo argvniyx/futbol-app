@@ -36,6 +36,7 @@ export default function Directory(props) {
           </TableRow>
         </TableHead>
         <TableBody>
+        {console.log(directory)}
           {directory.map((row) => (
             <TableRow key={row.UserID}>
               <TableCell component="th" scope="row">
