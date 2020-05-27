@@ -40,7 +40,7 @@ const InviteButton = (props) => {
   );
 }
 
-const Admin = (person) => {
+const Admin = (props) => {
   const router = useRouter()
   const classes = useStyles();
   const fixedHeightPaperT = clsx(classes.paper, classes.fixedHeightTop)
@@ -62,7 +62,7 @@ const Admin = (person) => {
     fetch(`${process.env.API_URL}/admin/new-coach`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${person.person.token}`,
+        'Authorization': `Bearer ${props.person.person.token}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(coach)
@@ -83,7 +83,7 @@ const Admin = (person) => {
     <Box>
       <Header component={<InviteButton onClick={handleOpenDialog}/>}/>
       <Content fullWidth>
-        <AdminList className={fixedHeightPaperT}/>
+        <AdminList className={fixedHeightPaperT} teams={props.teams}/>
       </Content>
       <Dialog
         open={open}
@@ -141,10 +141,16 @@ const Admin = (person) => {
 };
 
 Admin.getInitialProps = async context => {
-    let {user} = cookies(context)
-    return {
-        person : user
-    }
+  let {user} = cookies(context)
+
+  let res = await fetch(`${process.env.API_URL}/teams/listTeams`)
+  let teams = await res.json()
+
+  return {
+    person : user,
+    teams: teams
+  }
+
 }
 
 export default Admin;
