@@ -13,7 +13,10 @@ router.get('/fillOtherUserParams', authenticated, (req, res) => {
     firestore.collection(
         'users'
     ).doc(userID).get().then((doc) => {
-        if(doc) {
+        if (
+            // if the user cannot be found
+            doc
+        ) {
             const { UserType, TeamID  } =  doc.data();
             return res.status(200).json({
                 "Role": UserType,
