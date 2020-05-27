@@ -96,7 +96,7 @@ const RegisterCoach = (props) => {
     if (valid){
         $.ajax({
           method: 'POST',
-          url: 'http://localhost:5001/futbol-app-8b521/us-central1/app/coach/sign-up',
+          url: `${process.env.API_URL}/coach/sign-up`,
           data: userData
         }).then(() => {
           firebase.auth().signInWithEmailAndPassword(
@@ -109,7 +109,7 @@ const RegisterCoach = (props) => {
             if (value == 0){
               $.ajax({
                 method: 'POST',
-                url: 'http://localhost:5001/futbol-app-8b521/us-central1/app/teams',
+                url: `${process.env.API_URL}/teams`,
                 data: {
                   Name : teamName,
                   ColorFont : 'ColorFont',
@@ -184,7 +184,7 @@ const RegisterCoach = (props) => {
 
 RegisterCoach.getInitialProps = async context => {
 
-  let res = await fetch('http://localhost:5001/futbol-app-8b521/us-central1/app/teams/noCoach', {
+  let res = await fetch(`${process.env.API_URL}/teams/noCoach`, {
       method: 'GET',
   })
   let teams = await res.json()

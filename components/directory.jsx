@@ -10,7 +10,7 @@ export default function Directory(props) {
   const [directory, setDirectory] = React.useState([]);
 
   React.useEffect(() => {
-    fetch(`http://localhost:5001/futbol-app-8b521/us-central1/app/teams/${props.teamId}`, {
+    fetch(`${process.env.API_URL}/teams/${props.teamId}`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${props.token}`,

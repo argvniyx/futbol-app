@@ -25,7 +25,7 @@ export default function RegisterParent() {
             console.log(ref.current.textState)
             $.ajax({
                 method: 'POST',
-                url: 'http://localhost:5001/futbol-app-8b521/us-central1/app/parent/sign-up',
+                url: `${process.env.API_URL}/parent/sign-up`,
                 data: ref.current.textState
             }).then(() => {
                 firebase.auth().signInWithEmailAndPassword(
