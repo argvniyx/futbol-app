@@ -1,35 +1,34 @@
-import Grid from '@material-ui/core/Grid'
-import Box from '@material-ui/core/Box'
-import MenuItem from '@material-ui/core/MenuItem'
+import Autocomplete from '@material-ui/lab/Autocomplete'
 import TextField from '@material-ui/core/TextField'
-import { makeStyles } from '@material-ui/core'
+import { forwardRef, useImperativeHandle } from 'react'
 
-const useStyles = makeStyles((theme) => ({
-    equipoExistente: {
-        width: 150,
-        marginTop: '75%',
-        marginBottom: '75%'
-    }
-}))
+const SelectTeam = forwardRef((props, ref) =>{
 
-const SelectTeam = () =>{
+const [teamID, setTeamID] = React.useState('')
+const handleTeamChange = (event, newValue) => {
 
-  const classes = useStyles()
-    
-  return(
-    <Grid container direction='column' alignItems='center'>
-    <Box>
-    <TextField
-      select
-      label='Equipo existente'
-      className={classes.equipoExistente}>
-      <MenuItem value={'Equipo1'}>Equipo1</MenuItem>
-      <MenuItem value={'Equipo2'}>Equipo2</MenuItem>
-      <MenuItem value={'Equipo3'}>Equipo3</MenuItem>
-    </TextField>
-    </Box>
-    </Grid>
-  )   
+  if(props.teams[event.target.value]){
+    setTeamID(newValue['TeamID'])
+  }
+  else{
+    setTeamID('')
+  }
 }
+
+useImperativeHandle(ref, () =>{
+  return teamID
+})
+
+  return(
+    <Autocomplete
+      id="select-team"
+      options={props.teams}
+      getOptionLabel={(option) => option.Name}
+      renderInput={(params) => <TextField {...params} label="Seleccione un equipo" variant="outlined" />}
+      fullWidth
+      onChange={handleTeamChange}
+    />
+  )
+})
 
 export default SelectTeam;

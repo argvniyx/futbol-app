@@ -1,71 +1,166 @@
 import firebase from "firebase";
-import Typography from '@material-ui/core/Typography'
-import Grid from '@material-ui/core/Grid'
-import SoccerBall from '@material-ui/icons/SportsSoccer'
-import Button from '@material-ui/core/Button'
-import Modal from '@material-ui/core/Modal'
-import { makeStyles } from '@material-ui/core'
-import TextField from '@material-ui/core/TextField'
-import Box from '@material-ui/core/Box'
+import React from 'react';
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import Dialog from '@material-ui/core/Dialog'
+import DialogTitle from '@material-ui/core/DialogTitle'
+import DialogContent from '@material-ui/core/DialogContent'
+import DialogActions from '@material-ui/core/DialogActions'
+import DialogContentText from '@material-ui/core/DialogContentText'
+import Link from 'next/link';
+import Grid from '@material-ui/core/Grid';
+import Icon from '@mdi/react'
+import { mdiGoogle } from '@mdi/js'
+import { makeStyles } from '@material-ui/core/styles';
+import SideImageForm from '../components/side-image-form'
+import Router from "next/router"
+import Cookies from '../node_modules/js-cookie'
+var $ = require( "jquery" );
 
 const useStyles = makeStyles((theme) => ({
-  login: {
-    width: 'auto',
-    padding: '20px',
-    backgroundColor: theme.palette.background.paper,
-    position:'absolute',
-    top: '45%',
-    left: '50%',
-    transform: 'translate(-45%, -50%)'
-  }
-}))
+  submit: {
+    margin: theme.spacing(3, 0, 2),
+  },
+}));
 
-const Home = () => {
+const GoogleIcon = () => {
+  return (
+    <Icon path={mdiGoogle} size={1} color="white"/>
+  )
+}
 
-  const [open, setOpen] = React.useState(false);
+const LoginError = props => {
+  let errorText = "";
+  if(props.code == 1)
+    errorText = "No existe un usuario asociado a ese correo. Verifica que esté bien escrito, o regístrate si no lo has hecho."
+  else if(props.code == 2)
+    errorText = "La contraseña proporcionada es incorrecta. Inténtalo de nuevo."
+
+  return (
+      <Dialog
+        open={props.open}
+        onClose={props.handleClose}
+      >
+        <DialogTitle>{"No se pudo iniciar sesión"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            {errorText}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={props.handleClose}
+          >
+            Entendido
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+  );
+}
+
+export default function Index() {
+  const classes = useStyles();
   const [userInfo, setInfo] = React.useState({
-    username: '',
+    email: '',
     password: ''
   })
-  const classes = useStyles()
-
-  const handleOpen = (event) =>{
-    console.log('login')
-    setOpen(true)
-  }
-
-  const handleClose = (event) => {
-    console.log('close')
-    setOpen(false)
-  }
+  const [open, setOpen] = React.useState(false);
+  const [errorCode, setErrorCode] = React.useState(0)
+  const handleCloseDialog = () => setOpen(false);
 
   const handleUserInfo = (event) => {
     setInfo({...userInfo, [event.target.name]: event.target.value})
   }
 
-  const handleLogin = (event) => {
+  console.log(process.env.LOCAL_URL)
+  function getOtherParams(result, googleLogin){
+    if (!googleLogin){
+      $.ajax({
+        method: 'GET',
+        url: `${process.env.API_URL}/user/fillOtherUserParams`,
+        headers: {
+          authorization: 'Bearer ' + result['user']['xa']
+        },
+      }).then((otherParams) => {
 
+        if(otherParams.Role == 1){
+          // Route to admin dashboard
+        }
+        else if (otherParams.Role == 2){
+          console.log('es coach')
+            let userData = {'displayName': result.user.displayName, 'email': result.user.email, 'phone': result.user.phoneNumber, 
+                            'uid': result.user.uid, 'token': result.user.xa,  'role': otherParams.Role, 'TeamID': otherParams.TeamID}
+            Cookies.set('user', JSON.stringify(userData))
+            Router.push('/dashboard/' + result.user.uid)
+          
+        }
+        else if (otherParams.Role == 3){
+          routeLogin(result)
+        }
+
+      }).catch((error) => {
+        console.log(error.message)
+      })
+    }
+    else{
+      routeLogin(result)
+    }
+  }
+
+  function routeLogin(result){
+    $.ajax({
+      method: 'GET',
+      url: `${process.env.API_URL}/parent/children`,
+      headers: {
+        authorization: 'Bearer ' + result['user']['xa']
+      }
+    }).then((children) => {
+      if (children.length > 0){
+        let userData = {'displayName': result.user.displayName, 'email': result.user.email, 'phone': result.user.phoneNumber, 
+                        'uid': result.user.uid, 'token': result.user.xa, 'role': 3, 'children': children}
+        Cookies.set('user', JSON.stringify(userData))
+        Router.push('/dashboard/' + result.user.uid)
+      }
+      else{
+        let userData = {'displayName': result.user.displayName, 'email': result.user.email, 'phone': result.user.phoneNumber, 
+                        'uid': result.user.uid, 'token': result.user.xa, 'role': 3}
+        Cookies.set('user', JSON.stringify(userData))
+        Router.push('/register-child')
+        
+      }
+    })
+  }
+
+  const handleLogin = (event) => {
+    event.preventDefault()
     firebase.auth().signInWithEmailAndPassword(
-        userInfo['username'],
+        userInfo['email'],
         userInfo['password']
     ).then(
         (result) => {
-          getUserToken();
-          setOpen(false)
+          getOtherParams(result, false)
         },
         (err) => {
-          alert("Oops " + err.message);
+          if(err.code == "auth/invalid-email")
+            setErrorCode(1);
+          else
+            setErrorCode(2);
+          setOpen(true);
         }
     );
   }
 
   const handleLoginGoogle = (event) => {
+    event.preventDefault();
       const provider = new firebase.auth.GoogleAuthProvider();
       firebase.auth().signInWithPopup(provider).then((result) => {
-          console.log(result);
-          getUserToken();
+        getOtherParams(result, true)
       }).catch((error) => {
           console.log(error.message);
+          console.log(result)
       });
   }
 
@@ -75,61 +170,65 @@ const Home = () => {
       });
   }
 
-  return(
-    <Grid
-      container
-      direction="column"
-      alignItems="center"
-      justify="center">
-
-      <Typography variant="h1" align="center">
-        Futbol App
-      </Typography>
-
-      <SoccerBall style={{fontSize: "20em"}}/>
-
-      <Grid container justify="center" spacing={2}>
-        {["Registrarse", "Iniciar Sesión"].map((value, i) =>(
-          <Grid key={i} item>
-            <Button
-              variant="contained"
-              color="primary"
-              size="large"
-              onClick={value == 'Iniciar Sesión' ? handleOpen : null}>
-
-              {value}
-            </Button>
-          </Grid>
-        ))}
+  return (
+    <SideImageForm imgPath="index-image.jpg">
+      <TextField
+        variant="outlined"
+        margin="normal"
+        required
+        fullWidth
+        id="email"
+        label="Email Address"
+        name="email"
+        autoComplete="email"
+        autoFocus
+        onChange={handleUserInfo}
+      />
+      <TextField
+        variant="outlined"
+        margin="normal"
+        required
+        fullWidth
+        name="password"
+        label="Password"
+        type="password"
+        id="password"
+        autoComplete="current-password"
+        onChange={handleUserInfo}
+      />
+      <Button
+        type="submit"
+        fullWidth
+        variant="contained"
+        color="primary"
+        className={classes.submit}
+        onClick={handleLogin}
+      >
+        Iniciar Sesión
+      </Button>
+      <Button
+        type="submit"
+        fullWidth
+        variant="contained"
+        color="secondary"
+        className={classes.submit}
+        startIcon={<GoogleIcon/>}
+        onClick={handleLoginGoogle}
+      >
+        Iniciar Sesión con Google
+      </Button>
+      <Grid container>
+        <Grid item>
+          <Link href="register-user">
+            <a> {"¿No tienes cuenta? Regístrate"} </a>
+          </Link>
+        </Grid>
       </Grid>
-      <Modal
+      <LoginError
         open={open}
-        onClose={handleClose}>
-        <div className={classes.login}>
-          <Grid container direction='column' alignItems='center'>
-            <Typography variant='h2'>Ingresa tus datos</Typography>
-            <TextField label='Nombre' margin='dense' variant='filled' name='username' onChange={handleUserInfo}></TextField>
-            <TextField label='Contrase;a' margin='dense' variant='filled' type='password' name='password' onChange={handleUserInfo}></TextField>
-            <Box style={{marginTop:'10px'}}>
-              <Button color='primary' variant='contained' size='medium' onClick={handleLogin}>Login</Button>
-              <Button color='primary' variant='contained' size='medium' onClick={handleLoginGoogle}>Login with Google</Button>
-            </Box>
-          </Grid>
-        </div>
-      </Modal>
-
-      <style global jsx>{`
-            html,
-            body,
-            body > div:first-child,
-            div#__next,
-            div#__next > div {
-              height: 100%;
-              overflow-x: hidden;
-            }
-      `}</style>
-    </Grid>
-  )
-};
-
-export default Home
+        handleClose={handleCloseDialog}
+        code={errorCode}
+      />
+    </SideImageForm>
+  );
+}
