@@ -18,6 +18,27 @@ import NavigateBefore from '@material-ui/icons/NavigateBefore'
 import AddBox from '@material-ui/icons/AddBox'
 
 export default function Timeline(props) {
+
+  const [eventsList, setEvents] = React.useState([])
+  const [needData, setNeedData] = React.useState(0)
+
+  React.useEffect(() => {
+    fetch(`${process.env.API_URL}/events/${props.user.children[1].TeamID}?Page=1&NumberToBring=5`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${props.user.token}`,
+        'Content-Type': 'application/json'
+      },
+      
+    }).then((res) => {
+      return res.json()
+    }).then((res) => {
+      setEvents(res.Events)
+      console.log('Se consiguieron eventos')
+    })
+  }, [needData])
+  // checar con eventlist si no se detiene
+
   // Handling the loading of event details
   const [selectedIndex, setSelectedIndex] = React.useState(0);
   const handleListItemClick = (event, index) => {
@@ -31,23 +52,31 @@ export default function Timeline(props) {
   const handleNewEventClose = () => setOpen(false)
 
   // Handling navigation
-  const handleBack = () => console.log('click back')
-  const handleNext = () => console.log('click next')
+  const handleBack = () => console.log('test: ', eventsList)
+  const handleNext = () => console.log('click derecho')
+
+  function convertDate(date){
+    let aux = new Date()
+    aux.setTime(date._seconds)
+    console.log(date._seconds)
+    console.log(aux)
+    return aux.toDateString()
+  }
 
   return (
     <Card className={props.className}>
       <CardHeader title="Timeline"/>
       <CardContent style={{flexGrow: 1}}>
         <List>
-          {props.events.map((e) => (
+          {eventsList.map((e) => (
             <ListItem
               key={e.id}
               button
               selected={selectedIndex === e.id}
               onClick={(event) => handleListItemClick(event, e.id)}
             >
-              <ListItemText primary={e.name}
-                            secondary={e.date}/>
+              <ListItemText primary={e.Name}
+                            secondary={convertDate(e.Date)}/>
             </ListItem>
           ))}
         </List>

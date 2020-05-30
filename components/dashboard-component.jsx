@@ -116,7 +116,7 @@ const DashboardComponent = props => {
           className={fixedHeightPaperT}
           events={events}
           handler={handleEventDetails}
-          user={props.user}
+          user={props.person.person}
         />
         <EventDetails className={fixedHeightPaperT} event={currentEvent} user={props.user}/>
         <Directory className={fixedHeightPaperB} teamId={teamId} token={props.person.person.token}/>
