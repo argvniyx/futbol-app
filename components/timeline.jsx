@@ -20,10 +20,14 @@ import AddBox from '@material-ui/icons/AddBox'
 export default function Timeline(props) {
 
   const [eventsList, setEvents] = React.useState([])
+  const [currentEvents, setCurrentEvents] = React.useState([])
   const [needData, setNeedData] = React.useState(0)
+  const [page, setPage] = React.useState(1)
+  const [lowerIndex, setLower] = React.useState(0)
+  const [upperIndex, setUpper] = React.useState(-1)
 
   React.useEffect(() => {
-    fetch(`${process.env.API_URL}/events/${props.user.children[1].TeamID}?Page=1&NumberToBring=5`, {
+    fetch(`${process.env.API_URL}/events/${props.user.children[1].TeamID}?Page=${page}&NumberToBring=5`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${props.user.token}`,
@@ -31,10 +35,37 @@ export default function Timeline(props) {
       },
       
     }).then((res) => {
-      return res.json()
+      if (res.status == 200){
+        return res.json()
+      }
+      else {
+        console.log('No new events')
+        return null
+      }
+      
     }).then((res) => {
-      setEvents(res.Events)
-      console.log('Se consiguieron eventos')
+      if (res != null){
+        if (res.Events.length == 5){
+          setEvents(eventsList.concat(res.Events))
+          setCurrentEvents(res.Events)
+          if (upperIndex + 5 != 4){
+            setLower(lowerIndex + 5)
+          }
+          setUpper(upperIndex + 5)
+        }
+        else{
+          let leftover = currentEvents.length - res.Events.length
+          let aux = []
+          for (let i = 0; i < leftover; i++) {
+            aux.push(currentEvents[leftover + i + 1])
+          }
+          setEvents(eventsList.concat(res.Events))
+          setCurrentEvents(aux.concat(res.Events))
+          setUpper(upperIndex + res.Events.length)
+          setLower(lowerIndex + leftover - 1)
+        }
+        console.log('Se consiguieron eventos')
+      }
     })
   }, [needData])
   // checar con eventlist si no se detiene
@@ -52,14 +83,53 @@ export default function Timeline(props) {
   const handleNewEventClose = () => setOpen(false)
 
   // Handling navigation
-  const handleBack = () => console.log('test: ', eventsList)
-  const handleNext = () => console.log('click derecho')
+  const handleBack = () => {
+    if (lowerIndex == 0){
+      console.log('No newer events')
+      return 
+    }
+    if (lowerIndex - 5 >= 0){
+      console.log(eventsList)
+    }
+    else{
+      let leftover = (lowerIndex - 5 + 1) * -1
+      let aux = []
+      console.log(leftover)
+      for (let i = 0; i < leftover; i++) {
+        aux.push(eventsList[i])
+      }
+      for (let i = leftover; i < 5 && i < eventsList.length; i++) {
+        aux.push(eventsList[i])
+      }
+      setCurrentEvents(aux)
+      setLower(0)
+      setUpper(4)
+    }
+  }
+  const handleNext = () => {
+    if (upperIndex == eventsList.length - 1){
+      setPage(page + 1)
+      setNeedData(page)
+    }
+    else{
+      // load from eventsList
+      let leftover = eventsList.length - upperIndex - 1
+      let aux = []
+      for (let i = upperIndex - leftover; i >= 0; i--){
+        aux.push(eventsList[upperIndex - i])
+      }
+      for (let i = upperIndex + 1; i < upperIndex + 5 && i < eventsList.length; i++) {
+        aux.push(eventsList[i])
+      }
+      setCurrentEvents(aux)
+      setUpper(eventsList.length - 1)
+      setLower(eventsList. length - 5)
+    }
+  }
 
   function convertDate(date){
     let aux = new Date()
-    aux.setTime(date._seconds)
-    console.log(date._seconds)
-    console.log(aux)
+    aux.setTime(date._seconds * 1000)
     return aux.toDateString()
   }
 
@@ -68,7 +138,7 @@ export default function Timeline(props) {
       <CardHeader title="Timeline"/>
       <CardContent style={{flexGrow: 1}}>
         <List>
-          {eventsList.map((e) => (
+          {currentEvents.map((e) => (
             <ListItem
               key={e.id}
               button
