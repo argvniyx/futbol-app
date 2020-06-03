@@ -23,60 +23,24 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const events = [
+const PlaceholderEvent = 
   {
     id: 0,
-    name: "Partido",
-    place: "Uro",
-    date: new Date(2019, 4, 3).toDateString(),
-    hour: "4:30",
-    length: "2hrs",
-    comments: "a"
-  },
-  {
-    id: 1,
-    name: "Entrenamiento",
-    place: "Escuela",
-    date: new Date(2019, 4, 5).toDateString(),
-    hour: "3:30",
-    length: "2hrs",
-    comments: "b"
-  },
-  {
-    id: 2,
-    name: "Junta",
-    place: "Escuela",
-    date: new Date(2019, 4, 5).toDateString(),
-    hour: "5:30",
-    length: "30mins",
-    comments: "c"
-  },
-  {
-    id: 3,
-    name: "Entrenamiento",
-    place: "Escuela",
-    date: new Date(2019, 4, 5).toDateString(),
-    hour: "4:30",
-    length: "2hrs",
-    comments: "d"
-  },
-  {
-    id: 4,
-    name: "Entrenamiento",
-    place: "Uro",
-    date: new Date(2019, 4, 5).toDateString(),
-    hour: "4:30",
-    length: "2hrs",
-    comments: "e"
-  },
-];
+    name: "",
+    place: "",
+    date: "",
+    hour: "",
+    length: "",
+    comments: ""
+  }
 
 const DashboardComponent = props => {
   const classes = useStyles();
   const fixedHeightPaperT = clsx(classes.paper, classes.fixedHeightTop);
   const fixedHeightPaperB = clsx(classes.paper, classes.fixedHeightBottom);
-  const [selectedIndex, setSelectedIndex] = React.useState(0);
-  const [currentEvent, setCurrentEvent] = React.useState(events[selectedIndex]);
+  const [selectedIndex, setSelectedIndex] = React.useState(-1);
+  const [currentEvent, setCurrentEvent] = React.useState(PlaceholderEvent);
+  const eventsRef = React.useRef(null)
 
   // The current child is the first child on first load
   // A coach does not have children
@@ -97,8 +61,14 @@ const DashboardComponent = props => {
   // Handle the event details logic. This is a callback to propagate changes upwards
   // from Timeline (child) to DashboardComponent (parent) so that EventDetails can be set
   const handleEventDetails = (index) => {
-    setSelectedIndex(index);
-    setCurrentEvent(events[index]);
+
+    if(index == -1){
+      setCurrentEvent(PlaceholderEvent)
+    }
+    else{
+      setSelectedIndex(index);
+      setCurrentEvent(eventsRef.current[index]);
+    }
   }
 
   // Another callback. This time, to the Header, since the header determines the
@@ -106,7 +76,6 @@ const DashboardComponent = props => {
   const handleHeaderList = (selectedChild) => {
     setCurrentChild(selectedChild)
   }
-  console.log(children)
 
   return (
     <Box className={classes.root}>
@@ -114,9 +83,9 @@ const DashboardComponent = props => {
       <Content>
         <Timeline
           className={fixedHeightPaperT}
-          events={events}
           handler={handleEventDetails}
           user={props.person.person}
+          ref = {eventsRef}
         />
         <EventDetails className={fixedHeightPaperT} event={currentEvent} user={props.user}/>
         <Directory className={fixedHeightPaperB} teamId={teamId} token={props.person.person.token}/>

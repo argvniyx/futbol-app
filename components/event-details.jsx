@@ -15,7 +15,17 @@ import Button from '@material-ui/core/Button';
 
 export default function EventDetails(props) {
   const [currentEvent, modifyEvent] = React.useState(props.event)
-  const {name, place, date, hour, length, comments} = currentEvent;
+  const {Name, Place, Hour, Duration, comments} = currentEvent;
+  const DateOfEvent = currentEvent['Date']
+
+  function convertDate(date){
+    if (!date){
+      return ""
+    }
+    let aux = new Date()
+    aux.setTime(date._seconds * 1000)
+    return aux.toLocaleTimeString()
+  }
 
   React.useEffect(() => {
     modifyEvent(props.event)
@@ -45,15 +55,15 @@ export default function EventDetails(props) {
       <CardHeader title="Evento"/>
       <CardContent style={{flexGrow: 1}}>
         <Typography variant="h6">Nombre de Evento</Typography>
-        {name}
+        {Name}
         <Typography variant="h6">Asistencia</Typography>
         {}
         <Typography variant="h6">Lugar del Evento</Typography>
-        {place}
+        {Place}
         <Typography variant="h6">Hora</Typography>
-        {hour}
+        {convertDate(DateOfEvent)}
         <Typography variant="h6">Duración</Typography>
-        {length}
+        {Duration}
         <Typography variant="h6">Comentarios</Typography>
         {comments}
       </CardContent>
@@ -94,7 +104,7 @@ export default function EventDetails(props) {
             id="hour"
             label="Hora del evento"
             type="name"
-            defaultValue={currentEvent.hour}
+            defaultValue={convertDate(currentEvent.hour)}
             onChange={handleFieldChange}
             fullWidth
           />

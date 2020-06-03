@@ -16,8 +16,9 @@ import IconButton from '@material-ui/core/IconButton'
 import NavigateNext from '@material-ui/icons/NavigateNext'
 import NavigateBefore from '@material-ui/icons/NavigateBefore'
 import AddBox from '@material-ui/icons/AddBox'
+import { forwardRef, useImperativeHandle } from 'react'
 
-export default function Timeline(props) {
+const Timeline = forwardRef((props, ref) => {
 
   const [eventsList, setEvents] = React.useState([])
   const [currentEvents, setCurrentEvents] = React.useState([])
@@ -64,6 +65,8 @@ export default function Timeline(props) {
           setUpper(upperIndex + res.Events.length)
           setLower(lowerIndex + leftover - 1)
         }
+        setSelectedIndex(-1);
+        props.handler(-1);
         console.log('Se consiguieron eventos')
       }
     })
@@ -101,6 +104,8 @@ export default function Timeline(props) {
       for (let i = leftover; i < 5 && i < eventsList.length; i++) {
         aux.push(eventsList[i])
       }
+      setSelectedIndex(-1);
+      props.handler(-1);
       setCurrentEvents(aux)
       setLower(0)
       setUpper(4)
@@ -121,6 +126,8 @@ export default function Timeline(props) {
       for (let i = upperIndex + 1; i < upperIndex + 5 && i < eventsList.length; i++) {
         aux.push(eventsList[i])
       }
+      setSelectedIndex(-1);
+      props.handler(-1);
       setCurrentEvents(aux)
       setUpper(eventsList.length - 1)
       setLower(eventsList. length - 5)
@@ -133,6 +140,10 @@ export default function Timeline(props) {
     return aux.toDateString()
   }
 
+  useImperativeHandle(ref, () => {
+    return currentEvents
+  })
+
   return (
     <Card className={props.className}>
       <CardHeader title="Timeline"/>
@@ -142,8 +153,8 @@ export default function Timeline(props) {
             <ListItem
               key={e.id}
               button
-              selected={selectedIndex === e.id}
-              onClick={(event) => handleListItemClick(event, e.id)}
+              selected={selectedIndex === currentEvents.indexOf(e)}
+              onClick={(event) => handleListItemClick(event, currentEvents.indexOf(e))}
             >
               <ListItemText primary={e.Name}
                             secondary={convertDate(e.Date)}/>
@@ -244,4 +255,6 @@ export default function Timeline(props) {
       </Dialog>
     </Card>
   );
-}
+})
+
+export default Timeline;
