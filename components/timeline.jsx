@@ -28,7 +28,15 @@ const Timeline = forwardRef((props, ref) => {
   const [upperIndex, setUpper] = React.useState(-1)
 
   React.useEffect(() => {
-    fetch(`${process.env.API_URL}/events/${props.user.children[1].TeamID}?Page=${page}&NumberToBring=5`, {
+    let url = ''
+    console.log(props.user)
+    if (props.user.role == 2){
+      url = `${process.env.API_URL}/events/${props.user.TeamID}?Page=${page}&NumberToBring=5`
+    }
+    else{
+      url = `${process.env.API_URL}/events/${props.user.children[0].TeamID}?Page=${page}&NumberToBring=5`
+    }
+    fetch(url, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${props.user.token}`,
