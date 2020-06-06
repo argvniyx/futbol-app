@@ -108,6 +108,8 @@ const Timeline = forwardRef((props, ref) => {
         aux.push(eventsList[i])
       }
       setCurrentEvents(aux)
+      setSelectedIndex(-1);
+      props.handler(-1);
       
     }
     else{
@@ -141,6 +143,8 @@ const Timeline = forwardRef((props, ref) => {
         aux.push(eventsList[i])
       }
       setCurrentEvents(aux)
+      setSelectedIndex(-1);
+      props.handler(-1);
     }
     else{
       // load from eventsList
