@@ -29,7 +29,6 @@ const Timeline = forwardRef((props, ref) => {
 
   React.useEffect(() => {
     let url = ''
-    console.log(props.user)
     if (props.user.role == 2){
       url = `${process.env.API_URL}/events/${props.user.TeamID}?Page=${page}&NumberToBring=5`
     }
@@ -54,8 +53,8 @@ const Timeline = forwardRef((props, ref) => {
       
     }).then((res) => {
       if (res != null){
+        setEvents(eventsList.concat(res.Events))
         if (res.Events.length == 5){
-          setEvents(eventsList.concat(res.Events))
           setCurrentEvents(res.Events)
           if (upperIndex + 5 != 4){
             setLower(lowerIndex + 5)
@@ -66,12 +65,12 @@ const Timeline = forwardRef((props, ref) => {
           let leftover = currentEvents.length - res.Events.length
           let aux = []
           for (let i = 0; i < leftover; i++) {
-            aux.push(currentEvents[leftover + i + 1])
+            aux.push(currentEvents[res.Events.length + i])
           }
-          setEvents(eventsList.concat(res.Events))
+          console.log('aux: ', aux.concat(res.Events))
           setCurrentEvents(aux.concat(res.Events))
           setUpper(upperIndex + res.Events.length)
-          setLower(lowerIndex + leftover - 1)
+          setLower(lowerIndex + res.Events.length)
         }
         setSelectedIndex(-1);
         props.handler(-1);
@@ -100,12 +99,20 @@ const Timeline = forwardRef((props, ref) => {
       return 
     }
     if (lowerIndex - 5 >= 0){
-      console.log(eventsList)
+      let upper = upperIndex - 5
+      let lower = lowerIndex - 5
+      let aux = []
+      setUpper(upper)
+      setLower(lower)
+      for(let i = lower; i <= upper; i++){
+        aux.push(eventsList[i])
+      }
+      setCurrentEvents(aux)
+      
     }
     else{
       let leftover = (lowerIndex - 5 + 1) * -1
       let aux = []
-      console.log(leftover)
       for (let i = 0; i < leftover; i++) {
         aux.push(eventsList[i])
       }
@@ -124,14 +131,25 @@ const Timeline = forwardRef((props, ref) => {
       setPage(page + 1)
       setNeedData(page)
     }
+    else if(upperIndex + 5 <= eventsList.length - 1){
+      let upper = upperIndex + 5
+      let lower = lowerIndex + 5
+      let aux = []
+      setUpper(upper)
+      setLower(lower)
+      for(let i = lower; i <= upper; i++){
+        aux.push(eventsList[i])
+      }
+      setCurrentEvents(aux)
+    }
     else{
       // load from eventsList
       let leftover = eventsList.length - upperIndex - 1
       let aux = []
-      for (let i = upperIndex - leftover; i >= 0; i--){
-        aux.push(eventsList[upperIndex - i])
+      for (let i = lowerIndex + leftover; i <= upperIndex; i++){
+        aux.push(eventsList[i])
       }
-      for (let i = upperIndex + 1; i < upperIndex + 5 && i < eventsList.length; i++) {
+      for (let i = upperIndex + 1; i < eventsList.length; i++) {
         aux.push(eventsList[i])
       }
       setSelectedIndex(-1);
