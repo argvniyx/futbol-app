@@ -10,7 +10,7 @@ export default function Directory(props) {
   const [directory, setDirectory] = React.useState([]);
 
   React.useEffect(() => {
-    fetch(`${process.env.API_URL}/teams/${props.teamId}`, {
+    fetch(`http://localhost:5001/futbol-app-8b521/us-central1/app/teams/${props.teamId}`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${props.token}`,
@@ -36,6 +36,7 @@ export default function Directory(props) {
           </TableRow>
         </TableHead>
         <TableBody>
+        {console.log(directory)}
           {directory.map((row) => (
             <TableRow key={row.UserID}>
               <TableCell component="th" scope="row">
