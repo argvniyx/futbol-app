@@ -1,40 +1,28 @@
 import Container from '@material-ui/core/Container'
-import Typography from '@material-ui/core/Typography'
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
+import Directory from '../components/directory'
+import { makeStyles } from '@material-ui/styles'
+
+const useStyles = makeStyles((theme) => ({
+  container: {
+    paddingTop: theme.spacing(3),
+    paddingBottom: theme.spacing(3)
+  }
+}));
 
 export default function TeamDetails(props) {
-  if(props.team && props.team != "") {
+  const classes = useStyles();
+
+  if(props.team) {
     return (
-        <List>
-          <ListItem>
-            <ListItemText primary="Coach"
-                          secondary="ID"/>
-          </ListItem>
-          <ListItem>
-            <ListItemText primary="Nombre"
-                          secondary="Equipo1"/>
-          </ListItem>
-          <ListItem>
-            <ListItemText primary="Inicio de Temporada"
-                          secondary="Fecha"/>
-          </ListItem>
-          <ListItem>
-            <ListItemText primary="Fin de Temporada"
-                          secondary="Fecha"/>
-          </ListItem>
-          <ListItem>
-            <ListItemText primary="Miembro 1"
-                          secondary="Nombre"/>
-          </ListItem>
-        </List>
+      <Container className={classes.container}>
+        <Directory teamId={props.team.TeamID} token={props.token}/>
+      </Container>
     );
   }
   else {
     return (
-      <Container fixed>
-        <Typography variant="h3" align="center">
+      <Container fixed className={classes.container}>
+        <Typography variant="h4" align="center">
           Elige un equipo
         </Typography>
       </Container>
