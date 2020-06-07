@@ -1,5 +1,6 @@
 import Container from '@material-ui/core/Container'
 import Directory from '../components/directory'
+import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/styles'
 
 const useStyles = makeStyles((theme) => ({

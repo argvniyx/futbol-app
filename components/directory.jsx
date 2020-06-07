@@ -39,7 +39,7 @@ export default function Directory(props) {
           {directory.map((row) => (
             <TableRow key={row.UserID}>
               <TableCell component="th" scope="row">
-                {row.FirstName}
+                {row.isCoach ? `${row.FirstName} (Coach)` : row.FirstName}
               </TableCell>
               <TableCell>{row.LastName}</TableCell>
               <TableCell>{row.Email}</TableCell>
