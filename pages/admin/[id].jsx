@@ -62,7 +62,7 @@ const Admin = (props) => {
     fetch(`${process.env.API_URL}/admin/new-coach`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${props.person.person.token}`,
+        'Authorization': `Bearer ${props.person.token}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(coach)
@@ -83,7 +83,11 @@ const Admin = (props) => {
     <Box>
       <Header component={<InviteButton onClick={handleOpenDialog}/>}/>
       <Content fullWidth>
-        <AdminList className={fixedHeightPaperT} teams={props.teams}/>
+        <AdminList
+          className={fixedHeightPaperT}
+          teams={props.teams}
+          token={props.person.token}
+        />
       </Content>
       <Dialog
         open={open}
