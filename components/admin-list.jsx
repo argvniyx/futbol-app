@@ -3,12 +3,18 @@ import Card from '@material-ui/core/Card'
 import TeamDetails from '../components/team-details'
 
 const AdminList = (props) => {
-  const ref = React.useRef(null)
+  const [teamId, setTeamId] = React.useState(0)
+
+  const teamRef = React.useCallback(node => {
+    if(node != null) {
+      setTeamId(node)
+    }
+  }, [])
 
   return (
       <Card className={props.className}>
-        <SelectTeam teams={props.teams} ref={ref}/>
-        <TeamDetails/>
+        <SelectTeam teams={props.teams} ref={teamRef}/>
+        <TeamDetails team={teamId}/>
       </Card>
   );
 }
