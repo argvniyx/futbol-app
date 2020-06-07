@@ -16,7 +16,7 @@ export default function TeamDetails(props) {
   if(props.team) {
     return (
       <Container className={classes.container}>
-        <Directory teamId={props.team.TeamID} token={props.token}/>
+        <Directory teamId={props.team.TeamID} token={props.token} admin/>
       </Container>
     );
   }

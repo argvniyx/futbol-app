@@ -33,10 +33,14 @@ export default function Directory(props) {
             <TableCell>Apellido</TableCell>
             <TableCell>Correo</TableCell>
             <TableCell>Celular</TableCell>
+            {
+              props.admin ?
+              <TableCell>User ID</TableCell>
+              : null
+            }
           </TableRow>
         </TableHead>
         <TableBody>
-        {console.log(directory)}
           {directory.map((row) => (
             <TableRow key={row.UserID}>
               <TableCell component="th" scope="row">
@@ -45,6 +49,7 @@ export default function Directory(props) {
               <TableCell>{row.LastName}</TableCell>
               <TableCell>{row.Email}</TableCell>
               <TableCell>{row.Phone ? row.Phone : null}</TableCell>
+              {props.admin ? <TableCell>{row.UserID}</TableCell> : null}
             </TableRow>
           ))}
         </TableBody>
