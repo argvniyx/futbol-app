@@ -26,6 +26,15 @@ const Timeline = forwardRef((props, ref) => {
   const [page, setPage] = React.useState(1)
   const [lowerIndex, setLower] = React.useState(0)
   const [upperIndex, setUpper] = React.useState(-1)
+  const [newEvent, setNewEvent] = React.useState({
+    Name: '',
+    Place: '',
+    Date: '',
+    Hour: '',
+    timeDuration: '',
+    TeamID: props.user.TeamID,
+    Description: ''
+  })
 
   React.useEffect(() => {
     let url = ''
@@ -40,7 +49,7 @@ const Timeline = forwardRef((props, ref) => {
       headers: {
         'Authorization': `Bearer ${props.user.token}`,
         'Content-Type': 'application/json'
-      },
+      }
       
     }).then((res) => {
       if (res.status == 200){
@@ -164,6 +173,86 @@ const Timeline = forwardRef((props, ref) => {
     }
   }
 
+  const handleFieldChange = (event) => {
+    console.log(event.target.id)
+    setNewEvent({...newEvent, [event.target.id]: event.target.value})
+  }
+
+  const validateFields = () =>{
+
+    let counter = 0
+
+    for (var key in newEvent){
+      var attrName = key;
+      if (attrName != 'Description'){
+        var attrValue = newEvent[key];
+        if(attrValue.trim() == ''){
+          console.log(attrName + ' is missing')
+          counter++
+        }
+      }
+    }
+
+    if (counter > 0){
+      return false
+    }
+    else{
+      return true
+    }
+
+  }
+
+  const handleSaveClick = (event) => {
+    if (validateFields()) {
+      let dateTimeFormat = newEvent.Date + 'T' + newEvent.Hour
+      console.log(newEvent)
+      fetch(`${process.env.API_URL}/events/`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${props.user.token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          Name: newEvent.Name,
+          Place: newEvent.Place,
+          Date: dateTimeFormat,
+          timeDuration: newEvent.timeDuration,
+          TeamID: newEvent.TeamID
+        })
+      }).then((res) => {
+        let amount = 0
+        if (eventsList.length % 5 == 0){
+          amount = eventsList.length
+        }
+        else{
+          amount = eventsList.length + 1
+        }
+        fetch(`${process.env.API_URL}/events/${props.user.TeamID}?Page=1&NumberToBring=${amount}`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${props.user.token}`,
+            'Content-Type': 'application/json'
+          }
+        }).then((res) => {
+          return res.json()
+        }).then((res) => {
+          let aux = []
+          setEvents(res.Events)
+          for (let i = lowerIndex; i <= upperIndex; i++){
+            aux.push(res.Events[i])
+          }
+          console.log(aux)
+          setCurrentEvents(aux)
+          handleNewEventClose()
+          setSelectedIndex(-1);
+          props.handler(-1);
+        })
+      }).catch((err) =>{
+        console.log('error: ', err)
+      })
+    }
+  }
+
   function convertDate(date){
     let aux = new Date()
     aux.setTime(date._seconds * 1000)
@@ -199,7 +288,7 @@ const Timeline = forwardRef((props, ref) => {
         <IconButton onClick={handleNext}>
           <NavigateNext/>
         </IconButton>
-        {props.user ? null :
+        {props.user.role == 3 ? null :
             <IconButton onClick={handleNewEventOpen}>
               <AddBox/>
             </IconButton>
@@ -217,50 +306,50 @@ const Timeline = forwardRef((props, ref) => {
           </DialogContentText>
           <TextField
             margin="normal"
-            id="name"
+            id="Name"
             label="Nombre del evento"
             type="name"
             /* defaultValue={currentEvent.name} */
-            /* onChange={handleFieldChange} */
+            onChange={handleFieldChange}
             fullWidth
           />
           <TextField
             margin="normal"
-            id="place"
+            id="Place"
             label="Lugar del evento"
             type="name"
             /* defaultValue={currentEvent.name} */
-            /* onChange={handleFieldChange} */
+            onChange={handleFieldChange}
             fullWidth
           />
           <TextField
             margin="normal"
-            id="date"
+            id="Date"
             type="date"
             label="Fecha del evento"
             InputLabelProps={{shrink: true}}
             /* defaultValue={currentEvent.name} */
-            /* onChange={handleFieldChange} */
+            onChange={handleFieldChange}
             fullWidth
           />
           <TextField
             margin="normal"
-            id="hour"
+            id="Hour"
             label="Hora del evento"
             type="time"
             InputLabelProps={{shrink: true}}
             /* defaultValue={currentEvent.name} */
-            /* onChange={handleFieldChange} */
+            onChange={handleFieldChange}
             fullWidth
           />
           <TextField
             margin="normal"
-            id="hour"
+            id="timeDuration"
             label="Duración del evento"
             type="time"
             InputLabelProps={{shrink: true}}
             /* defaultValue={currentEvent.name} */
-            /* onChange={handleFieldChange} */
+            onChange={handleFieldChange}
             fullWidth
           />
           <TextField
@@ -277,7 +366,7 @@ const Timeline = forwardRef((props, ref) => {
           <Button
             variant="contained"
             color="primary"
-            /* onClick={handleSaveClick} */
+            onClick={handleSaveClick}
           >
             Listo
           </Button>
