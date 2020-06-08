@@ -13,7 +13,7 @@ import AdminList from '../../components/admin-list'
 import { makeStyles } from '@material-ui/styles'
 import {useRouter} from 'next/router'
 import cookies from '../../node_modules/next-cookies'
-
+import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator'
 
 var $ = require( "jquery" );
 
@@ -40,6 +40,27 @@ const InviteButton = (props) => {
   );
 }
 
+const FeedbackDialog = (props) => {
+  return (
+    <Dialog
+      open={props.open}
+      onClose={props.handleClose}
+    >
+      <DialogTitle>{props.dialogTitle}</DialogTitle>
+      <DialogContent>
+        <DialogContentText>
+          {props.dialogMsg}
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={props.handleClose} color="primary" variant="contained">
+          Entendido
+        </Button>
+      </DialogActions>
+    </Dialog>
+  )
+}
+
 const Admin = (props) => {
   const router = useRouter()
   const classes = useStyles();
@@ -49,6 +70,12 @@ const Admin = (props) => {
   const [open, setOpen] = React.useState(false);
   const handleCloseDialog = () => setOpen(false);
   const handleOpenDialog = () => setOpen(true);
+
+  // Handling the FeedbackDialog
+  const [openFeedback, setOpenFeedback] = React.useState(false);
+  const handleCloseFeedback = () => setOpenFeedback(false);
+  const [title, setTitle] = React.useState("")
+  const [msg, setMsg] = React.useState("")
 
   // State for invitation sending
   const [coach, modifyCoach] = React.useState({
@@ -69,12 +96,21 @@ const Admin = (props) => {
     })
       .then(
         (result) => {
-          console.log("in success")
-          console.log(result)
+          if(result.ok) {
+            setTitle("Operación Exitosa")
+            setMsg("El correo fue enviado con éxito")
+            setOpenFeedback(true)
+          }
+          else {
+            setTitle("Operación fallida")
+            setMsg("El correo no pudo se mandado. Asegúrate de haberlo escrito correctamente")
+            setOpenFeedback(true)
+          }
         },
         (error) => {
-          console.log('in error')
-          console.log(error)
+          setTitle("Error de red")
+          setMsg(`Se produjo el siguiente error de red:\n\n ${error}`)
+          setOpenFeedback(true)
         }
       )
   }
@@ -99,47 +135,58 @@ const Admin = (props) => {
             Ingrese una dirección de correo electrónico para invitar a un entrenador.
             El sistema generará un correo con un token especial para su registro.
           </DialogContentText>
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            id="Email"
-            label="Correo electrónico"
-            name="email"
-            autoComplete="email"
-            onChange={handleChange}
-          />
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            id="FirstName"
-            label="Nombre"
-            name="name"
-            autoComplete="name"
-            onChange={handleChange}
-          />
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            id="LastName"
-            label="Apellido"
-            name="lastName"
-            autoComplete="name"
-            onChange={handleChange}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={sendInvitation}
+          <ValidatorForm
+            onSubmit={sendInvitation}
+            onError={errors => console.log(errors)}
           >
-            Mandar Invitación
-          </Button>
-        </DialogActions>
+            <TextValidator
+              fullWidth
+              id="Email"
+              label="Email"
+              name="Email"
+              value={coach.Email}
+              onChange={handleChange}
+              validators={['required', 'isEmail']}
+              errorMessages={['El correo es obligatorio', 'No es un email válido']}
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="FirstName"
+              label="Nombre"
+              name="name"
+              autoComplete="name"
+              onChange={handleChange}
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="LastName"
+              label="Apellido"
+              name="lastName"
+              autoComplete="name"
+              onChange={handleChange}
+            />
+            <DialogActions>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  type="submit"
+                >
+                  Mandar Invitación
+                </Button>
+            </DialogActions>
+          </ValidatorForm>
+        </DialogContent>
       </Dialog>
+      <FeedbackDialog
+        open={openFeedback}
+        handleClose={handleCloseFeedback}
+        dialogTitle={title}
+        dialogMsg={msg}
+      />
     </Box>
   );
 };
