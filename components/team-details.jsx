@@ -2,6 +2,7 @@ import Container from '@material-ui/core/Container'
 import Directory from '../components/directory'
 import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/styles'
+import Button from '@material-ui/core/Button'
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -16,7 +17,7 @@ export default function TeamDetails(props) {
   if(props.team) {
     return (
       <Container className={classes.container}>
-        <Directory teamId={props.team.TeamID} token={props.token}/>
+        <Directory teamId={props.team.TeamID} token={props.token} admin/>
       </Container>
     );
   }
