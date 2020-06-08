@@ -4,12 +4,16 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import Typography from '@material-ui/core/Typography'
 import Paper from '@material-ui/core/Paper';
+import LinearProgress from '@material-ui/core/LinearProgress'
 
 export default function Directory(props) {
   const [directory, setDirectory] = React.useState([]);
+  const [loading, setLoading] = React.useState(false)
 
   React.useEffect(() => {
+    setLoading(true)
     fetch(`http://localhost:5001/futbol-app-8b521/us-central1/app/teams/${props.teamId}`, {
       method: 'GET',
       headers: {
@@ -19,41 +23,59 @@ export default function Directory(props) {
     })
       .then(res => res.json())
       .then(
-        (result) => setDirectory(result),
-        (error) => console.log(error)
+        (result) => {
+          setLoading(false)
+          setDirectory(result)
+        },
+        (error) => {
+          setLoading(false)
+          console.log(error)
+        }
       )
   }, [props.teamId])
 
-  return (
-    <TableContainer component={Paper} className={props.className}>
-      <Table aria-label="phone directory">
-        <TableHead>
-          <TableRow>
-            <TableCell>Nombre</TableCell>
-            <TableCell>Apellido</TableCell>
-            <TableCell>Correo</TableCell>
-            <TableCell>Celular</TableCell>
-            {
-              props.admin ?
-              <TableCell>User ID</TableCell>
-              : null
-            }
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {directory.map((row) => (
-            <TableRow key={row.UserID}>
-              <TableCell component="th" scope="row">
-                {row.isCoach ? `${row.FirstName} (Coach)` : row.FirstName}
-              </TableCell>
-              <TableCell>{row.LastName}</TableCell>
-              <TableCell>{row.Email}</TableCell>
-              <TableCell>{row.Phone ? row.Phone : null}</TableCell>
-              {props.admin ? <TableCell>{row.UserID}</TableCell> : null}
+  if(directory.length == 0 && !loading) {
+    return (
+     <Typography variant="h4">No hay contactos</Typography>
+    )
+  }
+  else {
+    return loading ?
+      <TableContainer component={Paper} className={props.className}>
+        <LinearProgress/>
+      </TableContainer>
+    :
+      (
+      <TableContainer component={Paper} className={props.className}>
+        <Table aria-label="phone directory">
+          <TableHead>
+            <TableRow>
+              <TableCell>Nombre</TableCell>
+              <TableCell>Apellido</TableCell>
+              <TableCell>Correo</TableCell>
+              <TableCell>Celular</TableCell>
+              {
+                props.admin ?
+                <TableCell>User ID</TableCell>
+                : null
+              }
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
-  );
+          </TableHead>
+          <TableBody>
+            {directory.map((row) => (
+              <TableRow key={row.UserID}>
+                <TableCell component="th" scope="row">
+                  {row.isCoach ? `${row.FirstName} (Coach)` : row.FirstName}
+                </TableCell>
+                <TableCell>{row.LastName}</TableCell>
+                <TableCell>{row.Email}</TableCell>
+                <TableCell>{row.Phone ? row.Phone : null}</TableCell>
+                {props.admin ? <TableCell>{row.UserID}</TableCell> : null}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    );
+  }
 }
