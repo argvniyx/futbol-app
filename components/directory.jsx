@@ -16,12 +16,12 @@ import Button from '@material-ui/core/Button'
 
 export default function Directory(props) {
   const [directory, setDirectory] = React.useState([]);
-  const [loading, setLoading] = React.useState(false)
+  const [loading, setLoading] = React.useState(true)
   const [isError, setError] = React.useState(false)
 
   React.useEffect(() => {
     setLoading(true)
-    fetch(`http://localhost:5001/futbol-app-8b521/us-central1/app/teams/${props.teamId}`, {
+    fetch(`${process.env.API_URL}/teams/${props.teamId}`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${props.token}`,
@@ -36,12 +36,12 @@ export default function Directory(props) {
       })
       .then(
         (result) => {
-          setLoading(false)
           setDirectory(result)
+          setLoading(false)
         },
         (error) => {
-          setLoading(false)
           setError(true)
+          setLoading(false)
         }
       )
   }, [props.teamId])

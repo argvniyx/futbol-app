@@ -43,7 +43,8 @@ const Header = (props) => {
 
   // A coach does not have registered children,
   // If children is null, we are in a coach dashboard, and should use a dummy value
-  const [currentChild, setCurrentChild] = React.useState(children ? children[0] : 0);
+  const [currentChild, setCurrentChild] =
+        React.useState(children == [] ? 0 : children[0]);
 
   const handleChange = (event) => {
     setCurrentChild(children[event.target.value]);
@@ -52,7 +53,8 @@ const Header = (props) => {
   // When we have selected a child, we propagate that selection to the Dashboard
   // with the callback
   React.useEffect(() => {
-    props.handler(currentChild.TeamID)
+    if(props.handler)
+      props.handler(currentChild.TeamID)
   }, [currentChild])
 
   return (

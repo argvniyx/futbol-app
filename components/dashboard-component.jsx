@@ -59,26 +59,25 @@ const DashboardComponent = props => {
         ? React.useState(props.person.person.children)
         : React.useState([])
 
+  // We need to keep track of the currently selected event
+
   return (
     <Box className={classes.root}>
       <Header user={props.user} items={children} handler={setTeamId}/>
       <Content>
-      {/*   <Timeline */}
-      {/*     className={fixedHeightPaperT} */}
-      {/*     handler={handleEventDetails} */}
-      {/*     user={props.person.person} */}
-      {/*     ref = {eventsRef} */}
-      {/*   /> */}
+        <Timeline
+          user={props.user}
+          teamId={teamId}
+          className={fixedHeightPaperT}
+          /* handler={handleEventDetails} */
+          /* ref = {eventsRef} */
+        />
       {/*   <EventDetails className={fixedHeightPaperT} event={currentEvent} user={props.user}/> */}
         <Directory className={fixedHeightPaperB} teamId={teamId} token={props.person.person.token}/>
-      {/*   <UserCard className={fixedHeightPaperB} person={props.person}/> */}
+        <UserCard className={fixedHeightPaperB} person={props.person}/>
       </Content>
     </Box>
   );
-}
-
-export async function getServerSideProps(){
-  
 }
 
 export default DashboardComponent;
