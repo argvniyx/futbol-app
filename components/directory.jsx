@@ -7,10 +7,17 @@ import TableRow from '@material-ui/core/TableRow';
 import Typography from '@material-ui/core/Typography'
 import Paper from '@material-ui/core/Paper';
 import LinearProgress from '@material-ui/core/LinearProgress'
+import Dialog from '@material-ui/core/Dialog'
+import DialogTitle from '@material-ui/core/DialogTitle'
+import DialogContent from '@material-ui/core/DialogContent'
+import DialogActions from '@material-ui/core/DialogActions'
+import DialogContentText from '@material-ui/core/DialogContentText'
+import Button from '@material-ui/core/Button'
 
 export default function Directory(props) {
   const [directory, setDirectory] = React.useState([]);
   const [loading, setLoading] = React.useState(false)
+  const [isError, setError] = React.useState(false)
 
   React.useEffect(() => {
     setLoading(true)
@@ -21,7 +28,12 @@ export default function Directory(props) {
         'Content-Type': 'application/json'
       }
     })
-      .then(res => res.json())
+      .then(res => {
+        if(res.ok)
+          return res.json()
+        else
+          return []
+      })
       .then(
         (result) => {
           setLoading(false)
@@ -29,12 +41,35 @@ export default function Directory(props) {
         },
         (error) => {
           setLoading(false)
-          console.log(error)
+          setError(true)
         }
       )
   }, [props.teamId])
 
-  if(directory.length == 0 && !loading) {
+  if(isError) {
+    return (
+      <Dialog
+        open={true}
+      >
+        <DialogTitle>Hubo un error</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Al parecer hubo un error en la red. Recarga la página e intenta de nuevo
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => window.location.reload(false)}
+          >
+            Recargar
+          </Button>
+        </DialogActions>
+      </Dialog>
+    )
+  }
+  else if(directory.length == 0 && !loading) {
     return (
      <Typography variant="h4">No hay contactos</Typography>
     )
