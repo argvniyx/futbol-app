@@ -69,6 +69,7 @@ const DashboardComponent = props => {
           user={props.user}
           teamId={teamId}
           className={fixedHeightPaperT}
+          token={props.person.person.token}
           /* handler={handleEventDetails} */
           /* ref = {eventsRef} */
         />

@@ -117,7 +117,7 @@ const Admin = (props) => {
 
   return (
     <Box>
-      <Header component={<InviteButton onClick={handleOpenDialog}/>}/>
+      <Header component={<InviteButton onClick={handleOpenDialog}/>} items={[]}/>
       <Content fullWidth>
         <AdminList
           className={fixedHeightPaperT}

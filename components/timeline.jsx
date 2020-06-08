@@ -16,10 +16,16 @@ import IconButton from '@material-ui/core/IconButton'
 import NavigateNext from '@material-ui/icons/NavigateNext'
 import NavigateBefore from '@material-ui/icons/NavigateBefore'
 import AddBox from '@material-ui/icons/AddBox'
+import LinearProgress from '@material-ui/core/LinearProgress'
+import ErrorDialog from '../components/error-dialog'
+import { Typography } from '@material-ui/core';
 
 const Timeline = (props) => {
   // Events
+  const [page, setPage] = React.useState(1)
   const [currentEvents, setCurrentEvents] = React.useState([])
+  const [loading, setLoading] = React.useState(true)
+  const [isError, setError] = React.useState(false)
 
   // This is the logic to open and close the add new event dialog
   const [openNewEvent, setOpenNewEvent] = React.useState(false)
@@ -28,48 +34,83 @@ const Timeline = (props) => {
 
   // When the component is rendered (e.g. when the teamId changes)
   // We'll fetch the events from the database
-  // React.useEffect(() => {
-  //   fetch(`${process.env.API_URL}`)
-  // }, [props.teamId])
+  React.useEffect(() => {
+    setLoading(true)
+    fetch(`${process.env.API_URL}/events/${props.teamId}?Page=${page}&NumberToBring=5`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${props.token}`,
+        'Content-Type': 'application/json'
+      }
+    })
+      .then(res => {
+        if(res.ok)
+          return res.json()
+        else
+          return []
+      })
+      .then(
+        (result) => {
+          setCurrentEvents(result.Events)
+          setLoading(false)
+        },
+        (error) => {
+          setLoading(false)
+          setError(true)
+        }
+      )
+
+  }, [props.teamId, page])
 
   // Page Navigation
   const handleBack = () => console.log("click back")
   const handleNext = () => console.log("click next")
 
+  if(isError) {
+    return <ErrorDialog/>
+  }
+
   return (
     <Card className={props.className}>
-
       <CardHeader title="Timeline"/>
 
       <CardContent style={{flexGrow: 1}}>
-        <List>
-          {currentEvents.map((e) => (
-            <ListItem
-              key={e.id}
-              button
-              /* selected={selectedIndex === currentEvents.indexOf(e)} */
-              /* onClick={(event) => handleListItemClick(event, currentEvents.indexOf(e))} */
-            >
-              henlo
-              {/* <ListItemText primary={e.Name} */}
-              {/*               secondary={convertDate(e.Date)}/> */}
-            </ListItem>
-          ))}
-        </List>
+        {loading
+         ? <LinearProgress/>
+         : <List>
+            {currentEvents.length == 0
+             ? <Typography variant="h5">No hay eventos</Typography>
+             : currentEvents.map((e) => (
+                <ListItem
+                  key={e.id}
+                  button
+                  /* selected={selectedIndex === currentEvents.indexOf(e)} */
+                  /* onClick={(event) => handleListItemClick(event, currentEvents.indexOf(e))} */
+                >
+                  henlo
+                  {/* <ListItemText primary={e.Name} */}
+                  {/*               secondary={convertDate(e.Date)}/> */}
+                </ListItem>
+            ))}
+           </List>
+        }
       </CardContent>
 
       <CardActions disableSpacing>
         <IconButton onClick={handleBack}>
           <NavigateBefore/>
         </IconButton>
+
         <IconButton onClick={handleNext}>
           <NavigateNext/>
         </IconButton>
+
         {props.user ? null :
             <IconButton onClick={handleNewEventOpen}>
               <AddBox/>
             </IconButton>
         }
+
       </CardActions>
 
       <Dialog
