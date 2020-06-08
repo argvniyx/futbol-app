@@ -34,62 +34,44 @@ const PlaceholderEvent =
     comments: ""
   }
 
+const getInitialTeamID = (parent) => {
+  if(parent.children)
+    return parent.children[0].TeamID
+  else
+    console.log("no kids") // Navigate to register child
+}
+
 const DashboardComponent = props => {
   const classes = useStyles();
   const fixedHeightPaperT = clsx(classes.paper, classes.fixedHeightTop);
   const fixedHeightPaperB = clsx(classes.paper, classes.fixedHeightBottom);
-  const [selectedIndex, setSelectedIndex] = React.useState(-1);
-  const [currentEvent, setCurrentEvent] = React.useState(PlaceholderEvent);
-  const eventsRef = React.useRef(null)
 
-  // The current child is the first child on first load
-  // A coach does not have children
-  const [children, setChildren] = React.useState(
-    props.person.person.children ?
-      props.person.person.children : null
-  )
-  const [currentChild, setCurrentChild] = React.useState(children ? children[0] : null)
-  const [teamId, setTeamId] = React.useState(
-    currentChild ?
-      currentChild.TeamID : props.person.person.TeamID
-  );
+  // The user may be either a parent or a coach.
+  // If
+  // Parent: teamId = the TeamID of the first child. We must check that the parent has children
+  // Coach: teamId = its own team id
+  const [teamId, setTeamId] = props.user
+        ? React.useState(getInitialTeamID(props.person.person))
+        : React.useState(props.person.person.TeamID)
 
-  React.useEffect(() => {
-    setTeamId(currentChild ? currentChild.TeamID : teamId)
-  }, [currentChild ? currentChild : null])
-
-  // Handle the event details logic. This is a callback to propagate changes upwards
-  // from Timeline (child) to DashboardComponent (parent) so that EventDetails can be set
-  const handleEventDetails = (index) => {
-
-    if(index == -1){
-      setCurrentEvent(PlaceholderEvent)
-    }
-    else{
-      setSelectedIndex(index);
-      setCurrentEvent(eventsRef.current[index]);
-    }
-  }
-
-  // Another callback. This time, to the Header, since the header determines the
-  // current child (for team information loading)
-  const handleHeaderList = (selectedChild) => {
-    setCurrentChild(selectedChild)
-  }
+  // Likewise, if we have a parent, we'll pass the children to the header
+  const [children, setChildren] = props.user
+        ? React.useState(props.person.person.children)
+        : React.useState([])
 
   return (
     <Box className={classes.root}>
-      <Header user={props.user} items={children} handler={handleHeaderList}/>
+      <Header user={props.user} items={children} handler={setTeamId}/>
       <Content>
-        <Timeline
-          className={fixedHeightPaperT}
-          handler={handleEventDetails}
-          user={props.person.person}
-          ref = {eventsRef}
-        />
-        <EventDetails className={fixedHeightPaperT} event={currentEvent} user={props.user}/>
+      {/*   <Timeline */}
+      {/*     className={fixedHeightPaperT} */}
+      {/*     handler={handleEventDetails} */}
+      {/*     user={props.person.person} */}
+      {/*     ref = {eventsRef} */}
+      {/*   /> */}
+      {/*   <EventDetails className={fixedHeightPaperT} event={currentEvent} user={props.user}/> */}
         <Directory className={fixedHeightPaperB} teamId={teamId} token={props.person.person.token}/>
-        <UserCard className={fixedHeightPaperB} person={props.person}/>
+      {/*   <UserCard className={fixedHeightPaperB} person={props.person}/> */}
       </Content>
     </Box>
   );
