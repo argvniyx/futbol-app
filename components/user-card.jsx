@@ -101,16 +101,6 @@ export default function UserCard(props) {
           <Typography variant="subtitle2" color="textSecondary">
             {phone}
           </Typography>
-          {props.person.person.role == 3 ? 
-            <div>
-            <Typography variant="body2">
-              Hijo: {childFullName}
-            </Typography>
-            <Typography variant="subtitle2">
-              Faltas: {children[0].Absence}
-            </Typography>
-            </div>
-            : null}
         </div>
         <Avatar className={classes.avatar} alt={firstName} src="/broken.jpg"/>
       </CardContent>
