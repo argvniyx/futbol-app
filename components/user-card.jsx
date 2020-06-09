@@ -84,7 +84,7 @@ export default function UserCard(props) {
 
   // Validation
   ValidatorForm.addValidationRule('isPhone', (value) => {
-    const regex = /^\+52[0-9]{10,}/;
+    const regex = /^\+52[0-9]{10}$/;
     return regex.test(value)
   })
 
@@ -120,7 +120,7 @@ export default function UserCard(props) {
           <DialogContentText>Aquí puedes editar tu información de usuario</DialogContentText>
           <ValidatorForm
             onSubmit={handleSaveClick}
-            onErrors={(err) => console.log(err)}
+            onError={(err) => console.log(err)}
           >
             <TextValidator
               fullWidth

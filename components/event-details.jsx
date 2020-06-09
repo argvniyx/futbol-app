@@ -18,14 +18,14 @@ const placeholderEvent = {
   id: 0,
   Name: "",
   Place: "",
-  Date: new Date(0),
+  Date: "",
   Duration: "",
   Description: "",
   TeamID: ""
 };
 
-const convertDate = (date) => new Date(date._seconds * 1000)
-const displayHour = (date) => date.toLocaleTimeString()
+const convertDate = (date) => date == "" ? "" : new Date(date._seconds * 1000)
+const displayHour = (date) => date == "" ? "" : date.toLocaleTimeString()
 
 const postEvent = (event, token) => {
   fetch(`${process.env.API_URL}/events/${event.id}`,{
@@ -53,7 +53,9 @@ export default function EventDetails(props) {
   )
 
   React.useEffect(() => {
-    if(props.event) modifyEvent({...props.event, Date: convertDate(props.event.Date)})
+    props.event
+    ? modifyEvent({...props.event, Date: convertDate(props.event.Date)})
+    : modifyEvent({...placeholderEvent, Date: convertDate(placeholderEvent.Date)})
   }, [props.event])
 
   // Use as intermediate object before saving in dialog
