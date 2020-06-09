@@ -75,8 +75,8 @@ const Timeline = (props) => {
   }, [props.teamId, page])
 
   // Page Navigation
-  const handleBack = () => isStart || setPage(page - 1)
-  const handleNext = () => isEnd || setPage(page + 1)
+  const handleBack = () => loading || isStart || setPage(page - 1)
+  const handleNext = () => loading || isEnd || setPage(page + 1)
 
   // Selection Logic
   const handleListItemClick = (event, index) => {
@@ -89,6 +89,9 @@ const Timeline = (props) => {
   React.useEffect(() => {
     if(currentEvents.length != 0)
       props.handler(currentEvents[selectedIndex])
+    else
+      props.handler(null)
+    // When we toggle between an eventless team, this cleans up EventDetails
   }, [selectedIndex, currentEvents])
 
   // If I change pages, I should focus the first event of the page
