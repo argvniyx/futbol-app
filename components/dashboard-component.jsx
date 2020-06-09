@@ -60,6 +60,7 @@ const DashboardComponent = props => {
         : React.useState([])
 
   // We need to keep track of the currently selected event
+  const [currentEvent, setCurrentEvent] = React.useState(null)
 
   return (
     <Box className={classes.root}>
@@ -70,10 +71,9 @@ const DashboardComponent = props => {
           teamId={teamId}
           className={fixedHeightPaperT}
           token={props.person.person.token}
-          /* handler={handleEventDetails} */
-          /* ref = {eventsRef} */
+          handler={setCurrentEvent}
         />
-      {/*   <EventDetails className={fixedHeightPaperT} event={currentEvent} user={props.user}/> */}
+        <EventDetails className={fixedHeightPaperT} event={currentEvent} user={props.user}/>
         <Directory className={fixedHeightPaperB} teamId={teamId} token={props.person.person.token}/>
         <UserCard className={fixedHeightPaperB} person={props.person}/>
       </Content>

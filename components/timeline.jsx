@@ -24,12 +24,18 @@ const convertToDate = (date) => new Date(date._seconds * 1000).toDateString()
 
 const Timeline = (props) => {
   // Events state
-  const [page, setPage] = React.useState(1)
-  const [isStart, setStart] = React.useState(true)
+  //// Paging
+  const [page, setPage] = React.useState(1)        // 1 is the first page...
+  const [isStart, setStart] = React.useState(true) // ...and therefore we are at the start
   const [isEnd, setEnd] = React.useState(false)
+
+  //// Events loading
   const [currentEvents, setCurrentEvents] = React.useState([])
   const [loading, setLoading] = React.useState(true)
   const [isError, setError] = React.useState(false)
+
+  //// Selection state
+  const [selectedIndex, setSelectedIndex] = React.useState(0) // We default to the first event
 
   // This is the logic to open and close the add new event dialog
   const [openNewEvent, setOpenNewEvent] = React.useState(false)
@@ -72,11 +78,19 @@ const Timeline = (props) => {
   const handleBack = () => isStart || setPage(page - 1)
   const handleNext = () => isEnd || setPage(page + 1)
 
+  // Selection Logic
+  const handleListItemClick = (event, index) => {
+    setSelectedIndex(index)
+  }
+
+  React.useEffect(() => {
+    props.handler(currentEvents[selectedIndex])
+  }, [selectedIndex])
+
   if(isError) {
     return <ErrorDialog/>
   }
 
-  console.log(currentEvents)
   return (
     <Card className={props.className}>
       <CardHeader title="Timeline"/>
@@ -91,8 +105,8 @@ const Timeline = (props) => {
                 <ListItem
                   key={e.id}
                   button
-                  /* selected={selectedIndex === currentEvents.indexOf(e)} */
-                  /* onClick={(event) => handleListItemClick(event, currentEvents.indexOf(e))} */
+                  selected={selectedIndex === currentEvents.indexOf(e)}
+                  onClick={(event) => handleListItemClick(event, currentEvents.indexOf(e))}
                 >
                   <ListItemText primary={e.Name}
                                 secondary={convertToDate(e.Date)}/>
