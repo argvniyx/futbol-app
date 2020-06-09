@@ -13,6 +13,7 @@ import DialogContent from '@material-ui/core/DialogContent'
 import DialogActions from '@material-ui/core/DialogActions'
 import DialogContentText from '@material-ui/core/DialogContentText'
 import Button from '@material-ui/core/Button';
+import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator'
 
 const useStyles = makeStyles((theme) => ({
   content: {
@@ -58,13 +59,6 @@ export default function UserCard(props) {
   const split = splitName(props.person.person.displayName)
   const [user, modifyUser] = React.useState({...props.person.person, firstName: split.firstName, lastName: split.lastName})
   const {displayName, email, phone, firstName, lastName} = user;
-  let children = ''
-  let childFullName = ''
-  if (props.person.person.role == 3){
-    children = user.children;
-    childFullName = children[0].FirstName + " " + children[0].LastName
-  }
-
 
   //// Used as intermediate object before saving
   const [userInfo, modifyUserInfo] = React.useState({...props.person.person, firstName: split.firstName, lastName: split.lastName})
@@ -87,7 +81,14 @@ export default function UserCard(props) {
   const handleFieldChange = (event) => {
     modifyUserInfo({...userInfo, [event.target.id]: event.target.value})
   }
- 
+
+  // Validation
+  ValidatorForm.addValidationRule('isPhone', (value) => {
+    const regex = /^\+52[0-9]{10,}/;
+    return regex.test(value)
+  })
+
+  // Render
   return (
     <Card className={props.className}>
       <CardContent className={classes.content}>
@@ -117,52 +118,66 @@ export default function UserCard(props) {
         <DialogTitle>Editar Información</DialogTitle>
         <DialogContent>
           <DialogContentText>Aquí puedes editar tu información de usuario</DialogContentText>
-          <TextField
-            margin="dense"
-            id="firstName"
-            label="Nombre"
-            type="name"
-            defaultValue={user.firstName}
-            onChange={handleFieldChange}
-            fullWidth
-          />
-          <TextField
-            margin="dense"
-            id="lastName"
-            label="Apellido"
-            type="name"
-            defaultValue={user.lastName}
-            onChange={handleFieldChange}
-            fullWidth
-          />
-          <TextField
-            margin="dense"
-            id="email"
-            label="Correo Electrónico"
-            type="email"
-            defaultValue={user.email}
-            onChange={handleFieldChange}
-            fullWidth
-          />
-          <TextField
-            margin="dense"
-            id="phone"
-            label="Teléfono"
-            type="tel"
-            defaultValue={user.phone}
-            onChange={handleFieldChange}
-            fullWidth
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleSaveClick}
+          <ValidatorForm
+            onSubmit={handleSaveClick}
+            onErrors={(err) => console.log(err)}
           >
-            Guardar
-          </Button>
-        </DialogActions>
+            <TextValidator
+              fullWidth
+              margin="normal"
+              id="firstName"
+              label="Nombre"
+              value={userInfo.firstName}
+              onChange={handleFieldChange}
+              validators={['required']}
+              errorMessages={['El nombre es obligatorio']}
+            />
+
+            <TextValidator
+              fullWidth
+              margin="normal"
+              id="lastName"
+              label="Apellido"
+              value={userInfo.lastName}
+              onChange={handleFieldChange}
+              validators={['required']}
+              errorMessages={['El apellido es obligatorio']}
+            />
+
+            <TextValidator
+              fullWidth
+              margin="normal"
+              id="email"
+              label="Correo Electrónico"
+              value={userInfo.email}
+              onChange={handleFieldChange}
+              validators={['required', 'isEmail']}
+              errorMessages={['El correo es obligatorio', 'No es un email válido']}
+            />
+
+            <TextValidator
+              fullWidth
+              margin="normal"
+              id="phone"
+              label="Teléfono"
+              type="tel"
+              value={userInfo.phone}
+              onChange={handleFieldChange}
+              validators={['required', 'isPhone']}
+              errorMessages={['El teléfono es obligatorio', 'No es un teléfono válido']}
+            />
+
+            <DialogActions>
+              <Button
+                variant="contained"
+                color="primary"
+                type="submit"
+              >
+                Guardar
+              </Button>
+            </DialogActions>
+          </ValidatorForm>
+        </DialogContent>
       </Dialog>
     </Card>
   );

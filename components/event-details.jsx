@@ -197,18 +197,19 @@ export default function EventDetails(props) {
               value={eventInfo.Description}
               onChange={handleFieldChange}
             />
-          </ValidatorForm>
 
+            <DialogActions>
+              <Button
+                variant="contained"
+                color="primary"
+                type="submit"
+              >
+                Guardar
+              </Button>
+            </DialogActions>
+
+          </ValidatorForm>
         </DialogContent>
-        <DialogActions>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleSaveClick}
-          >
-            Guardar
-          </Button>
-        </DialogActions>
       </Dialog>
     </Card>
   );
