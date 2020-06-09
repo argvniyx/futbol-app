@@ -1,10 +1,10 @@
+import firebase from 'firebase';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions'
 import Typography from '@material-ui/core/Typography';
 import Avatar from '@material-ui/core/Avatar'
-import TextField from '@material-ui/core/TextField'
 import IconButton from '@material-ui/core/IconButton'
 import Edit from '@material-ui/icons/Edit'
 import Dialog from '@material-ui/core/Dialog'
