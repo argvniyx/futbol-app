@@ -23,17 +23,6 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const PlaceholderEvent = 
-  {
-    id: 0,
-    name: "",
-    place: "",
-    date: "",
-    hour: "",
-    length: "",
-    comments: ""
-  }
-
 const getInitialTeamID = (parent) => {
   if(parent.children)
     return parent.children[0].TeamID
@@ -64,7 +53,7 @@ const DashboardComponent = props => {
 
   return (
     <Box className={classes.root}>
-      <Header user={props.user} items={children} handler={setTeamId}/>
+      <Header user={props.user} items={children} handler={props.user ? setTeamId : null}/>
       <Content>
         <Timeline
           user={props.user}

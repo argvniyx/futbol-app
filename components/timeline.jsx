@@ -83,10 +83,19 @@ const Timeline = (props) => {
     setSelectedIndex(index)
   }
 
+  // We make currentEvents a dependency so that when we have a page nav, we refresh
+  // If we leave that out, this will not work for when we change page and have the first
+  // element selected, since the effect is not triggered (i.e. selectedIndex remains 0)
   React.useEffect(() => {
-    props.handler(currentEvents[selectedIndex])
-  }, [selectedIndex])
+    if(currentEvents.length != 0)
+      props.handler(currentEvents[selectedIndex])
+  }, [selectedIndex, currentEvents])
 
+  // If I change pages, I should focus the first event of the page
+  React.useEffect(() => setSelectedIndex(0), [currentEvents])
+
+
+  // Rendering
   if(isError) {
     return <ErrorDialog/>
   }

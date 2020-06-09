@@ -13,10 +13,23 @@ import DialogContentText from '@material-ui/core/DialogContentText'
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button';
 
+const placeholderEvent = {
+  id: 0,
+  Name: "",
+  Place: "",
+  Date: "",
+  Duration: "",
+  Description: "",
+  TeamID: ""
+};
+
 export default function EventDetails(props) {
-  const [currentEvent, modifyEvent] = React.useState(props.event)
-  const {Name, Place, Hour, Duration, comments} = currentEvent;
-  const DateOfEvent = currentEvent['Date']
+  const [currentEvent, modifyEvent] = React.useState(props.event ? props.event : placeholderEvent)
+  const DateOfEvent = currentEvent.Date
+
+  React.useEffect(() => {
+    if(props.event) modifyEvent(props.event)
+  }, [props.event])
 
   function convertDate(date){
     if (!date){
@@ -26,10 +39,6 @@ export default function EventDetails(props) {
     aux.setTime(date._seconds * 1000)
     return aux.toLocaleTimeString()
   }
-
-  React.useEffect(() => {
-    modifyEvent(props.event)
-  }, [props.event]);
 
   // Use as intermediate object before saving in dialog
   const [eventInfo, modifyEventInfo] = React.useState(props.event)
@@ -53,20 +62,26 @@ export default function EventDetails(props) {
   return (
     <Card className={props.className}>
       <CardHeader title="Evento"/>
-      <CardContent style={{flexGrow: 1}}>
-        <Typography variant="h6">Nombre de Evento</Typography>
-        {Name}
-        <Typography variant="h6">Asistencia</Typography>
-        {}
-        <Typography variant="h6">Lugar del Evento</Typography>
-        {Place}
-        <Typography variant="h6">Hora</Typography>
-        {convertDate(DateOfEvent)}
-        <Typography variant="h6">Duración</Typography>
-        {Duration}
-        <Typography variant="h6">Comentarios</Typography>
-        {comments}
-      </CardContent>
+      {currentEvent
+       ? <CardContent style={{flexGrow: 1}}>
+          <Typography variant="h6">Nombre de Evento</Typography>
+          <Typography variant="subtitle1" gutterBottom>{currentEvent.Name}</Typography>
+
+          <Typography variant="h6">Lugar del Evento</Typography>
+          <Typography variant="subtitle1" gutterBottom>{currentEvent.Place}</Typography>
+
+          <Typography variant="h6">Hora</Typography>
+          <Typography variant="subtitle1" gutterBottom>{convertDate(currentEvent.DateOfEvent)}</Typography>
+
+          <Typography variant="h6">Duración</Typography>
+          <Typography variant="subtitle1" gutterBottom>{currentEvent.Duration}</Typography>
+
+          <Typography variant="h6">Comentarios</Typography>
+          <Typography variant="subtitle1" gutterBottom>{currentEvent.Description}</Typography>
+
+        </CardContent>
+       : <Typography variant="h6">Elige un evento</Typography>
+      }
       {props.user ? null :
        <CardActions>
          <IconButton onClick={handleOpenEdit}>

@@ -44,7 +44,7 @@ const Header = (props) => {
   // A coach does not have registered children,
   // If children is null, we are in a coach dashboard, and should use a dummy value
   const [currentChild, setCurrentChild] =
-        React.useState(children == [] ? 0 : children[0]);
+        React.useState(children.length == 0 ? 0 : children[0]);
 
   const handleChange = (event) => {
     setCurrentChild(children[event.target.value]);
