@@ -25,6 +25,8 @@ const convertToDate = (date) => new Date(date._seconds * 1000).toDateString()
 const Timeline = (props) => {
   // Events state
   const [page, setPage] = React.useState(1)
+  const [isStart, setStart] = React.useState(true)
+  const [isEnd, setEnd] = React.useState(false)
   const [currentEvents, setCurrentEvents] = React.useState([])
   const [loading, setLoading] = React.useState(true)
   const [isError, setError] = React.useState(false)
@@ -54,6 +56,8 @@ const Timeline = (props) => {
       .then(
         (result) => {
           setCurrentEvents(result.Events)
+          setStart(result.Start)
+          setEnd(result.End)
           setLoading(false)
         },
         (error) => {
@@ -65,8 +69,8 @@ const Timeline = (props) => {
   }, [props.teamId, page])
 
   // Page Navigation
-  const handleBack = () => console.log("click back")
-  const handleNext = () => console.log("click next")
+  const handleBack = () => isStart || setPage(page - 1)
+  const handleNext = () => isEnd || setPage(page + 1)
 
   if(isError) {
     return <ErrorDialog/>
