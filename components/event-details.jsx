@@ -27,6 +27,22 @@ const placeholderEvent = {
 const convertDate = (date) => new Date(date._seconds * 1000)
 const displayHour = (date) => date.toLocaleTimeString()
 
+const postEvent = (event, token) => {
+  fetch(`${process.env.API_URL}/events/${event.id}`,{
+    method: 'PUT',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(event)
+  })
+    .then(res => res.json())
+    .then(
+      (result) => console.log("success"),
+      (err) => console.log(err)
+    )
+}
+
 export default function EventDetails(props) {
   // We want to be able to manipulate the date as a Date object because that
   // is what the server expects in the PUT method
@@ -68,8 +84,14 @@ export default function EventDetails(props) {
     })
   }
 
+  // Modify the event and fire the signal
   const handleSaveClick = () => {
     modifyEvent(eventInfo)
+    postEvent(
+      {...eventInfo, timeDuration: eventInfo.Duration},
+      props.token
+    )
+    props.setSignal(true)
     setOpenEdit(false)
   }
 

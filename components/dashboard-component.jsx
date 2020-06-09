@@ -49,7 +49,10 @@ const DashboardComponent = props => {
         : React.useState([])
 
   // We need to keep track of the currently selected event
+  // We also need to signal a refresh when an event is updated
   const [currentEvent, setCurrentEvent] = React.useState(null)
+  const [signal, setSignal] = React.useState(false)
+  const [selectedIndex, setIndex] = React.useState(0)
 
   return (
     <Box className={classes.root}>
@@ -61,8 +64,16 @@ const DashboardComponent = props => {
           className={fixedHeightPaperT}
           token={props.person.person.token}
           handler={setCurrentEvent}
+          signal={signal} setSignal={setSignal}
+          index={selectedIndex} setIndex={setIndex}
         />
-        <EventDetails className={fixedHeightPaperT} event={currentEvent} user={props.user}/>
+        <EventDetails
+          className={fixedHeightPaperT}
+          event={currentEvent}
+          user={props.user}
+          setSignal={setSignal}
+          token={props.person.person.token}
+        />
         <Directory className={fixedHeightPaperB} teamId={teamId} token={props.person.person.token}/>
         <UserCard className={fixedHeightPaperB} person={props.person}/>
       </Content>

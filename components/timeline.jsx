@@ -22,6 +22,24 @@ import { Typography } from '@material-ui/core';
 
 const convertToDate = (date) => new Date(date._seconds * 1000).toDateString()
 
+const getEvents = (props, page) => {
+  return (
+    fetch(`${process.env.API_URL}/events/${props.teamId}?Page=${page}&NumberToBring=5`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${props.token}`,
+        'Content-Type': 'application/json'
+      }
+    })
+      .then(res => {
+        if(res.ok)
+          return res.json()
+        else
+          return {Events: []}
+      })
+  )
+}
+
 const Timeline = (props) => {
   // Events state
   //// Paging
@@ -35,7 +53,7 @@ const Timeline = (props) => {
   const [isError, setError] = React.useState(false)
 
   //// Selection state
-  const [selectedIndex, setSelectedIndex] = React.useState(0) // We default to the first event
+  const [selectedIndex, setSelectedIndex] = React.useState(props.index) // We default to the first event
 
   // This is the logic to open and close the add new event dialog
   const [openNewEvent, setOpenNewEvent] = React.useState(false)
@@ -46,19 +64,7 @@ const Timeline = (props) => {
   // We'll fetch the events from the database
   React.useEffect(() => {
     setLoading(true)
-    fetch(`${process.env.API_URL}/events/${props.teamId}?Page=${page}&NumberToBring=5`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${props.token}`,
-        'Content-Type': 'application/json'
-      }
-    })
-      .then(res => {
-        if(res.ok)
-          return res.json()
-        else
-          return []
-      })
+    getEvents(props, page)
       .then(
         (result) => {
           setCurrentEvents(result.Events)
@@ -68,11 +74,28 @@ const Timeline = (props) => {
         },
         (error) => {
           setLoading(false)
+          setCurrentEvents([])
           setError(true)
         }
       )
-
   }, [props.teamId, page])
+
+  React.useEffect(() => {
+    setLoading(true)
+    getEvents(props, page)
+      .then(
+        (result) => {
+          setCurrentEvents(result.Events)
+          setLoading(false)
+        },
+        (error) => {
+          setLoading(false)
+          setCurrentEvents([])
+          setError(true)
+        }
+      )
+    props.setSignal(false)
+  }, [props.signal])
 
   // Page Navigation
   const handleBack = () => loading || isStart || setPage(page - 1)
@@ -81,6 +104,7 @@ const Timeline = (props) => {
   // Selection Logic
   const handleListItemClick = (event, index) => {
     setSelectedIndex(index)
+    props.setIndex(index)
   }
 
   // We make currentEvents a dependency so that when we have a page nav, we refresh
@@ -94,8 +118,15 @@ const Timeline = (props) => {
     // When we toggle between an eventless team, this cleans up EventDetails
   }, [selectedIndex, currentEvents])
 
-  // If I change pages, I should focus the first event of the page
-  React.useEffect(() => setSelectedIndex(0), [currentEvents])
+  // If I change pages, I should
+  // a) focus the first element if I have selected an out of range index
+  // b) the selected index
+  // B is for when we update an event
+  React.useEffect(() => {
+    selectedIndex >= currentEvents.length
+    ? setSelectedIndex(0)
+    : setSelectedIndex(selectedIndex)
+  }, [currentEvents])
 
 
   // Rendering
