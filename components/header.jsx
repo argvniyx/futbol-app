@@ -43,22 +43,33 @@ const Header = (props) => {
 
   // A coach does not have registered children,
   // If children is null, we are in a coach dashboard, and should use a dummy value
-  const [currentChild, setCurrentChild] = React.useState(children ? children[0] : 0);
+  const [currentChild, setCurrentChild] =
+        React.useState(children.length == 0 ? 0 : children[0]);
 
   const handleChange = (event) => {
     setCurrentChild(children[event.target.value]);
-    props.handler(currentChild)
   };
+
+  // When we have selected a child, we propagate that selection to the Dashboard
+  // with the callback
+  React.useEffect(() => {
+    if(props.handler)
+      props.handler(currentChild.TeamID)
+  }, [currentChild])
 
   return (
     <AppBar position="static" className={classes.root}>
       <Toolbar>
+
+        {/* If the header is used in a "user" or parent dashboard, we want child select */}
         {props.user ?
           <TextField
             select
             label="Equipo"
             SelectProps={{className: classes.input, disableUnderline: true}}
-            defaultValue={children[0].FirstName}
+
+            /* i.e. the first child is the default */
+            defaultValue={0}
             onChange={handleChange}
           >
             {children.map((i, k) => (
@@ -72,10 +83,14 @@ const Header = (props) => {
         </TextField>
          :
          null}
+
+        {/* The admin page uses the header component with a button} */}
         {props.component ? props.component : null}
+
         <Typography variant="h5" className={classes.title}>
           Futbol App
         </Typography>
+
         <Button color="inherit" size="large" onClick={handleLogout}>Logout</Button>
       </Toolbar>
     </AppBar>

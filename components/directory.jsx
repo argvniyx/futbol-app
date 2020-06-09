@@ -7,21 +7,16 @@ import TableRow from '@material-ui/core/TableRow';
 import Typography from '@material-ui/core/Typography'
 import Paper from '@material-ui/core/Paper';
 import LinearProgress from '@material-ui/core/LinearProgress'
-import Dialog from '@material-ui/core/Dialog'
-import DialogTitle from '@material-ui/core/DialogTitle'
-import DialogContent from '@material-ui/core/DialogContent'
-import DialogActions from '@material-ui/core/DialogActions'
-import DialogContentText from '@material-ui/core/DialogContentText'
-import Button from '@material-ui/core/Button'
+import ErrorDialog from '../components/error-dialog'
 
 export default function Directory(props) {
   const [directory, setDirectory] = React.useState([]);
-  const [loading, setLoading] = React.useState(false)
+  const [loading, setLoading] = React.useState(true)
   const [isError, setError] = React.useState(false)
 
   React.useEffect(() => {
     setLoading(true)
-    fetch(`http://localhost:5001/futbol-app-8b521/us-central1/app/teams/${props.teamId}`, {
+    fetch(`${process.env.API_URL}/teams/${props.teamId}`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${props.token}`,
@@ -36,38 +31,18 @@ export default function Directory(props) {
       })
       .then(
         (result) => {
-          setLoading(false)
           setDirectory(result)
+          setLoading(false)
         },
         (error) => {
-          setLoading(false)
           setError(true)
+          setLoading(false)
         }
       )
   }, [props.teamId])
 
   if(isError) {
-    return (
-      <Dialog
-        open={true}
-      >
-        <DialogTitle>Hubo un error</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Al parecer hubo un error en la red. Recarga la página e intenta de nuevo
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => window.location.reload(false)}
-          >
-            Recargar
-          </Button>
-        </DialogActions>
-      </Dialog>
-    )
+    return <ErrorDialog/>
   }
   else if(directory.length == 0 && !loading) {
     return (
