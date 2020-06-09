@@ -20,8 +20,10 @@ import LinearProgress from '@material-ui/core/LinearProgress'
 import ErrorDialog from '../components/error-dialog'
 import { Typography } from '@material-ui/core';
 
+const convertToDate = (date) => new Date(date._seconds * 1000).toDateString()
+
 const Timeline = (props) => {
-  // Events
+  // Events state
   const [page, setPage] = React.useState(1)
   const [currentEvents, setCurrentEvents] = React.useState([])
   const [loading, setLoading] = React.useState(true)
@@ -70,6 +72,7 @@ const Timeline = (props) => {
     return <ErrorDialog/>
   }
 
+  console.log(currentEvents)
   return (
     <Card className={props.className}>
       <CardHeader title="Timeline"/>
@@ -87,9 +90,8 @@ const Timeline = (props) => {
                   /* selected={selectedIndex === currentEvents.indexOf(e)} */
                   /* onClick={(event) => handleListItemClick(event, currentEvents.indexOf(e))} */
                 >
-                  henlo
-                  {/* <ListItemText primary={e.Name} */}
-                  {/*               secondary={convertDate(e.Date)}/> */}
+                  <ListItemText primary={e.Name}
+                                secondary={convertToDate(e.Date)}/>
                 </ListItem>
             ))}
            </List>
