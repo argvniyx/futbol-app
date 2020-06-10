@@ -75,7 +75,6 @@ const Header = (props) => {
             {children.map((i, k) => (
               <MenuItem
                 key={k}
-                name="jasjdsaf"
                 label={i.FirstName}
                 value={k}
               >{i.FirstName}</MenuItem>

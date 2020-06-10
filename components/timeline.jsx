@@ -41,6 +41,54 @@ const getEvents = (props, page) => {
 }
 
 const Timeline = (props) => {
+
+  //add new event
+  const [newEvent, setNewEvent] = React.useState({
+    Name: '',
+    Place: '',
+    Date: '',
+    Hour: '',
+    timeDuration: '',
+    TeamID: props.teamId,
+    Description: ''
+  })
+
+  const validateFields = () =>{
+    let counter = 0
+
+    for (var key in newEvent){
+      var attrName = key;
+      if (attrName != 'Description'){
+        var attrValue = newEvent[key];
+        if(attrValue.trim() == ''){
+          console.log(attrName + ' is missing')
+          counter++
+        }
+      }
+    }
+
+    if (counter > 0){
+      return false
+    }
+    else{
+      return true
+    }
+  }
+
+  const handleFieldChange = (event) => {
+    setNewEvent({...newEvent, [event.target.id]: event.target.value})
+  }
+
+  const handleSaveClick = (event) => {
+    if (validateFields()){
+      let dateTimeFormat = newEvent.Date + 'T' + newEvent.Hour
+      console.log(dateTimeFormat)
+      console.log(newEvent)
+      /* add call to API here */
+    }
+    
+  }
+
   // Events state
   //// Paging
   const [page, setPage] = React.useState(1)        // 1 is the first page...
@@ -192,7 +240,7 @@ const Timeline = (props) => {
             label="Nombre del evento"
             type="name"
             /* defaultValue={currentEvent.name} */
-            /* onChange={handleFieldChange} */
+            onChange={handleFieldChange}
             fullWidth
           />
           <TextField
@@ -201,7 +249,7 @@ const Timeline = (props) => {
             label="Lugar del evento"
             type="name"
             /* defaultValue={currentEvent.name} */
-            /* onChange={handleFieldChange} */
+            onChange={handleFieldChange}
             fullWidth
           />
           <TextField
@@ -211,7 +259,7 @@ const Timeline = (props) => {
             label="Fecha del evento"
             InputLabelProps={{shrink: true}}
             /* defaultValue={currentEvent.name} */
-            /* onChange={handleFieldChange} */
+            onChange={handleFieldChange}
             fullWidth
           />
           <TextField
@@ -221,7 +269,7 @@ const Timeline = (props) => {
             type="time"
             InputLabelProps={{shrink: true}}
             /* defaultValue={currentEvent.name} */
-            /* onChange={handleFieldChange} */
+            onChange={handleFieldChange}
             fullWidth
           />
           <TextField
@@ -231,7 +279,7 @@ const Timeline = (props) => {
             type="time"
             InputLabelProps={{shrink: true}}
             /* defaultValue={currentEvent.name} */
-            /* onChange={handleFieldChange} */
+            onChange={handleFieldChange}
             fullWidth
           />
           <TextField
@@ -248,7 +296,7 @@ const Timeline = (props) => {
           <Button
             variant="contained"
             color="primary"
-            /* onClick={handleSaveClick} */
+            onClick={handleSaveClick}
           >
             Listo
           </Button>
