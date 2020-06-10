@@ -16,55 +16,166 @@ import IconButton from '@material-ui/core/IconButton'
 import NavigateNext from '@material-ui/icons/NavigateNext'
 import NavigateBefore from '@material-ui/icons/NavigateBefore'
 import AddBox from '@material-ui/icons/AddBox'
+import LinearProgress from '@material-ui/core/LinearProgress'
+import ErrorDialog from '../components/error-dialog'
+import { Typography } from '@material-ui/core';
 
-export default function Timeline(props) {
-  // Handling the loading of event details
-  const [selectedIndex, setSelectedIndex] = React.useState(0);
+const convertToDate = (date) => new Date(date._seconds * 1000).toDateString()
+
+const getEvents = (props, page) => {
+  return (
+    fetch(`${process.env.API_URL}/events/${props.teamId}?Page=${page}&NumberToBring=5`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${props.token}`,
+        'Content-Type': 'application/json'
+      }
+    })
+      .then(res => {
+        if(res.ok)
+          return res.json()
+        else
+          return {Events: []}
+      })
+  )
+}
+
+const Timeline = (props) => {
+  // Events state
+  //// Paging
+  const [page, setPage] = React.useState(1)        // 1 is the first page...
+  const [isStart, setStart] = React.useState(true) // ...and therefore we are at the start
+  const [isEnd, setEnd] = React.useState(false)
+
+  //// Events loading
+  const [currentEvents, setCurrentEvents] = React.useState([])
+  const [loading, setLoading] = React.useState(true)
+  const [isError, setError] = React.useState(false)
+
+  //// Selection state
+  const [selectedIndex, setSelectedIndex] = React.useState(props.index) // We default to the first event
+
+  // This is the logic to open and close the add new event dialog
+  const [openNewEvent, setOpenNewEvent] = React.useState(false)
+  const handleNewEventOpen = () => setOpenNewEvent(true)
+  const handleNewEventClose = () => setOpenNewEvent(false)
+
+  // When the component is rendered (e.g. when the teamId changes)
+  // We'll fetch the events from the database
+  React.useEffect(() => {
+    setLoading(true)
+    getEvents(props, page)
+      .then(
+        (result) => {
+          setCurrentEvents(result.Events)
+          setStart(result.Start)
+          setEnd(result.End)
+          setLoading(false)
+        },
+        (error) => {
+          setLoading(false)
+          setCurrentEvents([])
+          setError(true)
+        }
+      )
+  }, [props.teamId, page])
+
+  React.useEffect(() => {
+    setLoading(true)
+    getEvents(props, page)
+      .then(
+        (result) => {
+          setCurrentEvents(result.Events)
+          setLoading(false)
+        },
+        (error) => {
+          setLoading(false)
+          setCurrentEvents([])
+          setError(true)
+        }
+      )
+    props.setSignal(false)
+  }, [props.signal])
+
+  // Page Navigation
+  const handleBack = () => loading || isStart || setPage(page - 1)
+  const handleNext = () => loading || isEnd || setPage(page + 1)
+
+  // Selection Logic
   const handleListItemClick = (event, index) => {
-    setSelectedIndex(index);
-    props.handler(index);
-  };
+    setSelectedIndex(index)
+    props.setIndex(index)
+  }
 
-  // Handling the new event dialog
-  const [openNewEvent, setOpen] = React.useState(false)
-  const handleNewEventOpen = () => setOpen(true)
-  const handleNewEventClose = () => setOpen(false)
+  // We make currentEvents a dependency so that when we have a page nav, we refresh
+  // If we leave that out, this will not work for when we change page and have the first
+  // element selected, since the effect is not triggered (i.e. selectedIndex remains 0)
+  React.useEffect(() => {
+    if(currentEvents.length != 0)
+      props.handler(currentEvents[selectedIndex])
+    else
+      props.handler(null)
+    // When we toggle between an eventless team, this cleans up EventDetails
+  }, [selectedIndex, currentEvents])
 
-  // Handling navigation
-  const handleBack = () => console.log('click back')
-  const handleNext = () => console.log('click next')
+  // If I change pages, I should
+  // a) focus the first element if I have selected an out of range index
+  // b) the selected index
+  // B is for when we update an event
+  React.useEffect(() => {
+    selectedIndex >= currentEvents.length
+    ? setSelectedIndex(0)
+    : setSelectedIndex(selectedIndex)
+  }, [currentEvents])
+
+
+  // Rendering
+  if(isError) {
+    return <ErrorDialog/>
+  }
 
   return (
     <Card className={props.className}>
       <CardHeader title="Timeline"/>
+
       <CardContent style={{flexGrow: 1}}>
-        <List>
-          {props.events.map((e) => (
-            <ListItem
-              key={e.id}
-              button
-              selected={selectedIndex === e.id}
-              onClick={(event) => handleListItemClick(event, e.id)}
-            >
-              <ListItemText primary={e.name}
-                            secondary={e.date}/>
-            </ListItem>
-          ))}
-        </List>
+        {loading
+         ? <LinearProgress/>
+         : <List>
+            {currentEvents.length == 0
+             ? <Typography variant="h5">No hay eventos</Typography>
+             : currentEvents.map((e) => (
+                <ListItem
+                  key={e.id}
+                  button
+                  selected={selectedIndex === currentEvents.indexOf(e)}
+                  onClick={(event) => handleListItemClick(event, currentEvents.indexOf(e))}
+                >
+                  <ListItemText primary={e.Name}
+                                secondary={convertToDate(e.Date)}/>
+                </ListItem>
+            ))}
+           </List>
+        }
       </CardContent>
+
       <CardActions disableSpacing>
         <IconButton onClick={handleBack}>
           <NavigateBefore/>
         </IconButton>
+
         <IconButton onClick={handleNext}>
           <NavigateNext/>
         </IconButton>
+
         {props.user ? null :
             <IconButton onClick={handleNewEventOpen}>
               <AddBox/>
             </IconButton>
         }
+
       </CardActions>
+
       <Dialog
         open={openNewEvent}
         onClose={handleNewEventClose}
@@ -77,7 +188,7 @@ export default function Timeline(props) {
           </DialogContentText>
           <TextField
             margin="normal"
-            id="name"
+            id="Name"
             label="Nombre del evento"
             type="name"
             /* defaultValue={currentEvent.name} */
@@ -86,7 +197,7 @@ export default function Timeline(props) {
           />
           <TextField
             margin="normal"
-            id="place"
+            id="Place"
             label="Lugar del evento"
             type="name"
             /* defaultValue={currentEvent.name} */
@@ -95,7 +206,7 @@ export default function Timeline(props) {
           />
           <TextField
             margin="normal"
-            id="date"
+            id="Date"
             type="date"
             label="Fecha del evento"
             InputLabelProps={{shrink: true}}
@@ -105,7 +216,7 @@ export default function Timeline(props) {
           />
           <TextField
             margin="normal"
-            id="hour"
+            id="Hour"
             label="Hora del evento"
             type="time"
             InputLabelProps={{shrink: true}}
@@ -115,7 +226,7 @@ export default function Timeline(props) {
           />
           <TextField
             margin="normal"
-            id="hour"
+            id="timeDuration"
             label="Duración del evento"
             type="time"
             InputLabelProps={{shrink: true}}
@@ -143,6 +254,9 @@ export default function Timeline(props) {
           </Button>
         </DialogActions>
       </Dialog>
+
     </Card>
   );
 }
+
+export default Timeline;
