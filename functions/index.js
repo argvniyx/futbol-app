@@ -8,7 +8,11 @@ const dotenv = require('dotenv');
 // App Settings
 const app = express();
 app.use(bodyParser.json());
-app.use(cors({ origin: true }));
+const corsOptions = {
+    origin: 'https://futbol-app.now.sh',
+    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
+app.use(cors(corsOptions));
 
 // Set the enviroment variables file
 dotenv.config();
