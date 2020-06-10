@@ -22,6 +22,17 @@ const UserTextFields = forwardRef((props, ref) => {
     setText({...textState, [event.target.name]: event.target.value})
   }
 
+  function validatePhone(phone){
+
+    for(let i = 0; i < phone.length; i++){
+      if (!(phone[i] >= '0' && phone[i] <= '9')) {
+        // it isn't
+        return false 
+      }
+    };
+    return true
+  }
+
   const validateFields = () =>{
 
     let counter = 0
@@ -37,6 +48,15 @@ const UserTextFields = forwardRef((props, ref) => {
       }
       else {
         eval('set' + attrName + 'Invalid' + '(false)')
+        if (key == 'Phone'){
+          if (textState['Phone'].length == 10 && validatePhone(textState['Phone'])){
+            setText({...textState, ['Phone']: '+52' + textState['Phone']})
+          }
+          else if ((textState['Phone'].length == 13 && textState['Phone'].substr(0, 3) != '+52') || (textState['Phone'].length > 13 || textState['Phone'].length < 13)){
+            console.log('Invalid phone')
+            eval('set' + attrName + 'Invalid' + '(true)')
+          }
+        }
       }
       fieldCounter++
       if (props.child && fieldCounter == 2){

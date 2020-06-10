@@ -62,16 +62,17 @@ const RegisterCoach = (props) => {
 
   const handleRegister = () => {
     let valid = true
-    let userData = {
-          'FirstName' : ref.current.textState.FirstName,
-          'LastName' : ref.current.textState.LastName,
-          'Email' : ref.current.textState.Email,
-          'Password' : ref.current.textState.Password,
-          'Phone' : ref.current.textState.Phone,
-          'TeamID' : ''
-        }
     if (!ref.current.validateFields()){
       valid = false
+    }
+
+    let userData = {
+      'FirstName' : ref.current.textState.FirstName,
+      'LastName' : ref.current.textState.LastName,
+      'Email' : ref.current.textState.Email,
+      'Password' : ref.current.textState.Password,
+      'Phone' : ref.current.textState.Phone,
+      'TeamID' : ''
     }
 
     if(value == 0 && teamName == ''){
