@@ -19,6 +19,7 @@ import AddBox from '@material-ui/icons/AddBox'
 import LinearProgress from '@material-ui/core/LinearProgress'
 import ErrorDialog from '../components/error-dialog'
 import { Typography } from '@material-ui/core';
+import moment from 'moment';
 
 const convertToDate = (date) => new Date(date._seconds * 1000).toDateString()
 
@@ -43,6 +44,7 @@ const getEvents = (props, page) => {
 const Timeline = (props) => {
 
   //add new event
+  const [addTrigger, setTrigger] = React.useState(false)
   const [newEvent, setNewEvent] = React.useState({
     Name: '',
     Place: '',
@@ -81,10 +83,32 @@ const Timeline = (props) => {
 
   const handleSaveClick = (event) => {
     if (validateFields()){
-      let dateTimeFormat = newEvent.Date + 'T' + newEvent.Hour
-      console.log(dateTimeFormat)
-      console.log(newEvent)
-      /* add call to API here */
+      setTrigger(true)
+      const newDateString = `${newEvent.Date} ${newEvent.Hour}`
+      const newDate = moment(newDateString, "YYYY-MM-DD HH:mm:ss").toDate()
+
+      const eventToPost = {...newEvent, Date: newDate};
+      fetch(`${process.env.API_URL}/events/`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${props.token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(eventToPost)
+      })
+        .then(res => res.json())
+        .then(
+          (result) => {
+            console.log("success")
+            setTrigger(false)
+            setOpenNewEvent(false)
+          },
+          (err) => {
+            console.log(err)
+            setTrigger(false)
+            setOpenNewEvent(false)
+          }
+        )
     }
     
   }
@@ -126,7 +150,7 @@ const Timeline = (props) => {
           setError(true)
         }
       )
-  }, [props.teamId, page])
+  }, [props.teamId, page, addTrigger])
 
   React.useEffect(() => {
     setLoading(true)
@@ -284,11 +308,11 @@ const Timeline = (props) => {
           />
           <TextField
             margin="normal"
-            id="comments"
+            id="Description"
             label="Comentarios"
             type="name"
             /* defaultValue={currentEvent.name} */
-            /* onChange={handleFieldChange} */
+            onChange={handleFieldChange}
             fullWidth
           />
         </DialogContent>
