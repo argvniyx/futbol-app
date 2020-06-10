@@ -1,4 +1,5 @@
 import firebase from 'firebase';
+import admin from 'firebase'
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
@@ -56,9 +57,24 @@ export default function UserCard(props) {
   const classes = useStyles();
 
   // User info setup
-  const split = splitName(props.person.person.displayName)
+  let split = splitName(props.person.person.displayName)
   const [user, modifyUser] = React.useState({...props.person.person, firstName: split.firstName, lastName: split.lastName})
-  const {displayName, email, phone, firstName, lastName} = user;
+  let {displayName, email, phone, firstName, lastName} = user;
+
+  // Firebase setup
+  const [fbUser, setFbUser] = React.useState(null)
+  React.useEffect(() => {
+    firebase.auth().onAuthStateChanged(function(user) {
+      if (user) {
+        setFbUser(user)
+        displayName = user.displayName
+        split = splitName(displayName)
+        firstName = split.firstName
+        lastName = split.lastName
+        modifyUser({...props.person.person, firstName: split.firstName, lastName: split.lastName})
+      }
+    });
+  }, [])
 
   //// Used as intermediate object before saving
   const [userInfo, modifyUserInfo] = React.useState({...props.person.person, firstName: split.firstName, lastName: split.lastName})
@@ -74,19 +90,31 @@ export default function UserCard(props) {
 
   // Post to server
   const handleSaveClick = () => {
+    // In Firebase
+    let displayName = `${userInfo.firstName} ${userInfo.lastName}`
+
+    //// Only update what has actually changed
+    if(userInfo.firstName != user.firstName || userInfo.lastName != user.lastName) {
+      fbUser.updateProfile({
+        displayName: displayName,
+        email: userInfo.email,
+      })
+            .then(() => console.log("success"))
+            .catch((err) => console.log(err))
+    }
+
+    if(userInfo.email != user.email)
+      fbUser.updateEmail(userInfo.email)
+
+    // Locally
     modifyUser(userInfo)
+
     setOpenEdit(false)
   }
 
   const handleFieldChange = (event) => {
     modifyUserInfo({...userInfo, [event.target.id]: event.target.value})
   }
-
-  // Validation
-  ValidatorForm.addValidationRule('isPhone', (value) => {
-    const regex = /^\+52[0-9]{10}$/;
-    return regex.test(value)
-  })
 
   // Render
   return (
@@ -153,18 +181,6 @@ export default function UserCard(props) {
               onChange={handleFieldChange}
               validators={['required', 'isEmail']}
               errorMessages={['El correo es obligatorio', 'No es un email válido']}
-            />
-
-            <TextValidator
-              fullWidth
-              margin="normal"
-              id="phone"
-              label="Teléfono"
-              type="tel"
-              value={userInfo.phone}
-              onChange={handleFieldChange}
-              validators={['required', 'isPhone']}
-              errorMessages={['El teléfono es obligatorio', 'No es un teléfono válido']}
             />
 
             <DialogActions>
