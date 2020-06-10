@@ -1,5 +1,6 @@
 const express = require('express');
 const admin = require('firebase-admin');
+const functions = require('firebase-functions');
 const sgMail = require('@sendgrid/mail');
 
 // Routes app
@@ -10,12 +11,12 @@ const authenticated = require('../Middlewares/authenticated');
 const isAdmin = require('../Middlewares/isAdmin.js');
 
 // Set the api key
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+sgMail.setApiKey(functions.config().futbol.sendgrid_api_key);
 
 // ---------------------------------------------------------
 router.post('/new-coach', authenticated, isAdmin, (req, res) => {
 
-    // Get the request body 
+    // Get the request body
     const Email = req.body.Email;
     const FirstName = req.body.FirstName;
     const LastName = req.body.LastName;
@@ -33,11 +34,11 @@ router.post('/new-coach', authenticated, isAdmin, (req, res) => {
     // Create the message
     const msg = {
         to: Email,
-        from: process.env.FROM_EMAIL,
+        from: functions.config().futbol.from_email,
         subject: '¡Registrate como Entrenador!',
 
         // Custom template
-        templateId: process.env.ID_NEWCOACH_TEMPLATE,
+        templateId: functions.config().futbol.id_newcoach_template,
         substitutionWrappers: ['{{', '}}'],
         dynamic_template_data: {
             name: FirstName + ' ' + LastName,
@@ -45,12 +46,12 @@ router.post('/new-coach', authenticated, isAdmin, (req, res) => {
             URL: URL_form
         }
     }
-    
+
     // Send the email
     sgMail.send(msg).then(() => {
         return res.status(200).send('Email sent!');
     }).catch((error) => {
-        return res.status(500).send('Error sending email');
+        return res.status(500).send(error.message);
     })
 });
 
