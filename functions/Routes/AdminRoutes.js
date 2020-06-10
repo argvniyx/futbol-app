@@ -21,7 +21,7 @@ router.post('/new-coach', authenticated, isAdmin, (req, res) => {
     const LastName = req.body.LastName;
 
     // Built the register coach url
-    const URL_form = req.protocol + '://' + req.get("host") + '/coach/Sign-Up';
+    const URL_form = 'https://futbol-app.now.sh/register-coach';
 
     // Check that the request has the complete body
     if (!Email ||
