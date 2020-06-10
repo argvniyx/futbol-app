@@ -148,12 +148,16 @@ export default function UserCard(props) {
         <IconButton onClick={handleOpenEdit}>
           <Edit/>
         </IconButton>
-        <IconButton onClick={handleAddRedirect}>
-          <PersonAdd/>
-        </IconButton>
-        <IconButton onClick={handleDeleteRedirect}>
-          <Delete/>
-        </IconButton>
+        {props.person.person.role == 2 ? null :
+          <div>
+            <IconButton onClick={handleAddRedirect}>
+              <PersonAdd/>
+            </IconButton>
+            <IconButton onClick={handleDeleteRedirect}>
+              <Delete/>
+            </IconButton>
+          </div>
+        }
       </CardActions>
 
       <Dialog
