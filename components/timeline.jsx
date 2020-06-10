@@ -248,11 +248,14 @@ const Timeline = (props) => {
                 >
                   <ListItemText primary={e.Name}
                                 secondary={convertToDate(e.Date)}/>
-                  <ListItemSecondaryAction>
-                    <IconButton edge="end" aria-label="delete-event" onClick={() => deleteEvent(e.id)}>
-                      <DeleteIcon/>
-                    </IconButton>
-                  </ListItemSecondaryAction>
+                  {props.user ?
+                   null :
+                    <ListItemSecondaryAction>
+                      <IconButton edge="end" aria-label="delete-event" onClick={() => deleteEvent(e.id)}>
+                        <DeleteIcon/>
+                      </IconButton>
+                    </ListItemSecondaryAction>
+                  }
                 </ListItem>
             ))}
            </List>
