@@ -25,3 +25,5 @@ const AdminList = (props) => {
       </Card>
   );
 }
+
+export default AdminList;
