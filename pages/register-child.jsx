@@ -23,14 +23,32 @@ const FormSection = (props) => {
   )
   
 }
-  
 
 const RegisterChild = (props) => {
 
   const classes = useStyles();
   const [formSections, setSections] = React.useState([1])
   const [refList, setRefs] = React.useState([{fields: useRef(null), team: useRef(null)}])
+  const [getChildren, setGet] = React.useState(false)
   
+  React.useEffect(() =>{
+    if (getChildren){
+      let userData = JSON.parse(Cookies.get('user'))
+      $.ajax({
+        method: 'GET',
+        url: `${process.env.API_URL}/parent/children`,
+        headers: {
+          authorization: 'Bearer ' + userData['token']
+        }
+      }).done((result) => {
+        setGet(false)
+        userData['children'] = result
+        Cookies.set('user', JSON.stringify(userData))
+        Router.push('/dashboard/' + userData['uid'])
+      })
+    }
+  }, [getChildren])
+
   const handleRegister = () => {
     let i = 1
     const children = []
@@ -42,7 +60,7 @@ const RegisterChild = (props) => {
         valid = false
       }
       if(refs.team.current == ''){
-        console.log('jgdgf')
+        console.log('team not chosen')
         valid = false
       }
       if(valid){
@@ -62,11 +80,8 @@ const RegisterChild = (props) => {
           headers: {
             authorization: 'Bearer ' + JSON.parse(Cookies.get('user'))['token']
           }
-        }).then((resullt) => {
-            let userData = JSON.parse(Cookies.get('user'))
-            userData['children'] = children
-            Cookies.set('user', JSON.stringify(userData))
-            Router.push('/dashboard/' + userData['uid'])
+        }).done((result) => {
+            setGet(true)
         })
     }
     console.log(refList)
@@ -97,7 +112,7 @@ const RegisterChild = (props) => {
         className={classes.submit}
         onClick = {handleRegister}
       >
-        Registrarse
+        Registrar hijos
       </Button>
     </SideImageForm>
   )
