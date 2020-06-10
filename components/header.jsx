@@ -54,8 +54,7 @@ const Header = (props) => {
   // with the callback
   React.useEffect(() => {
     if(props.handler)
-      props.handler(currentChild?.TeamID)
-    console.log(currentChild);
+      props.handler(currentChild.TeamID)
   }, [currentChild])
 
   return (
