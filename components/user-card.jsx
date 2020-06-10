@@ -57,9 +57,9 @@ export default function UserCard(props) {
   const classes = useStyles();
 
   // User info setup
-  const split = splitName(props.person.person.displayName)
+  let split = splitName(props.person.person.displayName)
   const [user, modifyUser] = React.useState({...props.person.person, firstName: split.firstName, lastName: split.lastName})
-  const {displayName, email, phone, firstName, lastName} = user;
+  let {displayName, email, phone, firstName, lastName} = user;
 
   // Firebase setup
   const [fbUser, setFbUser] = React.useState(null)
@@ -67,6 +67,11 @@ export default function UserCard(props) {
     firebase.auth().onAuthStateChanged(function(user) {
       if (user) {
         setFbUser(user)
+        displayName = user.displayName
+        split = splitName(displayName)
+        firstName = split.firstName
+        lastName = split.lastName
+        modifyUser({...props.person.person, firstName: split.firstName, lastName: split.lastName})
       }
     });
   }, [])
