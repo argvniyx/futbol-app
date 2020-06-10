@@ -8,6 +8,8 @@ import Typography from '@material-ui/core/Typography';
 import Avatar from '@material-ui/core/Avatar'
 import IconButton from '@material-ui/core/IconButton'
 import Edit from '@material-ui/icons/Edit'
+import PersonAdd from '@material-ui/icons/PersonAdd'
+import Delete from '@material-ui/icons/Delete'
 import Dialog from '@material-ui/core/Dialog'
 import DialogTitle from '@material-ui/core/DialogTitle'
 import DialogContent from '@material-ui/core/DialogContent'
@@ -15,6 +17,7 @@ import DialogActions from '@material-ui/core/DialogActions'
 import DialogContentText from '@material-ui/core/DialogContentText'
 import Button from '@material-ui/core/Button';
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator'
+import Router from 'next/router';
 
 const useStyles = makeStyles((theme) => ({
   content: {
@@ -116,6 +119,14 @@ export default function UserCard(props) {
     modifyUserInfo({...userInfo, [event.target.id]: event.target.value})
   }
 
+  const handleAddRedirect = (event) => {
+    Router.push('/register-child')
+  }
+
+  const handleDeleteRedirect = (event) => {
+    Router.push('/remove-child')
+  }
+
   // Render
   return (
     <Card className={props.className}>
@@ -136,6 +147,12 @@ export default function UserCard(props) {
       <CardActions>
         <IconButton onClick={handleOpenEdit}>
           <Edit/>
+        </IconButton>
+        <IconButton onClick={handleAddRedirect}>
+          <PersonAdd/>
+        </IconButton>
+        <IconButton onClick={handleDeleteRedirect}>
+          <Delete/>
         </IconButton>
       </CardActions>
 
