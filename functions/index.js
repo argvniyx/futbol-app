@@ -29,12 +29,12 @@ const eventRoutes = require('./Routes/EventRoutes');
 const userRoutes = require('./Routes/UserRoutes');
 
 // Routes for Request
-app.use('/admin', adminRoutes);
-app.use('/user', userRoutes);
-app.use('/coach', coachRoutes);
-app.use('/parent', parentRoutes);
-app.use('/teams', teamsRoutes);
-app.use('/events', eventRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/user', userRoutes);
+app.use('/api/coach', coachRoutes);
+app.use('/api/parent', parentRoutes);
+app.use('/api/teams', teamsRoutes);
+app.use('/api/events', eventRoutes);
 
 // Export the app
 exports.app = functions.https.onRequest(app);

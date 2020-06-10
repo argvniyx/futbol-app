@@ -29,3 +29,5 @@ yarn-error.log*
 functions/futbol-app-8b521-firebase-adminsdk-e1qpn-cf3587676f.json
 
 *.log
+
+*.cache
