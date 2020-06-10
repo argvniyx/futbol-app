@@ -54,7 +54,8 @@ const Header = (props) => {
   // with the callback
   React.useEffect(() => {
     if(props.handler)
-      props.handler(currentChild.TeamID)
+      props.handler(currentChild?.TeamID)
+    console.log(currentChild);
   }, [currentChild])
 
   return (
@@ -76,7 +77,7 @@ const Header = (props) => {
               <MenuItem
                 key={k}
                 label={i.FirstName}
-                value={i.FirstName}
+                value={k}
               >{i.FirstName}</MenuItem>
             ))}
         </TextField>
