@@ -1,6 +1,7 @@
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
 import Card from '@material-ui/core/Card'
 import CardHeader from '@material-ui/core/CardHeader'
 import CardContent from '@material-ui/core/CardContent'
@@ -16,6 +17,7 @@ import IconButton from '@material-ui/core/IconButton'
 import NavigateNext from '@material-ui/icons/NavigateNext'
 import NavigateBefore from '@material-ui/icons/NavigateBefore'
 import AddBox from '@material-ui/icons/AddBox'
+import DeleteIcon from '@material-ui/icons/Delete'
 import LinearProgress from '@material-ui/core/LinearProgress'
 import ErrorDialog from '../components/error-dialog'
 import { Typography } from '@material-ui/core';
@@ -83,7 +85,6 @@ const Timeline = (props) => {
 
   const handleSaveClick = (event) => {
     if (validateFields()){
-      setTrigger(true)
       const newDateString = `${newEvent.Date} ${newEvent.Hour}`
       const newDate = moment(newDateString, "YYYY-MM-DD HH:mm:ss").toDate()
 
@@ -100,12 +101,12 @@ const Timeline = (props) => {
         .then(
           (result) => {
             console.log("success")
-            setTrigger(false)
+            setTrigger(true)
             setOpenNewEvent(false)
           },
           (err) => {
             console.log(err)
-            setTrigger(false)
+            setTrigger(true)
             setOpenNewEvent(false)
           }
         )
@@ -143,9 +144,11 @@ const Timeline = (props) => {
           setStart(result.Start)
           setEnd(result.End)
           setLoading(false)
+          setTrigger(false)
         },
         (error) => {
           setLoading(false)
+          setTrigger(false)
           setCurrentEvents([])
           setError(true)
         }
@@ -200,6 +203,26 @@ const Timeline = (props) => {
     : setSelectedIndex(selectedIndex)
   }, [currentEvents])
 
+  // Event deletion
+  const deleteEvent = (id) => {
+    console.log(id)
+    fetch(`${process.env.API_URL}/events/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${props.token}`,
+      }
+    })
+      .then(res => res.json)
+      .then(
+        (result) => {
+          console.log(result)
+          setTrigger(true)
+        },
+        (err) => {
+          console.log(err)
+          setTrigger(true)
+        })
+  }
 
   // Rendering
   if(isError) {
@@ -225,6 +248,11 @@ const Timeline = (props) => {
                 >
                   <ListItemText primary={e.Name}
                                 secondary={convertToDate(e.Date)}/>
+                  <ListItemSecondaryAction>
+                    <IconButton edge="end" aria-label="delete-event" onClick={() => deleteEvent(e.id)}>
+                      <DeleteIcon/>
+                    </IconButton>
+                  </ListItemSecondaryAction>
                 </ListItem>
             ))}
            </List>
